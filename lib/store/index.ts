@@ -2,8 +2,8 @@
  * Main Zustand store for BYNOMO dApp
  * Combines wallet, game, and history slices
  * 
- * Note: After CreditCoin migration, blockchain events are handled
- * by the CTC backend client for deposit/withdrawal confirmation.
+ * Note: After OneChain migration, blockchain events are handled
+ * by the OCT backend client for deposit/withdrawal confirmation.
  * Game logic remains off-chain.
  */
 

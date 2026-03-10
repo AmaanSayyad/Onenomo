@@ -1,7 +1,7 @@
 /**
  * Environment Variable Validation
  * 
- * This module validates required environment variables for CreditCoin integration
+ * This module validates required environment variables for OneChain integration
  * and logs warnings for missing or invalid configurations.
  */
 
@@ -13,56 +13,56 @@ interface EnvVariable {
 }
 
 /**
- * Required environment variables for CreditCoin integration
+ * Required environment variables for OneChain integration
  */
 const ENV_VARIABLES: EnvVariable[] = [
-  // CreditCoin Network Configuration
+  // OneChain Network Configuration
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TESTNET_RPC',
+    name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_RPC',
     required: false,
-    description: 'CreditCoin testnet RPC endpoint (defaults to https://rpc.cc3-testnet.creditcoin.network)',
+    description: 'OneChain testnet RPC endpoint (defaults to https://rpc-testnet.onechain.one)',
   },
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TESTNET_CHAIN_ID',
+    name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID',
     required: false,
-    description: 'CreditCoin testnet chain ID (defaults to 102031)',
+    description: 'OneChain testnet chain ID (defaults to 102031)',
   },
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TESTNET_EXPLORER',
+    name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER',
     required: false,
-    description: 'CreditCoin testnet block explorer URL (defaults to https://creditcoin-testnet.blockscout.com)',
+    description: 'OneChain testnet block explorer URL (defaults to https://explorer-testnet.onechain.one)',
   },
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY',
+    name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY',
     required: false,
-    description: 'CreditCoin native currency name (defaults to CTC)',
+    description: 'OneChain native currency name (defaults to OCT)',
   },
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY_SYMBOL',
+    name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_SYMBOL',
     required: false,
-    description: 'CreditCoin currency symbol for display (defaults to CTC)',
+    description: 'OneChain currency symbol for display (defaults to OCT)',
   },
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY_DECIMALS',
+    name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS',
     required: false,
-    description: 'CreditCoin native token decimals (defaults to 18)',
+    description: 'OneChain native token decimals (defaults to 18)',
   },
 
   // Treasury Configuration
   {
-    name: 'CREDITCOIN_TREASURY_ADDRESS',
+    name: 'ONECHAIN_TREASURY_ADDRESS',
     required: false,
     description: 'Treasury wallet address for deposits (defaults to 0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123)',
     serverSideOnly: true,
   },
   {
-    name: 'CREDITCOIN_TREASURY_PRIVATE_KEY',
+    name: 'ONECHAIN_TREASURY_PRIVATE_KEY',
     required: true,
     description: 'Treasury private key for withdrawals (REQUIRED for withdrawal operations)',
     serverSideOnly: true,
   },
   {
-    name: 'NEXT_PUBLIC_CREDITCOIN_TREASURY_ADDRESS',
+    name: 'NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS',
     required: false,
     description: 'Public treasury address for client-side display (defaults to 0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123)',
   },
@@ -103,10 +103,10 @@ const ENV_VARIABLES: EnvVariable[] = [
   {
     name: 'NEXT_PUBLIC_APP_NAME',
     required: false,
-    description: 'Application name displayed in UI (defaults to CreditNomo)',
+    description: 'Application name displayed in UI (defaults to Onenomo)',
   },
   {
-    name: 'NEXT_PUBLIC_CTC_NETWORK',
+    name: 'NEXT_PUBLIC_OCT_NETWORK',
     required: false,
     description: 'Network mode: testnet or mainnet (defaults to testnet)',
   },
@@ -246,6 +246,6 @@ export function validateEnvironment(): {
  * On the client side, validation is skipped to avoid exposing server-side variables.
  */
 if (isServerSide() && process.env.NODE_ENV !== 'test') {
-  console.log('🔍 Validating CreditCoin environment configuration...\n');
+  console.log('🔍 Validating OneChain environment configuration...\n');
   validateEnvironment();
 }

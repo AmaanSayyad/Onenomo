@@ -1,7 +1,7 @@
 /**
  * POST /api/balance/deposit endpoint
  * 
- * Task: 7.2 Update deposit endpoint for CreditCoin
+ * Task: 7.2 Update deposit endpoint for OneChain
  * Requirements: 2.4
  * 
  * Called by blockchain event listener after deposit transaction.
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body: DepositRequest = await request.json();
-    const { userAddress, amount, txHash, currency = 'CTC' } = body;
+    const { userAddress, amount, txHash, currency = 'OCT' } = body;
 
     // Validate required fields
     if (!userAddress || amount === undefined || amount === null || !txHash) {
@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate CTC (EVM) address only
+    // Validate OCT (EVM) address only
     if (!ethers.isAddress(userAddress)) {
       return NextResponse.json(
-        { error: 'Invalid CTC (EVM) wallet address' },
+        { error: 'Invalid OCT (EVM) wallet address' },
         { status: 400 }
       );
     }

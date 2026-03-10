@@ -79,7 +79,7 @@ describe('POST /api/balance/payout', () => {
     });
 
     // Verify stored procedure was called with correct parameters
-    expect(mockRpc).toHaveBeenCalledWith('credit_balance_for_payout', {
+    expect(mockRpc).toHaveBeenCalledWith('apply_balance_for_payout', {
       p_user_address: '0x123abc',
       p_payout_amount: 20.5,
       p_bet_id: 'bet_123456',
@@ -495,7 +495,7 @@ describe('POST /api/balance/payout', () => {
 
     // Verify stored procedure was called with bet ID
     // The procedure internally creates audit log with operation_type='bet_won'
-    expect(mockRpc).toHaveBeenCalledWith('credit_balance_for_payout', {
+    expect(mockRpc).toHaveBeenCalledWith('apply_balance_for_payout', {
       p_user_address: '0x123abc',
       p_payout_amount: 25.0,
       p_bet_id: 'bet_audit_test',

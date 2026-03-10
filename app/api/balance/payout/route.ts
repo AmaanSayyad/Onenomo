@@ -5,7 +5,7 @@
  * Requirements: 4.1, 4.2
  * 
  * Called when a round settles and user wins.
- * Credits payout amount to user's house balance.
+ * Adds payout amount to user's house balance.
  * Inserts audit log entry with operation_type='bet_won'.
  */
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body: PayoutRequest = await request.json();
-    const { userAddress, payoutAmount, currency = 'CTC', betId } = body;
+    const { userAddress, payoutAmount, currency = 'OCT', betId } = body;
 
     // Validate required fields
     if (!userAddress || payoutAmount === undefined || payoutAmount === null || !betId) {
@@ -51,12 +51,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call credit_balance_for_payout stored procedure
+    // Call apply_balance_for_payout stored procedure
     // This procedure handles:
     // - Atomic balance update with row-level locking
     // - Creating user record if it doesn't exist
     // - Inserting audit log entry with operation_type='bet_won'
-    const { data, error } = await supabase.rpc('credit_balance_for_payout', {
+    const { data, error } = await supabase.rpc('apply_balance_for_payout', {
       p_user_address: userAddress,
       p_payout_amount: payoutAmount,
       p_currency: currency,

@@ -1,6 +1,6 @@
 # Wallet Components
 
-This directory contains wallet-related components for the CreditNomo application.
+This directory contains wallet-related components for the Onenomo application.
 
 ## TransactionStatus Component
 
@@ -11,7 +11,7 @@ The `TransactionStatus` component displays transaction information with real-tim
 - **Transaction Hash Display**: Shows the full transaction hash with truncation support
 - **Copy to Clipboard**: One-click copy functionality for the transaction hash
 - **Real-time Status Updates**: Automatically polls for transaction status updates
-- **Block Explorer Link**: Direct link to view the transaction on CreditCoin testnet block explorer
+- **Block Explorer Link**: Direct link to view the transaction on OneChain testnet block explorer
 - **Status Indicators**: Visual indicators for pending, confirmed, and failed transactions
 
 ### Usage
@@ -104,11 +104,11 @@ const handleWithdraw = async () => {
 
 ### Requirements Validated
 
-This component validates the following requirements from the CreditNomo migration spec:
+This component validates the following requirements from the Onenomo migration spec:
 
-- **13.1**: Display transaction hash with link to CreditCoin block explorer
-- **13.2**: Display transaction hash with link to CreditCoin block explorer (withdrawal)
-- **13.3**: Format block explorer URLs as `https://creditcoin-testnet.blockscout.com/tx/{txHash}`
+- **13.1**: Display transaction hash with link to OneChain block explorer
+- **13.2**: Display transaction hash with link to OneChain block explorer (withdrawal)
+- **13.3**: Format block explorer URLs as `https://explorer-testnet.onechain.one/tx/{txHash}`
 - **13.4**: Display transaction status (pending, confirmed, failed) in real-time
 - **13.5**: Allow users to copy transaction hash to clipboard
 
@@ -130,19 +130,19 @@ npm test -- components/wallet/__tests__/TransactionStatus.test.tsx
 
 ### Styling
 
-The component uses Tailwind CSS classes and follows the CreditNomo design system:
+The component uses Tailwind CSS classes and follows the Onenomo design system:
 
 - **Pending**: Yellow color with spinning loader icon
 - **Confirmed**: Green color with check circle icon
 - **Failed**: Red color with X circle icon
-- **Links**: Cyan color (`#00f5ff`) matching the CreditNomo brand
+- **Links**: Cyan color (`#00f5ff`) matching the Onenomo brand
 
 ### Block Explorer Integration
 
 The component automatically generates the correct block explorer URL using the `getExplorerTxUrl` helper from `@/lib/ctc/config`:
 
 ```typescript
-// Format: https://creditcoin-testnet.blockscout.com/tx/{txHash}
+// Format: https://explorer-testnet.onechain.one/tx/{txHash}
 const explorerUrl = getExplorerTxUrl(txHash);
 ```
 

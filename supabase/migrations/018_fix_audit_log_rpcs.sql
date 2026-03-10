@@ -9,7 +9,7 @@ DROP FUNCTION IF EXISTS public.update_balance_for_withdrawal(TEXT, NUMERIC, TEXT
 CREATE OR REPLACE FUNCTION public.update_balance_for_deposit(
     p_user_address TEXT,
     p_deposit_amount NUMERIC,
-    p_currency TEXT DEFAULT 'CTC',
+    p_currency TEXT DEFAULT 'OCT',
     p_transaction_hash TEXT DEFAULT NULL
 )
 RETURNS JSONB
@@ -85,7 +85,7 @@ $$;
 CREATE OR REPLACE FUNCTION public.update_balance_for_withdrawal(
     p_user_address TEXT,
     p_withdrawal_amount NUMERIC,
-    p_currency TEXT DEFAULT 'CTC',
+    p_currency TEXT DEFAULT 'OCT',
     p_transaction_hash TEXT DEFAULT NULL
 )
 RETURNS JSONB

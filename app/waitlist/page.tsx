@@ -13,7 +13,7 @@ const steps = [
     {
         id: "01",
         title: "Hybrid Custody",
-        desc: "CreditCoin Testnet performance with non-custodial security. Bynomo connects your wallet to a high-speed house balance for instant execution without gas lag."
+        desc: "OneChain Testnet performance with non-custodial security. Bynomo connects your wallet to a high-speed house balance for instant execution without gas lag."
     },
     {
         id: "02",
@@ -68,7 +68,7 @@ const testimonials = [
 const faqs = [
     {
         question: "How does the House Balance work?",
-        answer: "To ensure millisecond execution, Bynomo uses a hybrid house balance system. You deposit CTC on CreditCoin Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
+        answer: "To ensure millisecond execution, Bynomo uses a hybrid house balance system. You deposit OCT on OneChain Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
     },
     {
         question: "What assets can I trade?",

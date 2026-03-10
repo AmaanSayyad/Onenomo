@@ -56,16 +56,16 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant App as Bynomo App
+    participant App as Onenomo App
     participant P as Pyth Hermes
     participant API as API + Supabase
-    participant BNB as BNB Treasury (BSC)
+    participant OCT as OCT Treasury (OneChain)
 
     U->>App: Connect wallet (MetaMask / Privy)
-    U->>App: Deposit BNB
-    App->>BNB: Transfer BNB to treasury
-    BNB-->>App: Tx confirmed
-    App->>API: Credit house balance
+    U->>App: Deposit OCT
+    App->>OCT: Transfer OCT to treasury
+    OCT-->>App: Tx confirmed
+    App->>API: Add house balance
 
     loop Betting
         P->>App: Live price stream
@@ -77,8 +77,8 @@ sequenceDiagram
 
     U->>App: Request withdrawal
     App->>API: Debit balance, create payout
-    API->>BNB: Send BNB from treasury to user
-    BNB-->>U: BNB received in wallet
+    API->>OCT: Send OCT from treasury to user
+    OCT-->>U: OCT received in wallet
 ```
 
 ### On-chain vs Off-chain
@@ -245,4 +245,3 @@ yarn dev
   - Verify Pyth configuration and that you have set appropriate envs for Hermes endpoints (see `DEVELOPER_GUIDE.md`).
 
 > For more detailed troubleshooting and production deployment notes, see `DEVELOPER_GUIDE.md` and `README.md` (Architecture & Scalability sections).
-

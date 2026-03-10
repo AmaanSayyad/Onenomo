@@ -165,7 +165,7 @@ export const BalanceDisplay: React.FC = () => {
             : 'from-purple-600/10 to-transparent border-purple-600/30'
             }`}>
             <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-0.5 font-mono">
-              Available Credits
+              Available Balance
             </p>
 
             {isLoading && accountType === 'real' ? (
@@ -186,7 +186,7 @@ export const BalanceDisplay: React.FC = () => {
                   </p>
                 </div>
                 <span className={`text-sm font-mono ${accountType === 'demo' ? 'text-yellow-400/70' : 'text-purple-400/70'}`}>
-                  CTC
+                  OCT
                 </span>
               </div>
             )}

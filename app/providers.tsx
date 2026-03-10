@@ -5,11 +5,10 @@ import { useBynomoStore } from '@/lib/store';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
-import { bsc } from 'viem/chains';
 import { WagmiProvider, useAccount } from 'wagmi';
 import { ConnectKitProvider } from 'connectkit';
 import { config as wagmiConfig } from '@/lib/ctc/wagmi';
-import { creditCoinTestnetChain } from '@/lib/ctc/wagmi';
+import { oneChainTestnetChain } from '@/lib/ctc/wagmi';
 
 // Custom Components
 import { WalletConnectModal } from '@/components/wallet/WalletConnectModal';
@@ -41,7 +40,7 @@ function WalletSync() {
       if (address !== '0xDEMO_1234567890') {
         setAddress('0xDEMO_1234567890');
         setIsConnected(true);
-        setNetwork('CTC');
+        setNetwork('OCT');
       }
       return;
     }
@@ -53,7 +52,7 @@ function WalletSync() {
       if (address !== effectiveAddress) {
         setAddress(effectiveAddress);
         setIsConnected(true);
-        setNetwork('CTC');
+        setNetwork('OCT');
 
         // Initial fetch
         refreshWalletBalance();
@@ -132,8 +131,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 accentColor: '#A855F7',
                 showWalletLoginFirst: true,
               },
-              supportedChains: [bsc, creditCoinTestnetChain],
-              defaultChain: creditCoinTestnetChain,
+              supportedChains: [oneChainTestnetChain],
+              defaultChain: oneChainTestnetChain,
               embeddedWallets: {
                 createOnLogin: 'users-without-wallets',
               },

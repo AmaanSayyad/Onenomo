@@ -32,7 +32,7 @@ describe('Environment Validation', () => {
   describe('validateEnvironment', () => {
     it('should pass validation when all required variables are set', () => {
       // Set required variables
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
@@ -44,7 +44,7 @@ describe('Environment Validation', () => {
 
     it('should fail validation when required variables are missing', () => {
       // Clear required variables
-      delete process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+      delete process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -57,12 +57,12 @@ describe('Environment Validation', () => {
 
     it('should warn about missing optional variables', () => {
       // Set required variables
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
       // Clear optional variables
-      delete process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_RPC;
+      delete process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_RPC;
       delete process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
       const result = validateEnvironment();
@@ -74,7 +74,7 @@ describe('Environment Validation', () => {
 
     it('should return validation results for all variables', () => {
       // Set required variables
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
@@ -94,7 +94,7 @@ describe('Environment Validation', () => {
 
     it('should handle partial configuration', () => {
       // Set only treasury key, missing both Supabase variables
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -107,20 +107,20 @@ describe('Environment Validation', () => {
 
     it('should log success message when all variables are configured', () => {
       // Set all required and optional variables
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = '2a975a6e86c98d3e96927ba685f2e45a7df6363596e30df574c7901f2e2e6cc9';
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_RPC = 'https://rpc.cc3-testnet.creditcoin.network';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_CHAIN_ID = '102031';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_EXPLORER = 'https://creditcoin-testnet.blockscout.com';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY = 'CTC';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY_SYMBOL = 'CTC';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY_DECIMALS = '18';
-      process.env.CREDITCOIN_TREASURY_ADDRESS = '0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123';
-      process.env.NEXT_PUBLIC_CREDITCOIN_TREASURY_ADDRESS = '0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123';
+      process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_RPC = 'https://rpc-testnet.onechain.one';
+      process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID = '102031';
+      process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER = 'https://explorer-testnet.onechain.one';
+      process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY = 'OCT';
+      process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_SYMBOL = 'OCT';
+      process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS = '18';
+      process.env.ONECHAIN_TREASURY_ADDRESS = '0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123';
+      process.env.NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS = '0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123';
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID = 'test-project-id';
-      process.env.NEXT_PUBLIC_APP_NAME = 'CreditNomo';
-      process.env.NEXT_PUBLIC_CTC_NETWORK = 'testnet';
+      process.env.NEXT_PUBLIC_APP_NAME = 'Onenomo';
+      process.env.NEXT_PUBLIC_OCT_NETWORK = 'testnet';
       process.env.NEXT_PUBLIC_ROUND_DURATION = '30';
       process.env.NEXT_PUBLIC_PRICE_UPDATE_INTERVAL = '1000';
       process.env.NEXT_PUBLIC_CHART_TIME_WINDOW = '300000';

@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // --- Assets / Icons ---
 // Reused from previous code
 const CHAINS = [
-    { name: 'CreditCoin Testnet', id: 'CTC', color: '#b24fff', logo: '/logos/ctc-logo.png', bg: '' },
+    { name: 'OneChain Testnet', id: 'OCT', color: '#b24fff', logo: '/logos/ctc-logo.png', bg: '' },
 ];
 
 export default function HowItWorksDemo() {
@@ -14,8 +14,8 @@ export default function HowItWorksDemo() {
 
     const features = [
         {
-            title: "CreditCoin Access",
-            desc: "Connect instantly with MetaMask or Privy on CreditCoin Testnet. Non-custodial and secure.",
+            title: "OneChain Access",
+            desc: "Connect instantly with MetaMask or Privy on OneChain Testnet. Non-custodial and secure.",
             component: <ChainSelectVisual />
         },
         {
@@ -261,7 +261,7 @@ function SettlementVisual() {
                     <div className="flex-1">
                         <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">Total Payout</div>
                         <div className="text-2xl font-mono text-white font-bold flex items-center gap-2">
-                            +1.95 <span className="text-purple-400 text-sm">CTC</span>
+                            +1.95 <span className="text-purple-400 text-sm">OCT</span>
                         </div>
                     </div>
                     <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded text-[10px] text-green-400 font-bold uppercase tracking-wider">

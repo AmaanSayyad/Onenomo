@@ -400,7 +400,7 @@ describe('POST /api/withdraw', () => {
 
   describe('Edge Cases', () => {
     it('should handle very large withdrawal amounts', async () => {
-      const largeAmount = '1000000.123456789012345678'; // 1M CTC with full precision
+      const largeAmount = '1000000.123456789012345678'; // 1M OCT with full precision
       
       (getHouseBalance as jest.Mock).mockResolvedValue('2000000.0');
       (updateHouseBalance as jest.Mock).mockResolvedValue('999999.876543210987654322');

@@ -1,4 +1,4 @@
--- Migration: Create balance_audit_log table for CreditCoin (CTC) audit trail
+-- Migration: Create balance_audit_log table for OneChain (OCT) audit trail
 -- Task: 2.3 Create database migration script for balance_audit_log table
 -- Requirements: 4.3, 4.4, 4.5, 4.6
 
@@ -6,7 +6,7 @@
 CREATE TABLE IF NOT EXISTS balance_audit_log (
   id SERIAL PRIMARY KEY,
   user_address TEXT NOT NULL,
-  currency TEXT DEFAULT 'CTC' NOT NULL,
+  currency TEXT DEFAULT 'OCT' NOT NULL,
   operation TEXT NOT NULL,
   amount NUMERIC(20, 18) NOT NULL,
   balance_before NUMERIC(20, 18) NOT NULL,
@@ -20,13 +20,13 @@ CREATE INDEX IF NOT EXISTS idx_audit_log_user ON balance_audit_log(user_address)
 CREATE INDEX IF NOT EXISTS idx_audit_log_created ON balance_audit_log(created_at DESC);
 
 -- Add table comment
-COMMENT ON TABLE balance_audit_log IS 'Audit trail for all balance-changing operations (deposits, withdrawals, bets, payouts, refunds) on CreditCoin testnet';
+COMMENT ON TABLE balance_audit_log IS 'Audit trail for all balance-changing operations (deposits, withdrawals, bets, payouts, refunds) on OneChain testnet';
 
 -- Add column comments
 COMMENT ON COLUMN balance_audit_log.id IS 'Auto-incrementing primary key';
 COMMENT ON COLUMN balance_audit_log.user_address IS 'User EVM wallet address (0x...)';
-COMMENT ON COLUMN balance_audit_log.currency IS 'Currency type (default: CTC for CreditCoin)';
-COMMENT ON COLUMN balance_audit_log.operation IS 'Operation type: deposit, withdraw, bet_debit, bet_credit, refund';
+COMMENT ON COLUMN balance_audit_log.currency IS 'Currency type (default: OCT for OneChain)';
+COMMENT ON COLUMN balance_audit_log.operation IS 'Operation type: deposit, withdraw, bet_debit, bet_payout, refund';
 COMMENT ON COLUMN balance_audit_log.amount IS 'Amount involved in the operation (18 decimal places)';
 COMMENT ON COLUMN balance_audit_log.balance_before IS 'User house balance before operation (18 decimal places)';
 COMMENT ON COLUMN balance_audit_log.balance_after IS 'User house balance after operation (18 decimal places)';

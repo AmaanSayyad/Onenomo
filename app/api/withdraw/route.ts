@@ -44,7 +44,7 @@ function sanitizeError(error: any): string {
  */
 interface WithdrawRequest {
   userAddress: string;
-  amount: string; // CTC amount as string
+  amount: string; // OCT amount as string
 }
 
 /**
@@ -70,7 +70,7 @@ type WithdrawResponse = WithdrawSuccessResponse | WithdrawErrorResponse;
  * POST /api/withdraw
  * 
  * Process a withdrawal request by debiting the user's house balance and
- * transferring CTC from treasury to user wallet.
+ * transferring OCT from treasury to user wallet.
  */
 export async function POST(request: NextRequest): Promise<NextResponse<WithdrawResponse>> {
   const timestamp = new Date().toISOString();

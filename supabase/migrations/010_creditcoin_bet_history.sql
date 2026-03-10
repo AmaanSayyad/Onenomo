@@ -1,18 +1,18 @@
--- Migration: Update bet_history table for CreditCoin (CTC) support
+-- Migration: Update bet_history table for OneChain (OCT) support
 -- Task: 2.2 Create database migration script for bet_history table
 -- Requirements: 4.2, 4.4, 4.5, 4.6
 
--- Update asset column default from 'BNB' to 'CTC'
+-- Update asset column default from 'BNB' to 'OCT'
 ALTER TABLE bet_history 
-ALTER COLUMN asset SET DEFAULT 'CTC';
+ALTER COLUMN asset SET DEFAULT 'OCT';
 
--- Update mode column default from 'binomo' to 'creditnomo'
+-- Update mode column default from 'binomo' to 'onenomo'
 ALTER TABLE bet_history 
-ALTER COLUMN mode SET DEFAULT 'creditnomo';
+ALTER COLUMN mode SET DEFAULT 'onenomo';
 
--- Update network column default from 'BNB' to 'CTC'
+-- Update network column default from 'BNB' to 'OCT'
 ALTER TABLE bet_history 
-ALTER COLUMN network SET DEFAULT 'CTC';
+ALTER COLUMN network SET DEFAULT 'OCT';
 
 -- Update amount column precision from NUMERIC(20,8) to NUMERIC(20,18)
 ALTER TABLE bet_history 
@@ -98,21 +98,21 @@ ADD CONSTRAINT bet_history_direction_check CHECK (direction IN ('UP', 'DOWN'));
 CREATE INDEX IF NOT EXISTS idx_bet_history_created ON bet_history(created_at DESC);
 
 -- Update table comment
-COMMENT ON TABLE bet_history IS 'Stores all bet results for persistent history and leaderboard on CreditCoin testnet';
+COMMENT ON TABLE bet_history IS 'Stores all bet results for persistent history and leaderboard on OneChain testnet';
 
 -- Update column comments
 COMMENT ON COLUMN bet_history.id IS 'Unique bet identifier (UUID)';
 COMMENT ON COLUMN bet_history.wallet_address IS 'User EVM wallet address (0x...)';
-COMMENT ON COLUMN bet_history.asset IS 'Asset type (default: CTC for CreditCoin)';
+COMMENT ON COLUMN bet_history.asset IS 'Asset type (default: OCT for OneChain)';
 COMMENT ON COLUMN bet_history.direction IS 'Bet direction: UP or DOWN';
-COMMENT ON COLUMN bet_history.amount IS 'Bet amount in CTC tokens (18 decimal places)';
+COMMENT ON COLUMN bet_history.amount IS 'Bet amount in OCT tokens (18 decimal places)';
 COMMENT ON COLUMN bet_history.multiplier IS 'Payout multiplier (e.g., 1.9x)';
 COMMENT ON COLUMN bet_history.strike_price IS 'Asset price when bet was placed (18 decimal places)';
 COMMENT ON COLUMN bet_history.end_price IS 'Asset price when bet was resolved (18 decimal places)';
-COMMENT ON COLUMN bet_history.payout IS 'Payout amount in CTC tokens if won (18 decimal places)';
+COMMENT ON COLUMN bet_history.payout IS 'Payout amount in OCT tokens if won (18 decimal places)';
 COMMENT ON COLUMN bet_history.won IS 'Whether the bet was won (true) or lost (false)';
-COMMENT ON COLUMN bet_history.mode IS 'Game mode (default: creditnomo)';
-COMMENT ON COLUMN bet_history.network IS 'Blockchain network (default: CTC for CreditCoin)';
+COMMENT ON COLUMN bet_history.mode IS 'Game mode (default: onenomo)';
+COMMENT ON COLUMN bet_history.network IS 'Blockchain network (default: OCT for OneChain)';
 COMMENT ON COLUMN bet_history.resolved_at IS 'Timestamp when bet was resolved';
 COMMENT ON COLUMN bet_history.created_at IS 'Timestamp when bet was created';
 

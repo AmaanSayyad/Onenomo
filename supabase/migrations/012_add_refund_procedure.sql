@@ -2,14 +2,14 @@
 -- Task: 9.2 Update bet settlement logic to use Pyth oracle
 -- Requirements: 9.5, 9.6
 -- 
--- This procedure credits a refund amount back to the user's house balance
+-- This procedure adds a refund amount back to the user's house balance
 -- and creates an audit log entry with operation='refund'
 
--- Create credit_balance_for_refund stored procedure
-CREATE OR REPLACE FUNCTION credit_balance_for_refund(
+-- Create apply_balance_for_refund stored procedure
+CREATE OR REPLACE FUNCTION apply_balance_for_refund(
     p_user_address TEXT,
     p_refund_amount NUMERIC,
-    p_currency TEXT DEFAULT 'CTC',
+    p_currency TEXT DEFAULT 'OCT',
     p_bet_id TEXT DEFAULT NULL
 )
 RETURNS JSON AS $$
@@ -78,5 +78,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Add comment to the function
-COMMENT ON FUNCTION credit_balance_for_refund IS 
-'Credits a refund amount to user house balance when oracle price fetch fails. Creates audit log entry with operation=refund.';
+COMMENT ON FUNCTION apply_balance_for_refund IS 
+'Adds a refund amount to user house balance when oracle price fetch fails. Creates audit log entry with operation=refund.';

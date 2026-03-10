@@ -1,18 +1,18 @@
-# CreditNomo
+# Onenomo
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CreditCoin](https://img.shields.io/badge/CreditCoin-Testnet-purple)](https://creditcoin.org/)
+[![OneChain](https://img.shields.io/badge/OneChain-Testnet-purple)](https://onechain.one/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.1-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 
-**The first on-chain binary options trading dApp on CreditCoin testnet.**  
-Running on **CreditCoin testnet**.
+**The first on-chain binary options trading dApp on OneChain testnet.**  
+Running on **OneChain testnet**.
 
-Powered by **CreditCoin testnet** + **Pyth Hermes** price attestations + **Supabase** + instant house balance.
+Powered by **OneChain testnet** + **Pyth Hermes** price attestations + **Supabase** + instant house balance.
 
 *Trade binary options with oracle-bound resolution and minimal trust.*
 
-**Main treasury (CreditCoin testnet):** [`0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123`](https://creditcoin-testnet.blockscout.com/address/0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123)
+**Main treasury (OneChain testnet):** [`0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123`](https://explorer-testnet.onechain.one/address/0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123)
 
 
 ## Evaluation repository
@@ -21,7 +21,7 @@ Powered by **CreditCoin testnet** + **Pyth Hermes** price attestations + **Supab
 
 | Content | Location |
 |--------|----------|
-| **Core code** | `app/`, `components/`, `lib/`, `supabase/`, `scripts/` — full Next.js app, CreditCoin integration, Pyth, Supabase |
+| **Core code** | `app/`, `components/`, `lib/`, `supabase/`, `scripts/` — full Next.js app, OneChain integration, Pyth, Supabase |
 | **README** | This file — overview, quick start, tech stack, architecture, getting started |
 | **Architecture & flow (`.md` + Mermaid)** | **README.md** (How It Works, System Architecture, Data Flow, Game Modes) · **docs/TECHNICAL.md** (architecture, setup, demo) · **docs/PROJECT.md** (problem, solution, user journey) · **USER_JOURNEY.md** (onboarding, deposit, Classic/Box, withdrawal, lifecycle) · **DEVELOPER_GUIDE.md** (component diagram, sequence diagram) · **ROADMAP.md** (timeline) |
 
@@ -35,7 +35,7 @@ All architectural and flow diagrams are in Markdown using [Mermaid](https://merm
 - **[Developer Guide](./DEVELOPER_GUIDE.md)** - Comprehensive setup and contribution guide
 - **[Roadmap](./ROADMAP.md)** - Product roadmap and milestones
 - **[User Journey](./USER_JOURNEY.md)** - End‑to‑end trader flow and UX
-- **[Dependencies & credits](./DEPENDENCIES.md)** - Open-source dependencies and acknowledgements
+- **[Dependencies & acknowledgements](./DEPENDENCIES.md)** - Open-source dependencies and acknowledgements
 - **[Contributing](./CONTRIBUTING.md)** - How to contribute
 - **[Security](./SECURITY.md)** - Security policy and vulnerability reporting
 
@@ -49,24 +49,24 @@ All architectural and flow diagrams are in Markdown using [Mermaid](https://merm
 |------|--------|
 | `app/` | Next.js App Router pages and API routes |
 | `components/` | React UI components (trade, chart, wallet) |
-| `lib/` | CTC config, Supabase client, Pyth, utilities |
-| `docs/` | PROJECT.md, TECHNICAL.md, EXTRAS.md, CreditCoin.address.json |
+| `lib/` | OCT config, Supabase client, Pyth, utilities |
+| `docs/` | PROJECT.md, TECHNICAL.md, EXTRAS.md, OneChain.address.json |
 | `scripts/` | Balance sync, reconciliation, DB helpers |
 | `supabase/` | SQL migrations and Supabase config |
 | `public/` | Static assets |
 
 ---
 
-## Why CreditNomo?
+## Why Onenomo?
 
 Binary options trading in Web3 is rare. Real-time oracles and sub-second resolution have been the missing piece.
 
 - **Pyth Hermes** delivers millisecond-grade prices for 300+ assets (crypto, stocks, metals, forex).
-- **CreditCoin testnet** — EVM-compatible blockchain for fast finality and low fees.
+- **OneChain testnet** — EVM-compatible blockchain for fast finality and low fees.
 - **House balance** — place unlimited bets without signing a transaction every time; only deposit/withdraw hit the chain.
 - **5s, 10s, 15s, 30s, 1m** rounds with oracle-bound settlement.
 
-CreditNomo brings binary options to CreditCoin testnet with transparent, on-chain settlement.
+Onenomo brings binary options to OneChain testnet with transparent, on-chain settlement.
 
 ---
 
@@ -75,19 +75,19 @@ CreditNomo brings binary options to CreditCoin testnet with transparent, on-chai
 | Layer        | Technology |
 |-------------|------------|
 | **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS, Zustand, Recharts |
-| **Blockchain** | **CreditCoin testnet**, ethers.js, viem, Wagmi, ConnectKit, Privy |
+| **Blockchain** | **OneChain testnet**, ethers.js, viem, Wagmi, ConnectKit, Privy |
 | **Oracle** | Pyth Network Hermes (real-time prices) |
 | **Backend** | Next.js API Routes, Supabase (PostgreSQL) |
-| **Payments** | CTC native transfers, single treasury |
+| **Payments** | OCT native transfers, single treasury |
 
-### Key Dependencies & Credits
+### Key Dependencies & Acknowledgements
 
 - **Next.js 16 & React 19** — core application framework and UI rendering.
 - **TypeScript** — type-safe application codebase.
 - **Tailwind CSS** — utility-first styling for a responsive trading UI.
 - **Zustand** — lightweight global state for prices, rounds, and UI state.
 - **Recharts** — charting library for price feeds and Box mode tiles.
-- **Wagmi, viem, ethers.js & ConnectKit** — wallet integration and CreditCoin testnet RPC access.
+- **Wagmi, viem, ethers.js & ConnectKit** — wallet integration and OneChain testnet RPC access.
 - **Privy** — social login and embedded wallet experience.
 - **Pyth Hermes** — real-time oracle prices for settlement.
 - **Supabase (PostgreSQL)** — managed database, auth, and SQL migrations.
@@ -107,15 +107,15 @@ CreditNomo brings binary options to CreditCoin testnet with transparent, on-chai
 
 ## Competitive Landscape
 
-| Segment | Examples | Limitation vs CreditNomo |
+| Segment | Examples | Limitation vs Onenomo |
 |--------|----------|----------------------|
 | **Web2 binary options** | Binomo, IQ Option, Quotex | Opaque pricing, regulatory issues, no on-chain settlement; users do not custody funds. |
 | **Crypto prediction markets** | Polymarket, Kalshi, Azuro | Event/outcome markets (e.g. “Will X happen?”), not sub-minute **price** binary options; resolution in hours or days. |
 | **Crypto derivatives (CEX)** | Binance Futures, Bybit, OKX | Leveraged perps and positions; not short-duration binary options (5s–1m) with oracle-bound resolution. |
 | **On-chain options / DeFi** | Dopex, Lyra, Premia | Standard options (calls/puts), complex UX; no simple “price up/down in 30s” binary product. |
-| **CreditCoin testnet binary options** | — | No established on-chain binary options dApp; CreditNomo fills this gap. |
+| **OneChain testnet binary options** | — | No established on-chain binary options dApp; Onenomo fills this gap. |
 
-**CreditNomo’s differentiation:** First on-chain binary options dApp on CreditCoin testnet with sub-second oracle resolution (Pyth Hermes), house balance for instant bets, and dual modes (Classic + Box) in one treasury.
+**Onenomo’s differentiation:** First on-chain binary options dApp on OneChain testnet with sub-second oracle resolution (Pyth Hermes), house balance for instant bets, and dual modes (Classic + Box) in one treasury.
 
 ---
 
@@ -128,7 +128,7 @@ Endless possibilities across:
 - **Derivatives & Futures** — More products for advanced traders.
 - **DEX** — Deeper DeFi integration and on-chain liquidity.
 
-**Ultimate objective:** To become the next PolyMarket for binary options — the go-to on-chain venue for short-duration, oracle-settled binary options on CreditCoin testnet and beyond.
+**Ultimate objective:** To become the next PolyMarket for binary options — the go-to on-chain venue for short-duration, oracle-settled binary options on OneChain testnet and beyond.
 
 ---
 
@@ -137,16 +137,16 @@ Endless possibilities across:
 ```mermaid
 flowchart LR
     subgraph User
-        A[Connect Wallet] --> B[Deposit CTC]
+        A[Connect Wallet] --> B[Deposit OCT]
         B --> C[Place Bets]
         C --> D[Win/Lose]
         D --> E[Withdraw]
     end
-    subgraph CreditNomo
+    subgraph Onenomo
         F[MetaMask / ConnectKit / Privy]
         G[Pyth Hermes Prices]
         H[Supabase Balances]
-        I[CTC Treasury]
+        I[OCT Treasury]
     end
     A --> F
     B --> I
@@ -158,11 +158,11 @@ flowchart LR
 
 ### Flow
 
-1. **Connect** — Connect via MetaMask (ConnectKit/Wagmi) or Privy (social login). All operations use **CTC** on CreditCoin testnet.
-2. **Deposit** — Send CTC from your wallet to the CreditNomo treasury. Your house balance is credited instantly.
+1. **Connect** — Connect via MetaMask (ConnectKit/Wagmi) or Privy (social login). All operations use **OCT** on OneChain testnet.
+2. **Deposit** — Send OCT from your wallet to the Onenomo treasury. Your house balance is added instantly.
 3. **Place bet** — Choose **Classic** (up/down + expiry) or **Box** (tap tiles with multipliers). No on-chain tx per bet.
 4. **Resolution** — Pyth Hermes provides the price at expiry; win/loss is applied to your house balance.
-5. **Withdraw** — Request withdrawal; CTC is sent from the treasury to your wallet on CreditCoin testnet.
+5. **Withdraw** — Request withdrawal; OCT is sent from the treasury to your wallet on OneChain testnet.
 
 ---
 
@@ -180,10 +180,10 @@ graph TB
         Pyth["Pyth Hermes Price Feeds"]
     end
 
-    subgraph CTCChain["CreditCoin Testnet"]
+    subgraph OCTChain["OneChain Testnet"]
         UserWallet["User Wallet MetaMask or Privy"]
-        Treasury["CreditNomo Treasury CTC EOA"]
-        CreditCoinRPC["CreditCoin RPC"]
+        Treasury["Onenomo Treasury OCT EOA"]
+        OneChainRPC["OneChain RPC"]
     end
 
     subgraph Backend
@@ -194,8 +194,8 @@ graph TB
     UI --> Store
     UI --> Wallets
     Wallets --> UserWallet
-    UserWallet --> CreditCoinRPC
-    CreditCoinRPC --> Treasury
+    UserWallet --> OneChainRPC
+    OneChainRPC --> Treasury
     UI --> Pyth
     UI --> API
     API --> DB
@@ -207,16 +207,16 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant App as CreditNomo App
+    participant App as Onenomo App
     participant P as Pyth Hermes
     participant API as API + Supabase
-    participant CTC as CTC Treasury on CreditCoin
+    participant OCT as OCT Treasury on OneChain
 
     U->>App: Connect wallet MetaMask or Privy
-    U->>App: Deposit CTC
-    App->>CTC: Transfer CTC to treasury
-    CTC-->>App: Tx confirmed
-    App->>API: Credit house balance
+    U->>App: Deposit OCT
+    App->>OCT: Transfer OCT to treasury
+    OCT-->>App: Tx confirmed
+    App->>API: Add house balance
 
     loop Betting
         P->>App: Live price stream
@@ -229,8 +229,8 @@ sequenceDiagram
 
     U->>App: Request withdrawal
     App->>API: Debit balance, create payout
-    API->>CTC: Sign and send CTC from treasury to user
-    CTC-->>U: CTC received in wallet
+    API->>OCT: Sign and send OCT from treasury to user
+    OCT-->>U: OCT received in wallet
 ```
 
 ### Game Modes
@@ -242,7 +242,7 @@ flowchart TD
 
     Classic --> C1[Choose UP or DOWN]
     C1 --> C2[Pick expiry 5s to 1m]
-    C2 --> C3[Enter stake in CTC]
+    C2 --> C3[Enter stake in OCT]
     C3 --> C4[Price at expiry vs entry - Oracle settlement]
 
     Box --> B1[Tap a tile on the chart]
@@ -258,14 +258,14 @@ flowchart TD
 
 - Node.js 18+
 - Yarn (or npm)
-- A CreditCoin testnet wallet (e.g. MetaMask) and some CTC
+- A OneChain testnet wallet (e.g. MetaMask) and some OCT
 - Supabase project
 
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/0xamaan-dev/CreditNomo.git
-cd CreditNomo
+git clone https://github.com/0xamaan-dev/Onenomo.git
+cd Onenomo
 yarn install
 ```
 
@@ -281,27 +281,27 @@ Edit `.env` with the following variables. See `.env.example` for a complete temp
 
 | Variable | Description |
 |----------|-------------|
-| `CREDITCOIN_TREASURY_PRIVATE_KEY` | Treasury private key for withdrawals (⚠️ KEEP SECRET - server-side only) |
+| `ONECHAIN_TREASURY_PRIVATE_KEY` | Treasury private key for withdrawals (⚠️ KEEP SECRET - server-side only) |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (required for database operations) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key (required for database operations) |
 
-#### CreditCoin Network Configuration (Optional - defaults provided)
+#### OneChain Network Configuration (Optional - defaults provided)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `NEXT_PUBLIC_CREDITCOIN_TESTNET_RPC` | `https://rpc.cc3-testnet.creditcoin.network` | CreditCoin testnet RPC endpoint |
-| `NEXT_PUBLIC_CREDITCOIN_TESTNET_CHAIN_ID` | `102031` | CreditCoin testnet chain ID |
-| `NEXT_PUBLIC_CREDITCOIN_TESTNET_EXPLORER` | `https://creditcoin-testnet.blockscout.com` | Block explorer URL |
-| `NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY` | `CTC` | Native currency name |
-| `NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY_SYMBOL` | `CTC` | Currency symbol for display |
-| `NEXT_PUBLIC_CREDITCOIN_TESTNET_CURRENCY_DECIMALS` | `18` | Native token decimals |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_RPC` | `https://rpc-testnet.onechain.one` | OneChain testnet RPC endpoint |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID` | `102031` | OneChain testnet chain ID |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER` | `https://explorer-testnet.onechain.one` | Block explorer URL |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY` | `OCT` | Native currency name |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_SYMBOL` | `OCT` | Currency symbol for display |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS` | `18` | Native token decimals |
 
 #### Treasury Configuration (Optional - defaults provided)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `CREDITCOIN_TREASURY_ADDRESS` | `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123` | Treasury wallet address (server-side) |
-| `NEXT_PUBLIC_CREDITCOIN_TREASURY_ADDRESS` | `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123` | Treasury address for client display |
+| `ONECHAIN_TREASURY_ADDRESS` | `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123` | Treasury wallet address (server-side) |
+| `NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS` | `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123` | Treasury address for client display |
 
 #### Wallet Connection (Optional)
 
@@ -315,8 +315,8 @@ Edit `.env` with the following variables. See `.env.example` for a complete temp
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `NEXT_PUBLIC_APP_NAME` | `CreditNomo` | Application name displayed in UI |
-| `NEXT_PUBLIC_CTC_NETWORK` | `testnet` | Network mode (`testnet` or `mainnet`) |
+| `NEXT_PUBLIC_APP_NAME` | `Onenomo` | Application name displayed in UI |
+| `NEXT_PUBLIC_OCT_NETWORK` | `testnet` | Network mode (`testnet` or `mainnet`) |
 | `NEXT_PUBLIC_ROUND_DURATION` | `30` | Default round duration in seconds |
 | `NEXT_PUBLIC_PRICE_UPDATE_INTERVAL` | `1000` | Price update interval in milliseconds |
 | `NEXT_PUBLIC_CHART_TIME_WINDOW` | `300000` | Chart time window in milliseconds (5 minutes) |
@@ -344,9 +344,9 @@ Open [http://localhost:3000](http://localhost:3000); the app redirects to `/trad
 
 ---
 
-## Architecture: How CreditNomo Scales
+## Architecture: How Onenomo Scales
 
-CreditNomo is designed for **high-throughput, low-latency** binary options trading on CreditCoin testnet.
+Onenomo is designed for **high-throughput, low-latency** binary options trading on OneChain testnet.
 
 ### Performance Characteristics
 
@@ -356,7 +356,7 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 | **Price updates** | 1-second interval | Pyth Hermes real-time feed |
 | **Concurrent users** | 10,000+ | Supabase PostgreSQL + connection pooling |
 | **Settlement latency** | <100ms | In-memory bet resolution + DB write |
-| **Blockchain finality** | ~3 seconds | CreditCoin testnet block time |
+| **Blockchain finality** | ~3 seconds | OneChain testnet block time |
 
 ### Scalability Strategy
 
@@ -382,7 +382,7 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 
 5. **Risk mitigation**  
    - **Insurance fund**: 5% of protocol fees reserved for edge cases  
-   - **Liquidity reserves**: 70% CTC, 20% USDT, 10% yield-bearing (Venus)  
+   - **Liquidity reserves**: 70% OCT, 20% USDT, 10% yield-bearing (Venus)  
    - **Circuit breaker**: Auto-pause if oracle deviation >5% or treasury <10% reserves
 
 ---
@@ -402,7 +402,7 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 
 **Treasury Reserve Management:**
 - Maintain **minimum 30% reserves** (if reserves drop below, pause bets until replenished)
-- **Yield generation**: Deposit idle CTC into Venus Protocol (~5% APY)
+- **Yield generation**: Deposit idle OCT into Venus Protocol (~5% APY)
 - **Dynamic fee adjustment**: Increase fees if treasury health <50%, decrease if >80%
 
 **Insurance Fund:**
@@ -411,7 +411,7 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 
 **Liquidity Incentives:**
 - **Early users**: Bonus multipliers for first 30 days (1.1x payouts)
-- **Liquidity mining**: Stake CreditNomo tokens to earn protocol fee share (planned Q3 2026)
+- **Liquidity mining**: Stake Onenomo tokens to earn protocol fee share (planned Q3 2026)
 - **Referral bonuses**: 10% of fees from referred users (permanent)
 
 **Long-term Revenue Targets:**
@@ -431,13 +431,13 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 
 ### Target Segments
 
-- **DeFi-native traders on CreditCoin testnet** — users already active on CreditCoin perps/DEXs looking for new high-frequency products.
+- **DeFi-native traders on OneChain testnet** — users already active on OneChain perps/DEXs looking for new high-frequency products.
 - **Binary options & prediction users (Web2 → Web3)** — users of Binomo/IQ Option and prediction markets seeking transparent, on-chain settlement.
 - **Creators & communities** — KOLs, trading groups, and Telegram/Discord communities who want gamified trading experiences.
 
 ### Acquisition Channels
 
-- **CreditCoin testnet ecosystem**: Grants, ecosystem programs, and co-marketing with CreditCoin testnet and infra partners.
+- **OneChain testnet ecosystem**: Grants, ecosystem programs, and co-marketing with OneChain testnet and infra partners.
 - **X/Twitter & Telegram**: Short-form trade clips, PnL screenshots, and streak highlights for virality.
 - **Referral program**: Perpetual fee share for referrers, with deep links into Classic and Box modes.
 - **Launch partners**: Early integrations with wallets, analytics dashboards, and trader communities.
@@ -451,9 +451,9 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 
 ### Expansion Roadmap
 
-- **Phase 1 (CreditCoin testnet focus)**: Ship on CreditCoin, harden infra, iterate on UX and risk parameters.
+- **Phase 1 (OneChain testnet focus)**: Ship on OneChain, harden infra, iterate on UX and risk parameters.
 - **Phase 2 (More assets & regions)**: Expand to FX, indices, and region-specific campaigns.
-- **Phase 3 (Cross-chain & tokenization)**: CreditNomo token, cross-chain deployment, and deeper DeFi integrations.
+- **Phase 3 (Cross-chain & tokenization)**: Onenomo token, cross-chain deployment, and deeper DeFi integrations.
 
 ---
 
@@ -465,10 +465,10 @@ CreditNomo is designed for **high-throughput, low-latency** binary options tradi
 
 ---
 
-## CreditCoin Testnet
+## OneChain Testnet
 
-CreditNomo is built for **CreditCoin testnet**:
+Onenomo is built for **OneChain testnet**:
 
-- Deposits and withdrawals are CTC transfers on CreditCoin testnet.
-- Treasury is an EOA on CreditCoin testnet; no custom contract required for core flow.
+- Deposits and withdrawals are OCT transfers on OneChain testnet.
+- Treasury is an EOA on OneChain testnet; no custom contract required for core flow.
 - Wallet connection via ConnectKit (MetaMask, etc.) and Privy.

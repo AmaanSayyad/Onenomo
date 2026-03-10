@@ -1,7 +1,7 @@
 /**
  * POST /api/balance/win endpoint
  * 
- * Credits winning amount to user's house balance.
+ * Adds winning amount to user's house balance.
  * Called when a bet is won in the instant-resolution system.
  */
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     try {
         // Parse request body
         const body: WinRequest = await request.json();
-        const { userAddress, winAmount, currency = 'CTC', betId } = body;
+        const { userAddress, winAmount, currency = 'OCT', betId } = body;
 
         // Validate required fields
         if (!userAddress || winAmount === undefined || winAmount === null) {
@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Call credit_balance_for_payout stored procedure
-        const { data, error } = await supabase.rpc('credit_balance_for_payout', {
+        // Call payout balance stored procedure
+        const { data, error } = await supabase.rpc('apply_balance_for_payout', {
             p_user_address: userAddress,
             p_payout_amount: winAmount,
             p_currency: currency,
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
         // Handle database errors
         if (error) {
-            console.error('Database error in win credit:', error);
+            console.error('Database error in win payout:', error);
             return NextResponse.json(
                 { error: 'Service temporarily unavailable. Please try again.' },
                 { status: 503 }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         // Check if the procedure reported an error
         if (!result.success) {
             return NextResponse.json(
-                { error: result.error || 'Failed to credit winnings' },
+                { error: result.error || 'Failed to add winnings' },
                 { status: 400 }
             );
         }

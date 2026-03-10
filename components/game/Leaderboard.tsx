@@ -25,9 +25,8 @@ export const Leaderboard: React.FC = () => {
         switch (network) {
             case 'SOL': return '/logos/solana-sol-logo.png';
             case 'SUI': return '/logos/sui-logo.png';
-            case 'CTC':
-            case 'CREDITCOIN':
-            case 'BNB': return '/logos/ctc-logo.png';
+            case 'OCT':
+            case 'ONECHAIN': return '/logos/ctc-logo.png';
             case 'XLM': return '/logos/stellar-xlm-logo.png';
             case 'XTZ': return '/logos/tezos-xtz-logo.png';
             case 'NEAR': return '/logos/near-logo.svg';
@@ -39,13 +38,12 @@ export const Leaderboard: React.FC = () => {
         switch (network) {
             case 'SOL': return 'SOL';
             case 'SUI': return 'USDC';
-            case 'CTC':
-            case 'CREDITCOIN':
-            case 'BNB': return 'CTC';
+            case 'OCT':
+            case 'ONECHAIN': return 'OCT';
             case 'XLM': return 'XLM';
             case 'XTZ': return 'XTZ';
             case 'NEAR': return 'NEAR';
-            default: return 'CTC';
+            default: return 'OCT';
         }
     };
 

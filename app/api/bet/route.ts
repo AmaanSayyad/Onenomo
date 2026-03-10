@@ -1,16 +1,16 @@
 /**
- * API Route: CTC Bet Management
+ * API Route: OCT Bet Management
  * POST /api/bet
  * 
- * Task: 7.1 Update app/api/bet/route.ts to handle CTC bets
+ * Task: 7.1 Update app/api/bet/route.ts to handle OCT bets
  * Requirements: 7.1, 7.2, 7.3, 7.4, 7.6
  * 
- * Handles both bet placement and settlement for CTC bets:
- * - Bet placement: Deducts CTC from house balance
- * - Bet settlement: Credits CTC payout for winning bets
- * - Records all bets in bet_history with network='CTC', asset='CTC'
- * - Creates audit log entries for bet_debit and bet_credit operations
- * - Uses 18 decimal precision for all CTC amounts
+ * Handles both bet placement and settlement for OCT bets:
+ * - Bet placement: Deducts OCT from house balance
+ * - Bet settlement: Adds OCT payout for winning bets
+ * - Records all bets in bet_history with network='OCT', asset='OCT'
+ * - Creates audit log entries for bet_debit and bet_payout operations
+ * - Uses 18 decimal precision for all OCT amounts
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -64,17 +64,17 @@ export async function POST(request: NextRequest) {
 
 /**
  * Handle bet placement
- * Deducts CTC from house balance and records bet in bet_history
+ * Deducts OCT from house balance and records bet in bet_history
  */
 async function handleBetPlacement(body: BetPlacementRequest): Promise<NextResponse> {
   const {
     userAddress,
     betAmount,
-    asset = 'CTC',
+    asset = 'OCT',
     direction,
     multiplier,
     strikePrice,
-    mode = 'creditnomo',
+    mode = 'onenomo',
   } = body;
 
   // Validate required fields
@@ -125,7 +125,7 @@ async function handleBetPlacement(body: BetPlacementRequest): Promise<NextRespon
     const { data, error } = await supabase.rpc('deduct_balance_for_bet', {
       p_user_address: userAddress.toLowerCase(),
       p_bet_amount: betAmountNum,
-      p_currency: 'CTC',
+      p_currency: 'OCT',
     });
 
     if (error) {
@@ -168,7 +168,7 @@ async function handleBetPlacement(body: BetPlacementRequest): Promise<NextRespon
       // Return specific error message for insufficient balance
       if (result.error === 'Insufficient balance') {
         return NextResponse.json(
-          { error: 'Insufficient house balance. Please deposit more CTC.' },
+          { error: 'Insufficient house balance. Please deposit more OCT.' },
           { status: 400 }
         );
       }
@@ -181,14 +181,14 @@ async function handleBetPlacement(body: BetPlacementRequest): Promise<NextRespon
     // Generate bet ID
     const betId = `bet_${Date.now()}_${userAddress.slice(-6)}`;
 
-    // Record bet in bet_history with network='CTC', asset='CTC'
+    // Record bet in bet_history with network='OCT', asset='OCT'
     // Requirements: 7.6
     const { error: betHistoryError } = await supabase
       .from('bet_history')
       .insert({
         id: betId,
         wallet_address: userAddress.toLowerCase(),
-        asset: 'CTC',
+        asset: 'OCT',
         direction,
         amount: betAmount,
         multiplier,
@@ -197,7 +197,7 @@ async function handleBetPlacement(body: BetPlacementRequest): Promise<NextRespon
         payout: null,
         won: null,
         mode,
-        network: 'CTC',
+        network: 'OCT',
         resolved_at: null,
         created_at: new Date().toISOString(),
       });
@@ -254,7 +254,7 @@ async function handleBetPlacement(body: BetPlacementRequest): Promise<NextRespon
 
 /**
  * Handle bet settlement
- * Credits CTC payout for winning bets and updates bet_history
+ * Adds OCT payout for winning bets and updates bet_history
  * Fetches price from Pyth oracle with retry logic
  * Refunds bet if oracle fails after all retries
  * 
@@ -431,12 +431,12 @@ async function handleBetSettlement(body: BetSettlementRequest): Promise<NextResp
       const payoutNum = betAmount * multiplier;
       payout = payoutNum.toFixed(18);
 
-      // Credit payout to house balance using stored procedure
+      // Add payout to house balance using stored procedure
       // Requirements: 7.3
-      const { data, error } = await supabase.rpc('credit_balance_for_payout', {
+      const { data, error } = await supabase.rpc('apply_balance_for_payout', {
         p_user_address: bet.wallet_address,
         p_payout_amount: payoutNum,
-        p_currency: 'CTC',
+        p_currency: 'OCT',
         p_bet_id: betId,
       });
 
@@ -456,7 +456,7 @@ async function handleBetSettlement(body: BetSettlementRequest): Promise<NextResp
           errorMessage = 'Database configuration error. Please contact support.';
         }
         
-        console.error('[Database Error] Failed to credit payout:', {
+        console.error('[Database Error] Failed to payout add:', {
           operation: 'bet_settlement',
           betId,
           userAddress: bet.wallet_address,
@@ -646,11 +646,11 @@ async function refundBet(
   try {
     const betAmountNum = parseFloat(betAmount);
     
-    // Credit bet amount back to house balance
-    const { data, error } = await supabase.rpc('credit_balance_for_refund', {
+    // Add bet amount back to house balance
+    const { data, error } = await supabase.rpc('apply_balance_for_refund', {
       p_user_address: userAddress,
       p_refund_amount: betAmountNum,
-      p_currency: 'CTC',
+      p_currency: 'OCT',
       p_bet_id: betId,
     });
 

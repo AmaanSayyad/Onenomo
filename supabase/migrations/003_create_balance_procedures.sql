@@ -90,15 +90,15 @@ $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION deduct_balance_for_bet IS 'Atomically deducts balance for a bet with row-level locking and audit logging';
 
 -- ============================================================================
--- Procedure: credit_balance_for_payout
--- Description: Atomically credits balance for a payout with row-level locking
+-- Procedure: apply_balance_for_payout
+-- Description: Atomically adds balance for a payout with row-level locking
 -- Parameters:
 --   p_user_address: User's Sui wallet address
---   p_payout_amount: Amount to credit for the payout
+--   p_payout_amount: Amount to add for the payout
 --   p_bet_id: Bet identifier for audit trail
 -- Returns: JSON object with success status and new balance
 -- ============================================================================
-CREATE OR REPLACE FUNCTION credit_balance_for_payout(
+CREATE OR REPLACE FUNCTION apply_balance_for_payout(
     p_user_address TEXT,
     p_payout_amount NUMERIC,
     p_bet_id TEXT DEFAULT NULL
@@ -170,7 +170,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Add comment to function
-COMMENT ON FUNCTION credit_balance_for_payout IS 'Atomically credits balance for a payout with row-level locking and audit logging';
+COMMENT ON FUNCTION apply_balance_for_payout IS 'Atomically adds balance for a payout with row-level locking and audit logging';
 
 -- ============================================================================
 -- Procedure: update_balance_for_deposit

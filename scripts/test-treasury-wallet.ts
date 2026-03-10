@@ -1,10 +1,10 @@
 #!/usr/bin/env tsx
 /**
- * CreditCoin Treasury Wallet Test Script
+ * OneChain Treasury Wallet Test Script
  * 
  * This script tests the treasury wallet configuration to verify:
  * - Treasury address is a valid EVM address
- * - Treasury has sufficient CTC balance
+ * - Treasury has sufficient OCT balance
  * - Transaction signing works with private key (dry run - no actual transaction)
  * 
  * Usage: npx tsx scripts/test-treasury-wallet.ts
@@ -13,8 +13,8 @@
  */
 
 import { ethers } from 'ethers';
-import { CreditCoinClient } from '../lib/ctc/client';
-import { creditCoinTestnet } from '../lib/ctc/config';
+import { OneChainClient } from '../lib/ctc/client';
+import { oneChainTestnet } from '../lib/ctc/config';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -61,7 +61,7 @@ function printInfo(message: string) {
  * Test 1: Verify treasury address is valid EVM address
  */
 function testTreasuryAddressValidity(): boolean {
-  const address = creditCoinTestnet.treasuryAddress;
+  const address = oneChainTestnet.treasuryAddress;
   
   // Check if address exists
   if (!address) {
@@ -102,39 +102,39 @@ function testTreasuryAddressValidity(): boolean {
 }
 
 /**
- * Test 2: Check treasury CTC balance
+ * Test 2: Check treasury OCT balance
  */
 async function testTreasuryBalance(): Promise<{ success: boolean; balance?: bigint }> {
   try {
-    const client = new CreditCoinClient();
-    const address = creditCoinTestnet.treasuryAddress;
+    const client = new OneChainClient();
+    const address = oneChainTestnet.treasuryAddress;
     
     printInfo(`Checking balance for: ${address}`);
     
     const balance = await client.getBalance(address);
-    const formattedBalance = client.formatCTC(balance);
+    const formattedBalance = client.formatOCT(balance);
     
     // Check if balance is zero
     if (balance === 0n) {
-      printWarning('Treasury balance is 0 CTC');
+      printWarning('Treasury balance is 0 OCT');
       printResult(
         'Treasury Balance Check',
         true,
-        `Balance: ${formattedBalance} CTC (WARNING: Empty treasury)`
+        `Balance: ${formattedBalance} OCT (WARNING: Empty treasury)`
       );
       return { success: true, balance };
     }
     
-    // Check if balance is very low (less than 0.1 CTC)
+    // Check if balance is very low (less than 0.1 OCT)
     const minRecommendedBalance = ethers.parseUnits('0.1', 18);
     if (balance < minRecommendedBalance) {
-      printWarning(`Treasury balance is low (< 0.1 CTC)`);
+      printWarning(`Treasury balance is low (< 0.1 OCT)`);
     }
     
     printResult(
       'Treasury Balance Check',
       true,
-      `Balance: ${formattedBalance} CTC`
+      `Balance: ${formattedBalance} OCT`
     );
     return { success: true, balance };
   } catch (error) {
@@ -152,13 +152,13 @@ async function testTreasuryBalance(): Promise<{ success: boolean; balance?: bigi
  * Test 3: Verify private key is configured
  */
 function testPrivateKeyConfiguration(): { success: boolean; hasPrivateKey: boolean } {
-  const privateKey = process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+  const privateKey = process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
   
   if (!privateKey) {
     printResult(
       'Private Key Configuration',
       false,
-      'CREDITCOIN_TREASURY_PRIVATE_KEY environment variable is not set'
+      'ONECHAIN_TREASURY_PRIVATE_KEY environment variable is not set'
     );
     return { success: false, hasPrivateKey: false };
   }
@@ -188,7 +188,7 @@ function testPrivateKeyConfiguration(): { success: boolean; hasPrivateKey: boole
  */
 async function testPrivateKeyMatchesAddress(): Promise<boolean> {
   try {
-    const privateKey = process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+    const privateKey = process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
     
     if (!privateKey) {
       printResult(
@@ -202,7 +202,7 @@ async function testPrivateKeyMatchesAddress(): Promise<boolean> {
     // Create wallet from private key
     const wallet = new ethers.Wallet(privateKey);
     const derivedAddress = wallet.address;
-    const configuredAddress = creditCoinTestnet.treasuryAddress;
+    const configuredAddress = oneChainTestnet.treasuryAddress;
     
     // Compare addresses (case-insensitive)
     const addressesMatch = derivedAddress.toLowerCase() === configuredAddress.toLowerCase();
@@ -238,7 +238,7 @@ async function testPrivateKeyMatchesAddress(): Promise<boolean> {
  */
 async function testTransactionSigning(): Promise<boolean> {
   try {
-    const privateKey = process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+    const privateKey = process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
     
     if (!privateKey) {
       printResult(
@@ -252,17 +252,17 @@ async function testTransactionSigning(): Promise<boolean> {
     printInfo('Creating test transaction (will NOT be broadcast)...');
     
     // Create client with private key
-    const client = new CreditCoinClient(undefined, privateKey);
+    const client = new OneChainClient(undefined, privateKey);
     const wallet = new ethers.Wallet(privateKey);
     
     // Create a test transaction (to self, 0 value)
     const testTx = {
-      to: creditCoinTestnet.treasuryAddress,
+      to: oneChainTestnet.treasuryAddress,
       value: 0n,
       gasLimit: 21000n,
       gasPrice: ethers.parseUnits('1', 'gwei'),
       nonce: 0, // Dummy nonce for dry run
-      chainId: creditCoinTestnet.chainId,
+      chainId: oneChainTestnet.chainId,
     };
     
     // Sign the transaction (but don't send it)
@@ -282,7 +282,7 @@ async function testTransactionSigning(): Promise<boolean> {
     
     // Verify signature is valid
     const recoveredAddress = parsedTx.from;
-    const expectedAddress = creditCoinTestnet.treasuryAddress;
+    const expectedAddress = oneChainTestnet.treasuryAddress;
     
     if (recoveredAddress?.toLowerCase() !== expectedAddress.toLowerCase()) {
       printResult(
@@ -315,7 +315,7 @@ async function testTransactionSigning(): Promise<boolean> {
  */
 async function testTreasuryClientInitialization(): Promise<boolean> {
   try {
-    const privateKey = process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+    const privateKey = process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
     
     if (!privateKey) {
       printResult(
@@ -334,7 +334,7 @@ async function testTreasuryClientInitialization(): Promise<boolean> {
     
     // Verify treasury address matches
     const clientAddress = treasuryClient.getTreasuryAddress();
-    const configAddress = creditCoinTestnet.treasuryAddress;
+    const configAddress = oneChainTestnet.treasuryAddress;
     
     if (clientAddress.toLowerCase() !== configAddress.toLowerCase()) {
       printResult(
@@ -367,17 +367,17 @@ async function testTreasuryClientInitialization(): Promise<boolean> {
  */
 async function main() {
   console.log(`${colors.blue}╔════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.blue}║  CreditCoin Treasury Wallet Test                          ║${colors.reset}`);
+  console.log(`${colors.blue}║  OneChain Treasury Wallet Test                          ║${colors.reset}`);
   console.log(`${colors.blue}╚════════════════════════════════════════════════════════════╝${colors.reset}`);
   
   const results: { name: string; passed: boolean }[] = [];
   
   // Display treasury configuration
   printHeader('Treasury Configuration');
-  console.log(`  Treasury Address: ${colors.cyan}${creditCoinTestnet.treasuryAddress}${colors.reset}`);
-  console.log(`  Chain ID: ${colors.cyan}${creditCoinTestnet.chainId}${colors.reset}`);
-  console.log(`  Network: ${colors.cyan}${creditCoinTestnet.chainName}${colors.reset}`);
-  console.log(`  RPC URL: ${colors.cyan}${creditCoinTestnet.rpcUrls[0]}${colors.reset}`);
+  console.log(`  Treasury Address: ${colors.cyan}${oneChainTestnet.treasuryAddress}${colors.reset}`);
+  console.log(`  Chain ID: ${colors.cyan}${oneChainTestnet.chainId}${colors.reset}`);
+  console.log(`  Network: ${colors.cyan}${oneChainTestnet.chainName}${colors.reset}`);
+  console.log(`  RPC URL: ${colors.cyan}${oneChainTestnet.rpcUrls[0]}${colors.reset}`);
   
   // Test 1: Treasury address validity
   printHeader('Address Validation');
@@ -402,7 +402,7 @@ async function main() {
   
   if (!privateKeyResult.hasPrivateKey) {
     printWarning('Private key not configured. Skipping signing tests.');
-    printInfo('Set CREDITCOIN_TREASURY_PRIVATE_KEY environment variable to enable withdrawal operations.');
+    printInfo('Set ONECHAIN_TREASURY_PRIVATE_KEY environment variable to enable withdrawal operations.');
   } else {
     // Test 4: Private key matches address
     const addressMatch = await testPrivateKeyMatchesAddress();
@@ -449,8 +449,8 @@ function printSummary(results: { name: string; passed: boolean }[], balance?: bi
     console.log(`${colors.green}✓ All tests passed! Treasury wallet is properly configured.${colors.reset}\n`);
     
     if (balance !== undefined && balance === 0n) {
-      printWarning('Treasury balance is 0 CTC. Fund the treasury to enable withdrawals.');
-      console.log(`  ${colors.cyan}Treasury Address: ${creditCoinTestnet.treasuryAddress}${colors.reset}\n`);
+      printWarning('Treasury balance is 0 OCT. Fund the treasury to enable withdrawals.');
+      console.log(`  ${colors.cyan}Treasury Address: ${oneChainTestnet.treasuryAddress}${colors.reset}\n`);
     }
   } else {
     console.log(`${colors.red}✗ Some tests failed. Please check the treasury configuration.${colors.reset}\n`);
@@ -459,11 +459,11 @@ function printSummary(results: { name: string; passed: boolean }[], balance?: bi
     const failedTests = results.filter(r => !r.passed);
     
     if (failedTests.some(t => t.name === 'Treasury Address Validity')) {
-      printInfo('Fix: Update CREDITCOIN_TREASURY_ADDRESS in your .env file with a valid EVM address.');
+      printInfo('Fix: Update ONECHAIN_TREASURY_ADDRESS in your .env file with a valid EVM address.');
     }
     
     if (failedTests.some(t => t.name === 'Private Key Configuration')) {
-      printInfo('Fix: Set CREDITCOIN_TREASURY_PRIVATE_KEY in your .env file.');
+      printInfo('Fix: Set ONECHAIN_TREASURY_PRIVATE_KEY in your .env file.');
     }
     
     if (failedTests.some(t => t.name === 'Private Key Address Match')) {

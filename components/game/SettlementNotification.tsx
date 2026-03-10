@@ -53,10 +53,10 @@ export const SettlementNotification: React.FC = () => {
 
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-black uppercase tracking-tighter leading-none opacity-60">
-                                    {(lastResult.currency || 'CTC')} {lastResult.won ? 'PROFIT' : 'LOSS'}
+                                    {(lastResult.currency || 'OCT')} {lastResult.won ? 'PROFIT' : 'LOSS'}
                                 </span>
                                 <span className="text-sm font-mono font-black tracking-tight leading-tight">
-                                    {lastResult.won ? '+' : '-'}{Math.abs(lastResult.won ? lastResult.payout : lastResult.amount).toFixed(4)} <span className="text-[10px] opacity-70">{lastResult.currency || 'CTC'}</span>
+                                    {lastResult.won ? '+' : '-'}{Math.abs(lastResult.won ? lastResult.payout : lastResult.amount).toFixed(4)} <span className="text-[10px] opacity-70">{lastResult.currency || 'OCT'}</span>
                                 </span>
                             </div>
 

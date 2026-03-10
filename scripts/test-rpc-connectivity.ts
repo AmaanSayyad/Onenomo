@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 /**
- * CreditCoin RPC Connectivity Test Script
+ * OneChain RPC Connectivity Test Script
  * 
- * This script tests the CreditCoin testnet RPC endpoint to verify:
+ * This script tests the OneChain testnet RPC endpoint to verify:
  * - RPC endpoint is reachable
  * - Basic RPC calls work (getBlockNumber, getBalance)
  * - Response times are acceptable
@@ -12,8 +12,8 @@
  * Requirements: 15.1
  */
 
-import { CreditCoinClient } from '../lib/ctc/client';
-import { creditCoinTestnet } from '../lib/ctc/config';
+import { OneChainClient } from '../lib/ctc/client';
+import { oneChainTestnet } from '../lib/ctc/config';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -58,7 +58,7 @@ function printHeader(text: string) {
 async function testRpcReachability(): Promise<boolean> {
   const startTime = Date.now();
   try {
-    const client = new CreditCoinClient();
+    const client = new OneChainClient();
     const blockNumber = await client['provider'].getBlockNumber();
     const duration = Date.now() - startTime;
     
@@ -88,7 +88,7 @@ async function testRpcReachability(): Promise<boolean> {
 async function testGetBlockNumber(): Promise<boolean> {
   const startTime = Date.now();
   try {
-    const client = new CreditCoinClient();
+    const client = new OneChainClient();
     const blockNumber = await client['provider'].getBlockNumber();
     const duration = Date.now() - startTime;
     
@@ -128,8 +128,8 @@ async function testGetBlockNumber(): Promise<boolean> {
 async function testGetBalance(): Promise<boolean> {
   const startTime = Date.now();
   try {
-    const client = new CreditCoinClient();
-    const balance = await client.getBalance(creditCoinTestnet.treasuryAddress);
+    const client = new OneChainClient();
+    const balance = await client.getBalance(oneChainTestnet.treasuryAddress);
     const duration = Date.now() - startTime;
     
     if (typeof balance !== 'bigint') {
@@ -142,12 +142,12 @@ async function testGetBalance(): Promise<boolean> {
       return false;
     }
     
-    const formattedBalance = client.formatCTC(balance);
+    const formattedBalance = client.formatOCT(balance);
     printResult(
       'getBalance()',
       true,
       duration,
-      `Treasury balance: ${formattedBalance} CTC`
+      `Treasury balance: ${formattedBalance} OCT`
     );
     return true;
   } catch (error) {
@@ -173,7 +173,7 @@ async function testResponseTime(): Promise<boolean> {
   console.log(`\n${colors.yellow}Running ${iterations} iterations to measure average response time...${colors.reset}`);
   
   try {
-    const client = new CreditCoinClient();
+    const client = new OneChainClient();
     
     for (let i = 0; i < iterations; i++) {
       const startTime = Date.now();
@@ -219,20 +219,20 @@ async function testResponseTime(): Promise<boolean> {
 function testNetworkConfiguration(): boolean {
   printHeader('Network Configuration');
   
-  console.log(`  Chain ID: ${colors.cyan}${creditCoinTestnet.chainId}${colors.reset}`);
-  console.log(`  Chain Name: ${colors.cyan}${creditCoinTestnet.chainName}${colors.reset}`);
-  console.log(`  Currency: ${colors.cyan}${creditCoinTestnet.nativeCurrency.symbol}${colors.reset} (${creditCoinTestnet.nativeCurrency.decimals} decimals)`);
-  console.log(`  RPC URL: ${colors.cyan}${creditCoinTestnet.rpcUrls[0]}${colors.reset}`);
-  console.log(`  Explorer: ${colors.cyan}${creditCoinTestnet.blockExplorerUrls[0]}${colors.reset}`);
-  console.log(`  Treasury: ${colors.cyan}${creditCoinTestnet.treasuryAddress}${colors.reset}`);
+  console.log(`  Chain ID: ${colors.cyan}${oneChainTestnet.chainId}${colors.reset}`);
+  console.log(`  Chain Name: ${colors.cyan}${oneChainTestnet.chainName}${colors.reset}`);
+  console.log(`  Currency: ${colors.cyan}${oneChainTestnet.nativeCurrency.symbol}${colors.reset} (${oneChainTestnet.nativeCurrency.decimals} decimals)`);
+  console.log(`  RPC URL: ${colors.cyan}${oneChainTestnet.rpcUrls[0]}${colors.reset}`);
+  console.log(`  Explorer: ${colors.cyan}${oneChainTestnet.blockExplorerUrls[0]}${colors.reset}`);
+  console.log(`  Treasury: ${colors.cyan}${oneChainTestnet.treasuryAddress}${colors.reset}`);
   
   // Validate configuration
   const validations = [
-    { name: 'Chain ID is 102031', valid: creditCoinTestnet.chainId === 102031 },
-    { name: 'Currency is CTC', valid: creditCoinTestnet.nativeCurrency.symbol === 'CTC' },
-    { name: 'Decimals is 18', valid: creditCoinTestnet.nativeCurrency.decimals === 18 },
-    { name: 'RPC URL is set', valid: creditCoinTestnet.rpcUrls.length > 0 },
-    { name: 'Treasury address is set', valid: creditCoinTestnet.treasuryAddress.length > 0 },
+    { name: 'Chain ID is 102031', valid: oneChainTestnet.chainId === 102031 },
+    { name: 'Currency is OCT', valid: oneChainTestnet.nativeCurrency.symbol === 'OCT' },
+    { name: 'Decimals is 18', valid: oneChainTestnet.nativeCurrency.decimals === 18 },
+    { name: 'RPC URL is set', valid: oneChainTestnet.rpcUrls.length > 0 },
+    { name: 'Treasury address is set', valid: oneChainTestnet.treasuryAddress.length > 0 },
   ];
   
   console.log();
@@ -252,7 +252,7 @@ function testNetworkConfiguration(): boolean {
  */
 async function main() {
   console.log(`${colors.blue}╔════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.blue}║  CreditCoin RPC Connectivity Test                         ║${colors.reset}`);
+  console.log(`${colors.blue}║  OneChain RPC Connectivity Test                         ║${colors.reset}`);
   console.log(`${colors.blue}╚════════════════════════════════════════════════════════════╝${colors.reset}`);
   
   const results: { name: string; passed: boolean }[] = [];
@@ -309,7 +309,7 @@ function printSummary(results: { name: string; passed: boolean }[]) {
   console.log(`  Success Rate: ${percentage}%\n`);
   
   if (passed === total) {
-    console.log(`${colors.green}✓ All tests passed! CreditCoin RPC is working correctly.${colors.reset}\n`);
+    console.log(`${colors.green}✓ All tests passed! OneChain RPC is working correctly.${colors.reset}\n`);
   } else {
     console.log(`${colors.red}✗ Some tests failed. Please check the RPC configuration and network connectivity.${colors.reset}\n`);
   }

@@ -1,12 +1,12 @@
 # Pyth Network Price Feed Verification Report
 
-**Task:** 9.1 Verify lib/utils/priceFeed.ts works with CreditCoin  
+**Task:** 9.1 Verify lib/utils/priceFeed.ts works with OneChain  
 **Date:** 2024  
 **Requirements:** 9.1, 9.2, 9.4
 
 ## Summary
 
-The Pyth Network Hermes integration has been verified and is fully compatible with CreditCoin testnet. All tests pass successfully.
+The Pyth Network Hermes integration has been verified and is fully compatible with OneChain testnet. All tests pass successfully.
 
 ## Verification Results
 
@@ -58,20 +58,20 @@ The retry logic will be implemented in **Task 9.2: Update bet settlement logic t
 2. Retry logic should be context-specific (bet settlement needs retries, but real-time price display doesn't)
 3. Task 9.2 explicitly states: "Refund bet amount if oracle fails after all retries"
 
-## CreditCoin Compatibility
+## OneChain Compatibility
 
 ### ✅ Chain-Agnostic Oracle
 
 **Status:** VERIFIED
 
-Pyth Network Hermes is chain-agnostic and works seamlessly with CreditCoin testnet:
+Pyth Network Hermes is chain-agnostic and works seamlessly with OneChain testnet:
 - No chain-specific configuration required
 - Same endpoint works for all EVM chains
-- No changes needed for CreditCoin migration
+- No changes needed for OneChain migration
 
 **Evidence:**
-- Test: "should work with CreditCoin testnet (chain-agnostic oracle)" - PASSED
-- Test: "should fetch prices for multiple assets used in CreditNomo" - PASSED
+- Test: "should work with OneChain testnet (chain-agnostic oracle)" - PASSED
+- Test: "should fetch prices for multiple assets used in Onenomo" - PASSED
 
 ## Price Data Parsing
 
@@ -117,18 +117,18 @@ The priceFeed has a fallback mechanism using last known price:
 3. Price Data Fetching and Parsing (3 tests)
 4. Error Handling (4 tests)
 5. Asset Switching (2 tests)
-6. CreditCoin Compatibility (2 tests)
+6. OneChain Compatibility (2 tests)
 7. Utility Functions (2 tests)
 
 ## Conclusion
 
-The lib/utils/priceFeed.ts is **fully verified** and ready for use with CreditCoin testnet. The implementation:
+The lib/utils/priceFeed.ts is **fully verified** and ready for use with OneChain testnet. The implementation:
 
 ✅ Uses correct Pyth Hermes endpoint  
 ✅ Has correct price feed IDs for all supported assets  
 ✅ Properly parses price data with exponents  
 ✅ Handles errors gracefully with fallback mechanism  
-✅ Is chain-agnostic and works with CreditCoin  
+✅ Is chain-agnostic and works with OneChain  
 ⏭️ Retry logic will be implemented in Task 9.2 (bet settlement)
 
 ## Next Steps
@@ -140,7 +140,7 @@ The lib/utils/priceFeed.ts is **fully verified** and ready for use with CreditCo
 
 ## References
 
-- Requirements: `.kiro/specs/creditnomo-migration/requirements.md` (Section 9)
-- Design: `.kiro/specs/creditnomo-migration/design.md` (Section 9)
+- Requirements: `.kiro/specs/onenomo-migration/requirements.md` (Section 9)
+- Design: `.kiro/specs/onenomo-migration/design.md` (Section 9)
 - Implementation: `lib/utils/priceFeed.ts`
 - Tests: `lib/utils/__tests__/priceFeed.test.ts`

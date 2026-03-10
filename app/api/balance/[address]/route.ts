@@ -22,12 +22,12 @@ export async function GET(
     const { address } = await params;
 
     const { searchParams } = new URL(request.url);
-    const currency = searchParams.get('currency') || 'CTC';
+    const currency = searchParams.get('currency') || 'OCT';
 
-    // Validate CTC (EVM) address only
+    // Validate OCT (EVM) address only
     if (!ethers.isAddress(address)) {
       return NextResponse.json(
-        { error: 'Invalid CTC (EVM) wallet address' },
+        { error: 'Invalid OCT (EVM) wallet address' },
         { status: 400 }
       );
     }

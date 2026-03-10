@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Copy, CheckCircle, XCircle, Loader2, Check } from 'lucide-react';
 import { getExplorerTxUrl } from '@/lib/ctc/config';
-import { CreditCoinClient } from '@/lib/ctc/client';
+import { OneChainClient } from '@/lib/ctc/client';
 
 export type TransactionStatus = 'pending' | 'confirmed' | 'failed';
 
@@ -19,12 +19,12 @@ interface TransactionStatusProps {
  * 
  * Displays transaction hash with copy-to-clipboard functionality,
  * real-time transaction status, and a clickable link to the
- * CreditCoin testnet block explorer.
+ * OneChain testnet block explorer.
  * 
  * Features:
  * - Copy transaction hash to clipboard
  * - Display transaction status (pending, confirmed, failed)
- * - Generate and display CreditCoin block explorer link
+ * - Generate and display OneChain block explorer link
  * - Auto-refresh status for pending transactions
  * 
  * Requirements: 13.1, 13.2, 13.3, 13.4, 13.5
@@ -49,7 +49,7 @@ export const TransactionStatus: React.FC<TransactionStatusProps> = ({
       
       try {
         setIsChecking(true);
-        const client = new CreditCoinClient();
+        const client = new OneChainClient();
         const receipt = await client.waitForTransaction(txHash);
         
         if (!isMounted) return;

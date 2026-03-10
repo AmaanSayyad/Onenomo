@@ -5,7 +5,7 @@
  * 
  * This test suite validates the four atomic balance update stored procedures:
  * 1. deduct_balance_for_bet - Deducts balance for bet placement
- * 2. credit_balance_for_payout - Credits balance for bet winnings
+ * 2. apply_balance_for_payout - Adds balance for bet winnings
  * 3. update_balance_for_deposit - Updates balance for deposits
  * 4. update_balance_for_withdrawal - Updates balance for withdrawals
  */
@@ -211,17 +211,17 @@ describe('Atomic Balance Update Stored Procedures', () => {
     });
   });
 
-  describe('credit_balance_for_payout', () => {
+  describe('apply_balance_for_payout', () => {
     beforeEach(async () => {
       await cleanupTestUser(testUser2);
     });
 
-    test('should successfully credit balance for a payout', async () => {
+    test('should successfully add balance for a payout', async () => {
       // Create user with 50 USDC
       await createTestUser(testUser2, 50);
 
-      // Credit 75 USDC for a payout
-      const { data, error } = await supabase.rpc('credit_balance_for_payout', {
+      // Add 75 USDC for a payout
+      const { data, error } = await supabase.rpc('apply_balance_for_payout', {
         p_user_address: testUser2,
         p_payout_amount: 75,
         p_bet_id: 'bet_123',
@@ -255,9 +255,9 @@ describe('Atomic Balance Update Stored Procedures', () => {
       });
     });
 
-    test('should create new user if not exists when crediting payout', async () => {
-      // Credit payout to non-existent user
-      const { data, error } = await supabase.rpc('credit_balance_for_payout', {
+    test('should create new user if not exists when adding payout', async () => {
+      // Add payout to non-existent user
+      const { data, error } = await supabase.rpc('apply_balance_for_payout', {
         p_user_address: testUser2,
         p_payout_amount: 100,
         p_bet_id: 'bet_456',
@@ -287,11 +287,11 @@ describe('Atomic Balance Update Stored Procedures', () => {
       });
     });
 
-    test('should fail to credit zero or negative amount', async () => {
+    test('should fail to add zero or negative amount', async () => {
       await createTestUser(testUser2, 50);
 
-      // Try to credit zero
-      const { data: data1 } = await supabase.rpc('credit_balance_for_payout', {
+      // Try to add zero
+      const { data: data1 } = await supabase.rpc('apply_balance_for_payout', {
         p_user_address: testUser2,
         p_payout_amount: 0,
       });
@@ -301,8 +301,8 @@ describe('Atomic Balance Update Stored Procedures', () => {
         error: 'Payout amount must be greater than zero',
       });
 
-      // Try to credit negative amount
-      const { data: data2 } = await supabase.rpc('credit_balance_for_payout', {
+      // Try to add negative amount
+      const { data: data2 } = await supabase.rpc('apply_balance_for_payout', {
         p_user_address: testUser2,
         p_payout_amount: -50,
       });
@@ -316,7 +316,7 @@ describe('Atomic Balance Update Stored Procedures', () => {
     test('should handle decimal amounts correctly', async () => {
       await createTestUser(testUser2, 50.5);
 
-      const { data } = await supabase.rpc('credit_balance_for_payout', {
+      const { data } = await supabase.rpc('apply_balance_for_payout', {
         p_user_address: testUser2,
         p_payout_amount: 25.12345678,
       });
@@ -611,8 +611,8 @@ describe('Atomic Balance Update Stored Procedures', () => {
         p_bet_amount: 50,
       });
 
-      // Credit 75 for payout
-      await supabase.rpc('credit_balance_for_payout', {
+      // Add 75 for payout
+      await supabase.rpc('apply_balance_for_payout', {
         p_user_address: concurrentUser,
         p_payout_amount: 75,
       });
@@ -643,7 +643,7 @@ describe('Atomic Balance Update Stored Procedures', () => {
           p_user_address: concurrentUser,
           p_bet_amount: 20,
         }),
-        supabase.rpc('credit_balance_for_payout', {
+        supabase.rpc('apply_balance_for_payout', {
           p_user_address: concurrentUser,
           p_payout_amount: 15,
         }),
@@ -693,7 +693,7 @@ describe('Atomic Balance Update Stored Procedures', () => {
       });
 
       // Payout
-      await supabase.rpc('credit_balance_for_payout', {
+      await supabase.rpc('apply_balance_for_payout', {
         p_user_address: auditUser,
         p_payout_amount: 50,
         p_bet_id: 'bet_789',

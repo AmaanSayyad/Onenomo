@@ -7,7 +7,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { useBynomoStore } from '@/lib/store';
 import { useToast } from '@/lib/hooks/useToast';
-import { getCTCConfig } from '@/lib/ctc/config';
+import { getOCTConfig } from '@/lib/ctc/config';
 import { getAddress, parseEther } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 
@@ -36,8 +36,8 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const { depositFunds, walletBalance, refreshWalletBalance, address } = useBynomoStore();
   const toast = useToast();
 
-  const currencySymbol = 'CTC';
-  const networkName = 'CreditCoin Testnet';
+  const currencySymbol = 'OCT';
+  const networkName = 'OneChain Testnet';
   const quickAmounts = [0.1, 0.5, 1, 5];
 
   useEffect(() => {
@@ -82,10 +82,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       setError(null);
       const depositAmount = parseFloat(amount);
 
-      const ctcConfig = getCTCConfig();
-      if (!ctcConfig.treasuryAddress) throw new Error('Treasury address not configured');
+      const octConfig = getOCTConfig();
+      if (!octConfig.treasuryAddress) throw new Error('Treasury address not configured');
 
-      const treasuryAddress = getAddress(ctcConfig.treasuryAddress);
+      const treasuryAddress = getAddress(octConfig.treasuryAddress);
       const value = parseEther(depositAmount.toString());
       let txHash: string;
 
@@ -142,7 +142,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           </div>
           <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1 font-mono">Wallet Balance</p>
           <p className="text-[#00f5ff] text-xl font-bold font-mono flex items-center gap-2">
-            <img src="/logos/ctc-logo.png" alt="CTC" className="w-5 h-5 rounded-sm" />
+            <img src="/logos/ctc-logo.png" alt="OCT" className="w-5 h-5 rounded-sm" />
             {walletBalance.toFixed(4)} {currencySymbol}
           </p>
         </div>

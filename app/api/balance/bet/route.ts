@@ -6,7 +6,7 @@
  * 
  * Called when user places a bet from house balance.
  * Validates sufficient balance and deducts bet amount atomically.
- * Note: After CreditCoin migration, game logic is off-chain. No blockchain call needed.
+ * Note: After OneChain migration, game logic is off-chain. No blockchain call needed.
  * Inserts audit log entry with operation_type='bet_placed'.
  */
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body: BetRequest = await request.json();
-    const { userAddress, betAmount, currency = 'CTC', roundId, targetPrice, isOver, multiplier, targetCell } = body;
+    const { userAddress, betAmount, currency = 'OCT', roundId, targetPrice, isOver, multiplier, targetCell } = body;
 
     // Validate required fields
     if (!userAddress || betAmount === undefined || betAmount === null) {
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Balance deducted successfully
-    // Note: After CreditCoin migration, game logic is off-chain. No blockchain call needed.
+    // Note: After OneChain migration, game logic is off-chain. No blockchain call needed.
     // The bet is tracked in the database and resolved by the game engine.
     try {
       // Generate a bet ID

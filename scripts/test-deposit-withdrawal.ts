@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * CreditCoin Deposit & Withdrawal Test Script
+ * OneChain Deposit & Withdrawal Test Script
  * 
  * This script tests the complete deposit and withdrawal flows to verify:
  * - Full deposit flow (transaction → API → database)
@@ -35,8 +35,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 // Now safe to import modules that depend on Supabase
 import { ethers } from 'ethers';
-import { CreditCoinClient } from '../lib/ctc/client';
-import { creditCoinTestnet } from '../lib/ctc/config';
+import { OneChainClient } from '../lib/ctc/client';
+import { oneChainTestnet } from '../lib/ctc/config';
 import { getTreasuryClient } from '../lib/ctc/backend-client';
 import { getHouseBalance, updateHouseBalance, supabase } from '../lib/ctc/database';
 
@@ -94,7 +94,7 @@ function generateTestAddress(): string {
  */
 async function testDepositFlow(): Promise<boolean> {
   const testAddress = generateTestAddress();
-  const depositAmount = '1.5'; // 1.5 CTC
+  const depositAmount = '1.5'; // 1.5 OCT
   
   try {
     printInfo(`Testing deposit for address: ${testAddress}`);
@@ -166,7 +166,7 @@ async function testDepositFlow(): Promise<boolean> {
     printResult(
       'Deposit Flow (Database Simulation)',
       true,
-      `Deposited ${depositAmount} CTC, balance updated, audit log created`
+      `Deposited ${depositAmount} OCT, balance updated, audit log created`
     );
     return true;
   } catch (error) {
@@ -185,8 +185,8 @@ async function testDepositFlow(): Promise<boolean> {
  */
 async function testWithdrawalFlow(): Promise<boolean> {
   const testAddress = generateTestAddress();
-  const initialDeposit = '5.0'; // 5.0 CTC
-  const withdrawalAmount = '2.5'; // 2.5 CTC
+  const initialDeposit = '5.0'; // 5.0 OCT
+  const withdrawalAmount = '2.5'; // 2.5 OCT
   
   try {
     printInfo(`Testing withdrawal for address: ${testAddress}`);
@@ -266,7 +266,7 @@ async function testWithdrawalFlow(): Promise<boolean> {
     printResult(
       'Withdrawal Flow (Database Simulation)',
       true,
-      `Withdrew ${withdrawalAmount} CTC, balance updated, audit log created`
+      `Withdrew ${withdrawalAmount} OCT, balance updated, audit log created`
     );
     return true;
   } catch (error) {
@@ -285,8 +285,8 @@ async function testWithdrawalFlow(): Promise<boolean> {
  */
 async function testInsufficientBalanceError(): Promise<boolean> {
   const testAddress = generateTestAddress();
-  const initialDeposit = '1.0'; // 1.0 CTC
-  const withdrawalAmount = '2.0'; // 2.0 CTC (more than balance)
+  const initialDeposit = '1.0'; // 1.0 OCT
+  const withdrawalAmount = '2.0'; // 2.0 OCT (more than balance)
   
   try {
     printInfo(`Testing insufficient balance error for address: ${testAddress}`);
@@ -375,7 +375,7 @@ async function testMultipleOperations(): Promise<boolean> {
   try {
     printInfo(`Testing multiple operations for address: ${testAddress}`);
     
-    // Deposit 1: 3.0 CTC
+    // Deposit 1: 3.0 OCT
     await updateHouseBalance(testAddress, '3.0', 'deposit', '0x' + '6'.repeat(64));
     let balance = await getHouseBalance(testAddress);
     if (parseFloat(balance) !== 3.0) {
@@ -383,7 +383,7 @@ async function testMultipleOperations(): Promise<boolean> {
       return false;
     }
     
-    // Deposit 2: 2.0 CTC (total: 5.0)
+    // Deposit 2: 2.0 OCT (total: 5.0)
     await updateHouseBalance(testAddress, '2.0', 'deposit', '0x' + '7'.repeat(64));
     balance = await getHouseBalance(testAddress);
     if (parseFloat(balance) !== 5.0) {
@@ -391,7 +391,7 @@ async function testMultipleOperations(): Promise<boolean> {
       return false;
     }
     
-    // Withdrawal 1: 1.5 CTC (total: 3.5)
+    // Withdrawal 1: 1.5 OCT (total: 3.5)
     await updateHouseBalance(testAddress, '-1.5', 'withdraw', '0x' + '8'.repeat(64));
     balance = await getHouseBalance(testAddress);
     if (parseFloat(balance) !== 3.5) {
@@ -399,7 +399,7 @@ async function testMultipleOperations(): Promise<boolean> {
       return false;
     }
     
-    // Withdrawal 2: 2.0 CTC (total: 1.5)
+    // Withdrawal 2: 2.0 OCT (total: 1.5)
     await updateHouseBalance(testAddress, '-2.0', 'withdraw', '0x' + '9'.repeat(64));
     balance = await getHouseBalance(testAddress);
     if (parseFloat(balance) !== 1.5) {
@@ -539,10 +539,10 @@ async function testTreasuryClientInitialization(): Promise<boolean> {
   try {
     printInfo('Testing treasury client initialization...');
     
-    const privateKey = process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+    const privateKey = process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
     
     if (!privateKey) {
-      printWarning('CREDITCOIN_TREASURY_PRIVATE_KEY not set, skipping treasury client tests');
+      printWarning('ONECHAIN_TREASURY_PRIVATE_KEY not set, skipping treasury client tests');
       printResult(
         'Treasury Client Initialization',
         true,
@@ -556,7 +556,7 @@ async function testTreasuryClientInitialization(): Promise<boolean> {
     
     // Verify treasury address matches config
     const clientAddress = treasuryClient.getTreasuryAddress();
-    const configAddress = creditCoinTestnet.treasuryAddress;
+    const configAddress = oneChainTestnet.treasuryAddress;
     
     if (clientAddress.toLowerCase() !== configAddress.toLowerCase()) {
       printResult(
@@ -569,13 +569,13 @@ async function testTreasuryClientInitialization(): Promise<boolean> {
     
     // Check treasury balance
     const balance = await treasuryClient.getTreasuryBalance();
-    const client = new CreditCoinClient();
-    const formattedBalance = client.formatCTC(balance);
+    const client = new OneChainClient();
+    const formattedBalance = client.formatOCT(balance);
     
     printResult(
       'Treasury Client Initialization',
       true,
-      `Treasury initialized, balance: ${formattedBalance} CTC`
+      `Treasury initialized, balance: ${formattedBalance} OCT`
     );
     return true;
   } catch (error) {
@@ -596,10 +596,10 @@ async function testWithdrawalValidation(): Promise<boolean> {
   try {
     printInfo('Testing withdrawal validation...');
     
-    const privateKey = process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+    const privateKey = process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
     
     if (!privateKey) {
-      printWarning('CREDITCOIN_TREASURY_PRIVATE_KEY not set, skipping withdrawal validation test');
+      printWarning('ONECHAIN_TREASURY_PRIVATE_KEY not set, skipping withdrawal validation test');
       printResult(
         'Withdrawal Validation',
         true,
@@ -719,21 +719,21 @@ async function testAuditLogPerformance(): Promise<boolean> {
  */
 async function main() {
   console.log(`${colors.blue}╔════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.blue}║  CreditCoin Deposit & Withdrawal Test                     ║${colors.reset}`);
+  console.log(`${colors.blue}║  OneChain Deposit & Withdrawal Test                     ║${colors.reset}`);
   console.log(`${colors.blue}╚════════════════════════════════════════════════════════════╝${colors.reset}`);
   
   const results: { name: string; passed: boolean }[] = [];
   
   // Display configuration
   printHeader('Configuration');
-  console.log(`  Treasury Address: ${colors.cyan}${creditCoinTestnet.treasuryAddress}${colors.reset}`);
-  console.log(`  Chain ID: ${colors.cyan}${creditCoinTestnet.chainId}${colors.reset}`);
-  console.log(`  Network: ${colors.cyan}${creditCoinTestnet.chainName}${colors.reset}`);
+  console.log(`  Treasury Address: ${colors.cyan}${oneChainTestnet.treasuryAddress}${colors.reset}`);
+  console.log(`  Chain ID: ${colors.cyan}${oneChainTestnet.chainId}${colors.reset}`);
+  console.log(`  Network: ${colors.cyan}${oneChainTestnet.chainName}${colors.reset}`);
   
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   console.log(`  Supabase URL: ${colors.cyan}${supabaseUrl || 'NOT SET'}${colors.reset}`);
   
-  const hasPrivateKey = !!process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+  const hasPrivateKey = !!process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
   console.log(`  Treasury Private Key: ${colors.cyan}${hasPrivateKey ? 'CONFIGURED' : 'NOT SET'}${colors.reset}`);
   
   if (!supabaseUrl) {
@@ -828,7 +828,7 @@ function printSummary(results: { name: string; passed: boolean }[]) {
     }
     
     if (failedTests.some(t => t.name.includes('Treasury Client'))) {
-      printInfo('Fix: Verify CREDITCOIN_TREASURY_PRIVATE_KEY is set correctly');
+      printInfo('Fix: Verify ONECHAIN_TREASURY_PRIVATE_KEY is set correctly');
     }
     
     console.log();

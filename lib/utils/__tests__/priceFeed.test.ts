@@ -1,7 +1,7 @@
 /**
  * Test Suite: Pyth Network Price Feed Integration
  * 
- * Task: 9.1 Verify lib/utils/priceFeed.ts works with CreditCoin
+ * Task: 9.1 Verify lib/utils/priceFeed.ts works with OneChain
  * Requirements: 9.1, 9.2, 9.4
  * 
  * Verifies:
@@ -344,9 +344,9 @@ describe('Pyth Network Price Feed Integration', () => {
     });
   });
 
-  describe('CreditCoin Compatibility', () => {
-    it('should work with CreditCoin testnet (chain-agnostic oracle)', async () => {
-      // Requirement 9.1: Pyth oracle is chain-agnostic and works with CreditCoin
+  describe('OneChain Compatibility', () => {
+    it('should work with OneChain testnet (chain-agnostic oracle)', async () => {
+      // Requirement 9.1: Pyth oracle is chain-agnostic and works with OneChain
       
       const mockResponse = {
         parsed: [{
@@ -377,7 +377,7 @@ describe('Pyth Network Price Feed Integration', () => {
       );
     });
 
-    it('should fetch prices for multiple assets used in CreditNomo', async () => {
+    it('should fetch prices for multiple assets used in Onenomo', async () => {
       // Test that all major assets work
       const assets: AssetType[] = ['BTC', 'ETH', 'SOL'];
       

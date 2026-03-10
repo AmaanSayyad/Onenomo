@@ -7,8 +7,8 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { useBynomoStore } from '@/lib/store';
 import { useToast } from '@/lib/hooks/useToast';
-import { creditCoinTestnet, getExplorerTxUrl } from '@/lib/ctc/config';
-import { CreditCoinClient } from '@/lib/ctc/client';
+import { oneChainTestnet, getExplorerTxUrl } from '@/lib/ctc/config';
+import { OneChainClient } from '@/lib/ctc/client';
 import { getAddress, parseEther } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 import { ExternalLink, CheckCircle, XCircle, Loader2 } from 'lucide-react';
@@ -42,8 +42,8 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const { walletBalance, refreshWalletBalance, address, fetchBalance } = useBynomoStore();
   const toast = useToast();
 
-  const currencySymbol = creditCoinTestnet.nativeCurrency.symbol;
-  const networkName = creditCoinTestnet.chainName;
+  const currencySymbol = oneChainTestnet.nativeCurrency.symbol;
+  const networkName = oneChainTestnet.chainName;
   const quickAmounts = [0.1, 0.5, 1, 5];
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       setTxStatus('pending');
       const depositAmount = parseFloat(amount);
 
-      const treasuryAddress = getAddress(creditCoinTestnet.treasuryAddress);
+      const treasuryAddress = getAddress(oneChainTestnet.treasuryAddress);
       const value = parseEther(depositAmount.toString());
       let transactionHash: string;
 
@@ -123,7 +123,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       toast.info('Transaction submitted. Waiting for confirmation...');
 
       // Wait for transaction confirmation
-      const client = new CreditCoinClient();
+      const client = new OneChainClient();
       const receipt = await client.waitForTransaction(transactionHash);
 
       if (receipt.status === 'failed') {
@@ -132,7 +132,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
 
       setTxStatus('confirmed');
 
-      // Call deposit API to credit house balance
+      // Call deposit API to add to house balance
       const response = await fetch('/api/deposit', {
         method: 'POST',
         headers: {
@@ -241,7 +241,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       showCloseButton={!isLoading}
     >
       <div className="space-y-4">
-        {/* CTC Token Information */}
+        {/* OCT Token Information */}
         <div className="bg-gradient-to-br from-[#00f5ff]/10 to-purple-500/10 border border-[#00f5ff]/30 rounded-lg p-3 relative overflow-hidden">
           <div className="absolute top-0 right-0 px-2 py-0.5 bg-[#00f5ff]/20 text-[#00f5ff] text-[8px] font-bold uppercase tracking-tighter rounded-bl-lg">
             {networkName}

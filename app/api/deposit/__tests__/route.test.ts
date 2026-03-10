@@ -11,9 +11,9 @@
 import { POST } from '../route';
 import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
-import { CreditCoinClient } from '@/lib/ctc/client';
+import { OneChainClient } from '@/lib/ctc/client';
 import { updateHouseBalance } from '@/lib/ctc/database';
-import { creditCoinTestnet } from '@/lib/ctc/config';
+import { oneChainTestnet } from '@/lib/ctc/config';
 
 // Mock NextResponse.json
 jest.mock('next/server', () => ({
@@ -30,13 +30,13 @@ jest.mock('next/server', () => ({
 jest.mock('@/lib/ctc/client');
 jest.mock('@/lib/ctc/database');
 jest.mock('@/lib/ctc/config', () => ({
-  creditCoinTestnet: {
+  oneChainTestnet: {
     treasuryAddress: '0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123',
   },
 }));
 
 describe('POST /api/deposit', () => {
-  let mockClient: jest.Mocked<CreditCoinClient>;
+  let mockClient: jest.Mocked<OneChainClient>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -44,10 +44,10 @@ describe('POST /api/deposit', () => {
     // Setup mock client
     mockClient = {
       waitForTransaction: jest.fn(),
-      formatCTC: jest.fn((amount: bigint) => (Number(amount) / 1e18).toString()),
+      formatOCT: jest.fn((amount: bigint) => (Number(amount) / 1e18).toString()),
     } as any;
 
-    (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => mockClient);
+    (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => mockClient);
   });
 
   const createRequest = (body: any): NextRequest => {
@@ -199,7 +199,7 @@ describe('POST /api/deposit', () => {
         transactionHash: validRequest.txHash,
         blockNumber: 12345,
         from: validRequest.userAddress,
-        to: creditCoinTestnet.treasuryAddress,
+        to: oneChainTestnet.treasuryAddress,
         value: ethers.parseUnits(validRequest.amount, 18),
         status: 'failed',
         gasUsed: BigInt(21000),
@@ -239,7 +239,7 @@ describe('POST /api/deposit', () => {
         transactionHash: validRequest.txHash,
         blockNumber: 12345,
         from: validRequest.userAddress,
-        to: creditCoinTestnet.treasuryAddress,
+        to: oneChainTestnet.treasuryAddress,
         value: ethers.parseUnits('2.0', 18), // Different amount
         status: 'success',
         gasUsed: BigInt(21000),
@@ -259,7 +259,7 @@ describe('POST /api/deposit', () => {
         transactionHash: validRequest.txHash,
         blockNumber: 12345,
         from: '0x9999999999999999999999999999999999999999', // Different sender
-        to: creditCoinTestnet.treasuryAddress,
+        to: oneChainTestnet.treasuryAddress,
         value: ethers.parseUnits(validRequest.amount, 18),
         status: 'success',
         gasUsed: BigInt(21000),
@@ -282,13 +282,13 @@ describe('POST /api/deposit', () => {
       amount: '1.5',
     };
 
-    it('should credit house balance on valid deposit', async () => {
+    it('should add house balance on valid deposit', async () => {
       // Mock successful transaction verification
       mockClient.waitForTransaction.mockResolvedValue({
         transactionHash: validRequest.txHash,
         blockNumber: 12345,
         from: validRequest.userAddress,
-        to: creditCoinTestnet.treasuryAddress,
+        to: oneChainTestnet.treasuryAddress,
         value: ethers.parseUnits(validRequest.amount, 18),
         status: 'success',
         gasUsed: BigInt(21000),
@@ -324,7 +324,7 @@ describe('POST /api/deposit', () => {
         transactionHash: validRequest.txHash,
         blockNumber: 12345,
         from: requestWithUpperCase.userAddress.toLowerCase(),
-        to: creditCoinTestnet.treasuryAddress.toUpperCase(), // Different case
+        to: oneChainTestnet.treasuryAddress.toUpperCase(), // Different case
         value: ethers.parseUnits(validRequest.amount, 18),
         status: 'success',
         gasUsed: BigInt(21000),
@@ -353,7 +353,7 @@ describe('POST /api/deposit', () => {
         transactionHash: validRequest.txHash,
         blockNumber: 12345,
         from: validRequest.userAddress,
-        to: creditCoinTestnet.treasuryAddress,
+        to: oneChainTestnet.treasuryAddress,
         value: ethers.parseUnits(validRequest.amount, 18),
         status: 'success',
         gasUsed: BigInt(21000),

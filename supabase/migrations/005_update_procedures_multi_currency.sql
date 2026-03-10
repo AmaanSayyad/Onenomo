@@ -43,8 +43,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. credit_balance_for_payout
-CREATE OR REPLACE FUNCTION credit_balance_for_payout(
+-- 2. apply_balance_for_payout
+CREATE OR REPLACE FUNCTION apply_balance_for_payout(
     p_user_address TEXT,
     p_payout_amount NUMERIC,
     p_currency TEXT DEFAULT 'BNB',

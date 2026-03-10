@@ -1,4 +1,4 @@
-﻿// Unit tests for CreditCoin Database Module
+﻿// Unit tests for OneChain Database Module
 
 const mockSelect = jest.fn();
 const mockUpsert = jest.fn();
@@ -102,7 +102,7 @@ describe('Database Module', () => {
       expect(mockInsert).toHaveBeenCalledWith(
         expect.objectContaining({
           user_address: '0x123',
-          currency: 'CTC',
+          currency: 'OCT',
           operation: 'deposit',
           amount: '50.0',
           balance_before: '100.0',

@@ -16,13 +16,13 @@ export const WalletConnectModal: React.FC = () => {
     const { setOpen: openConnectKit } = useModal();
 
     const handlePrivyConnect = () => {
-        setPreferredNetwork('CTC');
+        setPreferredNetwork('OCT');
         loginPrivy();
         setOpen(false);
     };
 
     const handleWagmiConnect = () => {
-        setPreferredNetwork('CTC');
+        setPreferredNetwork('OCT');
         openConnectKit(true);
         setOpen(false);
     };
@@ -64,21 +64,21 @@ export const WalletConnectModal: React.FC = () => {
 
                     {/* Options */}
                     <div className="p-4 sm:p-6 space-y-2 sm:space-y-3 overflow-y-auto no-scrollbar">
-                        {/* BNB Wagmi Option */}
+                        {/* OneChain wallet option */}
                         <button
                             onClick={handleWagmiConnect}
                             className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group relative overflow-hidden"
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:scale-110 transition-transform shrink-0">
-                                <img src="/logos/ctc-logo.png" alt="CTC" className="w-6 h-6 sm:w-7 sm:h-7 rounded-sm" />
+                                <img src="/logos/ctc-logo.png" alt="OCT" className="w-6 h-6 sm:w-7 sm:h-7 rounded-sm" />
                             </div>
                             <div className="flex-1 text-left">
                                 <div className="flex items-center gap-2">
-                                    <span className="font-bold text-white text-sm sm:text-base">CreditCoin Testnet</span>
-                                    <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] bg-purple-500/20 text-purple-400 font-bold uppercase tracking-wider">CTC</span>
+                                    <span className="font-bold text-white text-sm sm:text-base">OneChain Testnet</span>
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] bg-purple-500/20 text-purple-400 font-bold uppercase tracking-wider">OCT</span>
                                 </div>
-                                <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5">MetaMask, Trust, Core, etc.</p>
+                                <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5">One Wallet, MetaMask, Trust, Core</p>
                             </div>
                             <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-purple-400 transition-colors" />
                         </button>

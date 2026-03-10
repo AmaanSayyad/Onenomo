@@ -1,7 +1,7 @@
 {
-  "name": "CreditNomo",
+  "name": "Onenomo",
   "version": "0.1.0",
-  "description": "On-chain binary options trading dApp on CreditCoin testnet. Built for CreditCoin ecosystem.",
+  "description": "On-chain binary options trading dApp on OneChain testnet. Built for OneChain ecosystem.",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -31,7 +31,6 @@
     "face-api.js": "^0.22.2",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.563.0",
-    "next": "16.1.3",
     "ogl": "^1.0.11",
     "postprocessing": "^6.38.2",
     "react": "19.2.3",

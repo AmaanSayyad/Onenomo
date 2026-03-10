@@ -7,7 +7,7 @@ import { BalanceDisplay } from '@/components/balance';
 import { startPriceFeed } from '@/lib/store/gameSlice';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useAccount, useDisconnect } from 'wagmi';
-import { creditCoinTestnet } from '@/lib/ctc/config';
+import { oneChainTestnet } from '@/lib/ctc/config';
 import { getAddress } from 'viem';
 import { ethers } from 'ethers';
 import { useToast } from '@/lib/hooks/useToast';
@@ -75,7 +75,7 @@ export const GameBoard: React.FC = () => {
 
   const toast = useToast();
 
-  const currencySymbol = 'CTC';
+  const currencySymbol = 'OCT';
   const blitzEntryFee = 0.0001;
 
   // Connection and Authorization status (access code requirement disabled)
@@ -95,12 +95,12 @@ export const GameBoard: React.FC = () => {
 
     try {
       setIsActivatingBlitz(true);
-      toast.info(`Preparing ${blitzEntryFee} CTC Blitz Entry...`);
+      toast.info(`Preparing ${blitzEntryFee} OCT Blitz Entry...`);
 
       // 1. Try WAGMI first if connected
       if (wagmiConnected) {
         const hash = await sendTransactionAsync({
-          to: creditCoinTestnet.treasuryAddress as `0x${string}`,
+          to: oneChainTestnet.treasuryAddress as `0x${string}`,
           value: ethers.parseEther(blitzEntryFee.toString()),
         });
         toast.success(`Access granted! Tx: ${hash.slice(0, 6)}...`);
@@ -117,7 +117,7 @@ export const GameBoard: React.FC = () => {
         const ethersProvider = new ethers.BrowserProvider(provider);
         const signer = await ethersProvider.getSigner();
         const tx = await signer.sendTransaction({
-          to: creditCoinTestnet.treasuryAddress,
+          to: oneChainTestnet.treasuryAddress,
           value: ethers.parseEther(blitzEntryFee.toString()),
         });
         toast.success(`Access granted! Tx: ${tx.hash.slice(0, 6)}...`);

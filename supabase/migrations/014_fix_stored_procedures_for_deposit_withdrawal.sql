@@ -1,13 +1,13 @@
--- Migration: Fix update_balance_for_deposit and update_balance_for_withdrawal for CreditCoin schema
+-- Migration: Fix update_balance_for_deposit and update_balance_for_withdrawal for OneChain schema
 -- Task: 11.6 Fix deposit and withdrawal stored procedures
 -- Requirements: 2.4, 2.5, 6.2
 
--- 1. Update update_balance_for_deposit to use CreditCoin schema
+-- 1. Update update_balance_for_deposit to use OneChain schema
 CREATE OR REPLACE FUNCTION update_balance_for_deposit(
     p_user_address TEXT,
     p_deposit_amount NUMERIC,
     p_transaction_hash TEXT DEFAULT NULL,
-    p_currency TEXT DEFAULT 'CTC'
+    p_currency TEXT DEFAULT 'OCT'
 )
 RETURNS JSON AS $$
 DECLARE
@@ -76,12 +76,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. Update update_balance_for_withdrawal to use CreditCoin schema
+-- 2. Update update_balance_for_withdrawal to use OneChain schema
 CREATE OR REPLACE FUNCTION update_balance_for_withdrawal(
     p_user_address TEXT,
     p_withdrawal_amount NUMERIC,
     p_transaction_hash TEXT DEFAULT NULL,
-    p_currency TEXT DEFAULT 'CTC'
+    p_currency TEXT DEFAULT 'OCT'
 )
 RETURNS JSON AS $$
 DECLARE

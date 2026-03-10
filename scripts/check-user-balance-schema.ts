@@ -61,7 +61,7 @@ async function checkSchema() {
       .from('user_balances')
       .select('*')
       .eq('user_address', testAddress.toLowerCase())
-      .eq('currency', 'CTC');
+      .eq('currency', 'OCT');
 
     if (userError) {
       console.error('❌ Error querying user:', userError);

@@ -1,14 +1,14 @@
 /**
- * CreditCoin Testnet Client Module
+ * OneChain Testnet Client Module
  * 
- * This module provides a client wrapper for interacting with CreditCoin testnet
+ * This module provides a client wrapper for interacting with OneChain testnet
  * using ethers.js. It includes balance operations, transaction handling, and
- * utility methods for CTC token formatting.
+ * utility methods for OCT token formatting.
  * 
  * Features:
  * - Automatic retry logic for RPC failures (3 attempts)
  * - Transaction status tracking
- * - CTC amount formatting (18 decimals)
+ * - OCT amount formatting (18 decimals)
  * - Comprehensive error handling and logging
  * - Sensitive data protection in logs
  */
@@ -55,15 +55,15 @@ export interface TransactionReceipt {
 }
 
 /**
- * CreditCoin Client for blockchain interactions
+ * OneChain Client for blockchain interactions
  */
-export class CreditCoinClient {
+export class OneChainClient {
   private provider: ethers.JsonRpcProvider;
   private signer?: ethers.Wallet;
   private rpcUrl: string;
 
   /**
-   * Create a new CreditCoinClient instance
+   * Create a new OneChainClient instance
    * @param rpcUrl - RPC endpoint URL (defaults to config)
    * @param privateKey - Optional private key for signing transactions
    */
@@ -122,7 +122,7 @@ export class CreditCoinClient {
   }
 
   /**
-   * Get CTC balance for an address with retry logic
+   * Get OCT balance for an address with retry logic
    * @param address - Wallet address to check
    * @returns Balance in wei (bigint)
    */
@@ -131,7 +131,7 @@ export class CreditCoinClient {
   }
 
   /**
-   * Send CTC transaction with error handling
+   * Send OCT transaction with error handling
    * @param to - Recipient address
    * @param amount - Amount in wei (bigint)
    * @returns Transaction hash
@@ -152,7 +152,7 @@ export class CreditCoinClient {
           error,
           from: senderAddress,
           to,
-          amount: this.formatCTC(amount),
+          amount: this.formatOCT(amount),
         });
         throw new Error(error);
       }
@@ -164,7 +164,7 @@ export class CreditCoinClient {
           error,
           from: senderAddress,
           to,
-          amount: this.formatCTC(amount),
+          amount: this.formatOCT(amount),
         });
         throw new Error(error);
       }
@@ -173,13 +173,13 @@ export class CreditCoinClient {
       const balance = await this.getBalance(senderAddress);
 
       if (balance < amount) {
-        const error = `Insufficient balance. Have: ${this.formatCTC(balance)} CTC, Need: ${this.formatCTC(amount)} CTC`;
+        const error = `Insufficient balance. Have: ${this.formatOCT(balance)} OCT, Need: ${this.formatOCT(amount)} OCT`;
         console.error(`[${timestamp}] Transaction validation failed:`, {
           error,
           from: senderAddress,
           to,
-          requestedAmount: this.formatCTC(amount),
-          currentBalance: this.formatCTC(balance),
+          requestedAmount: this.formatOCT(amount),
+          currentBalance: this.formatOCT(balance),
         });
         throw new Error(error);
       }
@@ -196,7 +196,7 @@ export class CreditCoinClient {
         txHash: tx.hash,
         from: senderAddress,
         to,
-        amount: this.formatCTC(amount),
+        amount: this.formatOCT(amount),
       }));
       return tx.hash;
     } catch (error) {
@@ -205,7 +205,7 @@ export class CreditCoinClient {
         timestamp,
         from: senderAddress,
         to,
-        amount: this.formatCTC(amount),
+        amount: this.formatOCT(amount),
         errorType: error instanceof Error ? error.constructor.name : 'Unknown',
         errorMessage: error instanceof Error ? error.message : String(error),
       });
@@ -282,24 +282,24 @@ export class CreditCoinClient {
   }
 
   /**
-   * Format CTC amount from wei to human-readable string (18 decimals)
+   * Format OCT amount from wei to human-readable string (18 decimals)
    * @param amount - Amount in wei (bigint)
-   * @returns Formatted string (e.g., "1.5" for 1.5 CTC)
+   * @returns Formatted string (e.g., "1.5" for 1.5 OCT)
    */
-  formatCTC(amount: bigint): string {
+  formatOCT(amount: bigint): string {
     return ethers.formatUnits(amount, 18);
   }
 
   /**
-   * Parse CTC amount from string to wei (18 decimals)
+   * Parse OCT amount from string to wei (18 decimals)
    * @param amount - Amount as string (e.g., "1.5")
    * @returns Amount in wei (bigint)
    */
-  parseCTC(amount: string): bigint {
+  parseOCT(amount: string): bigint {
     try {
       return ethers.parseUnits(amount, 18);
     } catch (error) {
-      throw new Error(`Invalid CTC amount format: ${amount}`);
+      throw new Error(`Invalid OCT amount format: ${amount}`);
     }
   }
 
@@ -322,7 +322,7 @@ export class CreditCoinClient {
 
     // Insufficient funds
     if (errorMessage.includes('insufficient funds') || errorMessage.includes('insufficient balance')) {
-      return new Error('Insufficient CTC balance for this transaction.');
+      return new Error('Insufficient OCT balance for this transaction.');
     }
 
     // Nonce issues
@@ -357,36 +357,36 @@ export class CreditCoinClient {
 /**
  * Singleton instance for convenience
  */
-let clientInstance: CreditCoinClient | null = null;
+let clientInstance: OneChainClient | null = null;
 
 /**
- * Get or create a CreditCoinClient instance
+ * Get or create a OneChainClient instance
  * @param privateKey - Optional private key for signing transactions
- * @returns CreditCoinClient instance
+ * @returns OneChainClient instance
  */
-export function getCreditCoinClient(privateKey?: string): CreditCoinClient {
+export function getOneChainClient(privateKey?: string): OneChainClient {
   if (!clientInstance || (privateKey && !clientInstance['signer'])) {
-    clientInstance = new CreditCoinClient(undefined, privateKey);
+    clientInstance = new OneChainClient(undefined, privateKey);
   }
   return clientInstance;
 }
 
 /**
- * Get CTC balance for an address (convenience function)
+ * Get OCT balance for an address (convenience function)
  * @param address - Wallet address
  * @returns Balance as formatted string
  */
-export async function getCTCBalance(address: string): Promise<string> {
-  const client = getCreditCoinClient();
+export async function getOCTBalance(address: string): Promise<string> {
+  const client = getOneChainClient();
   const balance = await client.getBalance(address);
-  return client.formatCTC(balance);
+  return client.formatOCT(balance);
 }
 
 /**
- * Get treasury CTC balance (convenience function)
+ * Get treasury OCT balance (convenience function)
  * @returns Balance as formatted string
  */
-export async function getTreasuryCTCBalance(): Promise<string> {
-  const { creditCoinTestnet } = await import('./config');
-  return getCTCBalance(creditCoinTestnet.treasuryAddress);
+export async function getTreasuryOCTBalance(): Promise<string> {
+  const { oneChainTestnet } = await import('./config');
+  return getOCTBalance(oneChainTestnet.treasuryAddress);
 }

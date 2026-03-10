@@ -10,7 +10,7 @@ interface WithdrawRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: WithdrawRequest = await request.json();
-    const { userAddress, amount, currency = 'CTC' } = body;
+    const { userAddress, amount, currency = 'OCT' } = body;
 
     console.log('Withdrawal request received:', { userAddress, amount, currency });
 
@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate CTC (EVM) address only
+    // Validate OCT (EVM) address only
     const { isValidAddress } = await import('@/lib/utils/address');
     if (!(await isValidAddress(userAddress))) {
       return NextResponse.json(
-        { error: 'Invalid CTC (EVM) wallet address' },
+        { error: 'Invalid OCT (EVM) wallet address' },
         { status: 400 }
       );
     }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`Withdrawal Request: Total=${amount}, Fee=${feeAmount}, Net=${netWithdrawAmount}, Currency=${currency}`);
 
-    // Perform CTC transfer from treasury
+    // Perform OCT transfer from treasury
     let signature: string;
     try {
       const { getTreasuryClient } = await import('@/lib/ctc/backend-client');
@@ -159,12 +159,12 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Database error in withdrawal update:', error);
-      // Note: At this point the CTC has been sent!
+      // Note: At this point the OCT has been sent!
       return NextResponse.json(
         {
           success: true,
           txHash: signature,
-          warning: 'CTC sent but balance update failed. Please contact support.',
+          warning: 'OCT sent but balance update failed. Please contact support.',
           error: error.message
         },
         { status: 200 }

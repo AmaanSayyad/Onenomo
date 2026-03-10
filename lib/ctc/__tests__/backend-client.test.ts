@@ -9,10 +9,10 @@
  */
 
 import { TreasuryClient } from '../backend-client';
-import { CreditCoinClient } from '../client';
+import { OneChainClient } from '../client';
 import { ethers } from 'ethers';
 
-// Mock the CreditCoinClient
+// Mock the OneChainClient
 jest.mock('../client');
 
 // Mock ethers module
@@ -24,7 +24,7 @@ jest.mock('ethers', () => ({
 
 // Mock the config module
 jest.mock('../config', () => ({
-  creditCoinTestnet: {
+  oneChainTestnet: {
     treasuryAddress: '0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123',
   },
 }));
@@ -36,7 +36,7 @@ describe('TreasuryClient', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Clear environment variable
-    delete process.env.CREDITCOIN_TREASURY_PRIVATE_KEY;
+    delete process.env.ONECHAIN_TREASURY_PRIVATE_KEY;
   });
 
   describe('Constructor', () => {
@@ -47,7 +47,7 @@ describe('TreasuryClient', () => {
     });
 
     it('should initialize with private key from environment variable', () => {
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = mockPrivateKey;
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = mockPrivateKey;
       const client = new TreasuryClient();
       expect(client).toBeInstanceOf(TreasuryClient);
     });
@@ -69,13 +69,13 @@ describe('TreasuryClient', () => {
 
   describe('getTreasuryBalance', () => {
     it('should return treasury balance', async () => {
-      const mockBalance = BigInt('1000000000000000000'); // 1 CTC
+      const mockBalance = BigInt('1000000000000000000'); // 1 OCT
       const mockGetBalance = jest.fn().mockResolvedValue(mockBalance);
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
         getBalance: mockGetBalance,
-        formatCTC: mockFormatCTC,
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
@@ -88,7 +88,7 @@ describe('TreasuryClient', () => {
     it('should throw error when balance check fails', async () => {
       const mockGetBalance = jest.fn().mockRejectedValue(new Error('RPC error'));
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
         getBalance: mockGetBalance,
       } as any));
 
@@ -99,45 +99,45 @@ describe('TreasuryClient', () => {
 
   describe('validateWithdrawal', () => {
     it('should return true when treasury has sufficient balance', () => {
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
-        formatCTC: mockFormatCTC,
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
-      const amount = BigInt('500000000000000000'); // 0.5 CTC
-      const treasuryBalance = BigInt('1000000000000000000'); // 1 CTC
+      const amount = BigInt('500000000000000000'); // 0.5 OCT
+      const treasuryBalance = BigInt('1000000000000000000'); // 1 OCT
 
       const isValid = client.validateWithdrawal(amount, treasuryBalance);
       expect(isValid).toBe(true);
     });
 
     it('should return false when treasury has insufficient balance', () => {
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
-        formatCTC: mockFormatCTC,
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
-      const amount = BigInt('2000000000000000000'); // 2 CTC
-      const treasuryBalance = BigInt('1000000000000000000'); // 1 CTC
+      const amount = BigInt('2000000000000000000'); // 2 OCT
+      const treasuryBalance = BigInt('1000000000000000000'); // 1 OCT
 
       const isValid = client.validateWithdrawal(amount, treasuryBalance);
       expect(isValid).toBe(false);
     });
 
     it('should return true when amount equals treasury balance', () => {
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
-        formatCTC: mockFormatCTC,
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
-      const amount = BigInt('1000000000000000000'); // 1 CTC
-      const treasuryBalance = BigInt('1000000000000000000'); // 1 CTC
+      const amount = BigInt('1000000000000000000'); // 1 OCT
+      const treasuryBalance = BigInt('1000000000000000000'); // 1 OCT
 
       const isValid = client.validateWithdrawal(amount, treasuryBalance);
       expect(isValid).toBe(true);
@@ -154,10 +154,10 @@ describe('TreasuryClient', () => {
       // Override mock for this test
       (ethers.isAddress as jest.Mock).mockReturnValue(false);
 
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
-        formatCTC: mockFormatCTC,
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
@@ -168,10 +168,10 @@ describe('TreasuryClient', () => {
     });
 
     it('should return error for zero amount', async () => {
-      const mockFormatCTC = jest.fn().mockReturnValue('0.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('0.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
-        formatCTC: mockFormatCTC,
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
@@ -182,20 +182,20 @@ describe('TreasuryClient', () => {
     });
 
     it('should return error when treasury has insufficient balance', async () => {
-      const mockGetBalance = jest.fn().mockResolvedValue(BigInt('500000000000000000')); // 0.5 CTC
-      const mockFormatCTC = jest.fn()
+      const mockGetBalance = jest.fn().mockResolvedValue(BigInt('500000000000000000')); // 0.5 OCT
+      const mockFormatOCT = jest.fn()
         .mockReturnValueOnce('1.0') // For amount in processWithdrawal
         .mockReturnValueOnce('0.5') // For treasuryBalance in getTreasuryBalance
         .mockReturnValueOnce('0.5') // For treasuryBalance in error message
         .mockReturnValueOnce('1.0'); // For amount in error message
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
         getBalance: mockGetBalance,
-        formatCTC: mockFormatCTC,
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
-      const result = await client.processWithdrawal(mockUserAddress, BigInt('1000000000000000000')); // 1 CTC
+      const result = await client.processWithdrawal(mockUserAddress, BigInt('1000000000000000000')); // 1 OCT
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Insufficient treasury balance');
@@ -203,7 +203,7 @@ describe('TreasuryClient', () => {
 
     it('should successfully process withdrawal', async () => {
       const mockTxHash = '0xabc123';
-      const mockGetBalance = jest.fn().mockResolvedValue(BigInt('2000000000000000000')); // 2 CTC
+      const mockGetBalance = jest.fn().mockResolvedValue(BigInt('2000000000000000000')); // 2 OCT
       const mockSendTransaction = jest.fn().mockResolvedValue(mockTxHash);
       const mockWaitForTransaction = jest.fn().mockResolvedValue({
         transactionHash: mockTxHash,
@@ -214,13 +214,13 @@ describe('TreasuryClient', () => {
         status: 'success',
         gasUsed: BigInt('21000'),
       });
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
         getBalance: mockGetBalance,
         sendTransaction: mockSendTransaction,
         waitForTransaction: mockWaitForTransaction,
-        formatCTC: mockFormatCTC,
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
@@ -241,13 +241,13 @@ describe('TreasuryClient', () => {
         status: 'failed',
         gasUsed: BigInt('21000'),
       });
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
         getBalance: mockGetBalance,
         sendTransaction: mockSendTransaction,
         waitForTransaction: mockWaitForTransaction,
-        formatCTC: mockFormatCTC,
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
@@ -261,12 +261,12 @@ describe('TreasuryClient', () => {
     it('should handle transaction sending errors', async () => {
       const mockGetBalance = jest.fn().mockResolvedValue(BigInt('2000000000000000000'));
       const mockSendTransaction = jest.fn().mockRejectedValue(new Error('Network error'));
-      const mockFormatCTC = jest.fn().mockReturnValue('1.0');
+      const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 
-      (CreditCoinClient as jest.MockedClass<typeof CreditCoinClient>).mockImplementation(() => ({
+      (OneChainClient as jest.MockedClass<typeof OneChainClient>).mockImplementation(() => ({
         getBalance: mockGetBalance,
         sendTransaction: mockSendTransaction,
-        formatCTC: mockFormatCTC,
+        formatOCT: mockFormatOCT,
       } as any));
 
       const client = new TreasuryClient(mockPrivateKey);
@@ -279,7 +279,7 @@ describe('TreasuryClient', () => {
 
   describe('getTreasuryClient singleton', () => {
     it('should create and return singleton instance', () => {
-      process.env.CREDITCOIN_TREASURY_PRIVATE_KEY = mockPrivateKey;
+      process.env.ONECHAIN_TREASURY_PRIVATE_KEY = mockPrivateKey;
       
       const { getTreasuryClient } = require('../backend-client');
       const client1 = getTreasuryClient();

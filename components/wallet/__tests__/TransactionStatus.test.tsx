@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TransactionStatus } from '../TransactionStatus';
-import { CreditCoinClient } from '@/lib/ctc/client';
+import { OneChainClient } from '@/lib/ctc/client';
 
-// Mock the CreditCoinClient
+// Mock the OneChainClient
 jest.mock('@/lib/ctc/client');
 
 // Mock clipboard API
@@ -47,7 +47,7 @@ describe('TransactionStatus Component', () => {
     it('should render block explorer link with correct URL', () => {
       render(<TransactionStatus txHash={mockTxHash} status="confirmed" autoRefresh={false} />);
       const link = screen.getByRole('link', { name: /view on block explorer/i });
-      expect(link).toHaveAttribute('href', `https://creditcoin-testnet.blockscout.com/tx/${mockTxHash}`);
+      expect(link).toHaveAttribute('href', `https://explorer-testnet.onechain.one/tx/${mockTxHash}`);
       expect(link).toHaveAttribute('target', '_blank');
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     });
@@ -101,7 +101,7 @@ describe('TransactionStatus Component', () => {
   describe('Auto-refresh Status', () => {
     it('should not auto-refresh when autoRefresh is false', async () => {
       const mockWaitForTransaction = jest.fn();
-      (CreditCoinClient as jest.Mock).mockImplementation(() => ({
+      (OneChainClient as jest.Mock).mockImplementation(() => ({
         waitForTransaction: mockWaitForTransaction,
       }));
 
@@ -123,7 +123,7 @@ describe('TransactionStatus Component', () => {
         gasUsed: BigInt(21000),
       });
 
-      (CreditCoinClient as jest.Mock).mockImplementation(() => ({
+      (OneChainClient as jest.Mock).mockImplementation(() => ({
         waitForTransaction: mockWaitForTransaction,
       }));
 
@@ -149,7 +149,7 @@ describe('TransactionStatus Component', () => {
         gasUsed: BigInt(21000),
       });
 
-      (CreditCoinClient as jest.Mock).mockImplementation(() => ({
+      (OneChainClient as jest.Mock).mockImplementation(() => ({
         waitForTransaction: mockWaitForTransaction,
       }));
 
@@ -162,7 +162,7 @@ describe('TransactionStatus Component', () => {
 
     it('should not auto-refresh confirmed transactions', async () => {
       const mockWaitForTransaction = jest.fn();
-      (CreditCoinClient as jest.Mock).mockImplementation(() => ({
+      (OneChainClient as jest.Mock).mockImplementation(() => ({
         waitForTransaction: mockWaitForTransaction,
       }));
 
@@ -177,7 +177,7 @@ describe('TransactionStatus Component', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const mockWaitForTransaction = jest.fn().mockRejectedValue(new Error('Network error'));
 
-      (CreditCoinClient as jest.Mock).mockImplementation(() => ({
+      (OneChainClient as jest.Mock).mockImplementation(() => ({
         waitForTransaction: mockWaitForTransaction,
       }));
 
@@ -235,7 +235,7 @@ describe('TransactionStatus Component', () => {
       const link = screen.getByRole('link', { name: /view on block explorer/i });
       expect(link).toHaveAttribute(
         'href',
-        `https://creditcoin-testnet.blockscout.com/tx/${mockTxHash}`
+        `https://explorer-testnet.onechain.one/tx/${mockTxHash}`
       );
     });
 
@@ -250,7 +250,7 @@ describe('TransactionStatus Component', () => {
         gasUsed: BigInt(21000),
       });
 
-      (CreditCoinClient as jest.Mock).mockImplementation(() => ({
+      (OneChainClient as jest.Mock).mockImplementation(() => ({
         waitForTransaction: mockWaitForTransaction,
       }));
 

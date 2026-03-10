@@ -514,12 +514,12 @@ async function testAssetSwitching(): Promise<boolean> {
 }
 
 /**
- * Test 9: Test CreditCoin compatibility
+ * Test 9: Test OneChain compatibility
  */
-async function testCreditCoinCompatibility(): Promise<boolean> {
+async function testOneChainCompatibility(): Promise<boolean> {
   try {
     // Pyth Network Hermes is chain-agnostic
-    // It works with any blockchain, including CreditCoin testnet
+    // It works with any blockchain, including OneChain testnet
     
     const assets: AssetType[] = ['BTC', 'ETH'];
     let allSuccess = true;
@@ -538,25 +538,25 @@ async function testCreditCoinCompatibility(): Promise<boolean> {
     
     if (allSuccess) {
       printResult(
-        'CreditCoin Compatibility',
+        'OneChain Compatibility',
         true,
         undefined,
-        'Pyth oracle works with CreditCoin (chain-agnostic)'
+        'Pyth oracle works with OneChain (chain-agnostic)'
       );
       return true;
     } else {
       printResult(
-        'CreditCoin Compatibility',
+        'OneChain Compatibility',
         false,
         undefined,
-        'Failed to fetch prices for CreditCoin assets'
+        'Failed to fetch prices for OneChain assets'
       );
       return false;
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     printResult(
-      'CreditCoin Compatibility',
+      'OneChain Compatibility',
       false,
       undefined,
       `Error: ${errorMessage}`
@@ -621,10 +621,10 @@ async function main() {
   const retryWorks = await testRetryLogic();
   results.push({ name: 'Retry Logic', passed: retryWorks });
   
-  // Test 8: CreditCoin compatibility
-  printHeader('CreditCoin Integration');
-  const creditCoinWorks = await testCreditCoinCompatibility();
-  results.push({ name: 'CreditCoin Compatibility', passed: creditCoinWorks });
+  // Test 8: OneChain compatibility
+  printHeader('OneChain Integration');
+  const oneChainWorks = await testOneChainCompatibility();
+  results.push({ name: 'OneChain Compatibility', passed: oneChainWorks });
   
   // Print summary
   printSummary(results, assetResults);

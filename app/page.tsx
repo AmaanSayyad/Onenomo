@@ -13,12 +13,12 @@ const steps = [
     {
         id: "01",
         title: "Hybrid Custody",
-        desc: "CreditCoin Testnet performance with non-custodial security. Bynomo connects your wallet to a high-speed house balance for instant execution without gas lag."
+        desc: "OneChain Testnet performance with non-custodial security. Bynomo connects your wallet to a high-speed house balance for instant execution without gas lag."
     },
     {
         id: "02",
         title: "Multi-Asset Feed",
-        desc: "Trade more than just crypto. Predict millisecond movements on Bitcoin, CTC, Gold, and Tech giants like NVDA and TSLA via Pyth Fixed Oracles."
+        desc: "Trade more than just crypto. Predict millisecond movements on Bitcoin, OCT, Gold, and Tech giants like NVDA and TSLA via Pyth Fixed Oracles."
     },
     {
         id: "03",
@@ -68,11 +68,11 @@ const testimonials = [
 const faqs = [
     {
         question: "How does the House Balance work?",
-        answer: "To ensure millisecond execution, Bynomo uses a hybrid house balance system. You deposit CTC on CreditCoin Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
+        answer: "To ensure millisecond execution, Bynomo uses a hybrid house balance system. You deposit OCT on OneChain Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
     },
     {
         question: "What assets can I trade?",
-        answer: "Bynomo supports a wide range of assets including major cryptos (BTC, ETH, CTC), precious metals (Gold, Silver), and top-tier stocks (AAPL, NVDA, TSLA) through Pyth price feeds."
+        answer: "Bynomo supports a wide range of assets including major cryptos (BTC, ETH, OCT), precious metals (Gold, Silver), and top-tier stocks (AAPL, NVDA, TSLA) through Pyth price feeds."
     },
     {
         question: "What are Blitz Rounds?",
@@ -401,9 +401,9 @@ export default function WaitlistPage() {
                     <div className="footer-meta-item">2026 © All rights reserved</div>
 
                     <div className="footer-link-group">
-                        <a href="https://creditcoin.org" target="_blank" rel="noopener noreferrer" className="footer-meta-item">CreditCoin</a>
-                        <a href="https://docs.creditcoin.org" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Documentation</a>
-                        <a href="https://creditcoin-testnet.blockscout.com" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Explorer</a>
+                        <a href="https://onechain.one" target="_blank" rel="noopener noreferrer" className="footer-meta-item">OneChain</a>
+                        <a href="https://docs.onechain.one" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Documentation</a>
+                        <a href="https://explorer-testnet.onechain.one" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Explorer</a>
                     </div>
 
                     <div className="footer-link-group">

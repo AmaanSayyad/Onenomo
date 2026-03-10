@@ -28,8 +28,8 @@ export const WalletInfo: React.FC = () => {
     return `${addr.slice(0, 5)}...${addr.slice(-4)}`;
   };
 
-  const currencySymbol = 'CTC';
-  const networkName = 'CreditCoin Testnet';
+  const currencySymbol = 'OCT';
+  const networkName = 'OneChain Testnet';
 
   const balance = walletBalance.toFixed(4);
   const isLoading = false; // Store doesn't have isLoading for wallet balance yet, but fetch is fast

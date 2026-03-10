@@ -290,7 +290,7 @@ export class MockPriceFeed {
     // Default base prices for different assets
     const defaultPrices = {
       BTC: 50000,
-      BNB: 600
+      OCT: 600
     };
     this.basePrice = basePrice || defaultPrices[asset as keyof typeof defaultPrices] || 1;
     this.volatility = volatility;
@@ -301,7 +301,7 @@ export class MockPriceFeed {
     this.asset = asset;
     const defaultPrices = {
       BTC: 50000,
-      BNB: 600
+      OCT: 600
     };
     this.basePrice = defaultPrices[asset as keyof typeof defaultPrices] || 1;
   }

@@ -1,8 +1,8 @@
 /**
- * CreditCoin Database Module
+ * OneChain Database Module
  * 
  * This module provides Supabase client and helper functions for managing
- * user house balances and audit logs on CreditCoin testnet.
+ * user house balances and audit logs on OneChain testnet.
  * 
  * Requirements: 4.1, 4.2, 4.3
  */
@@ -50,7 +50,7 @@ export interface BalanceAuditLog {
 }
 
 /**
- * Get user's house balance in CTC
+ * Get user's house balance in OCT
  * 
  * @param userAddress - User's EVM wallet address
  * @returns User's house balance as decimal string, or '0' if user doesn't exist
@@ -65,7 +65,7 @@ export async function getHouseBalance(userAddress: string): Promise<string> {
       .from('user_balances')
       .select('balance')
       .eq('user_address', userAddress.toLowerCase())
-      .eq('currency', 'CTC')
+      .eq('currency', 'OCT')
       .single();
 
     if (error) {
@@ -106,7 +106,7 @@ export async function getHouseBalance(userAddress: string): Promise<string> {
  * 
  * @param userAddress - User's EVM wallet address
  * @param amount - Amount to add (positive) or subtract (negative) as decimal string
- * @param operation - Operation type (deposit, withdraw, bet_debit, bet_credit, refund)
+ * @param operation - Operation type (deposit, withdraw, bet_debit, bet_payout, refund)
  * @param txHash - Optional blockchain transaction hash
  * @returns New balance as decimal string
  * 
@@ -148,7 +148,7 @@ export async function updateHouseBalance(
       .from('user_balances')
       .upsert({
         user_address: normalizedAddress,
-        currency: 'CTC',
+        currency: 'OCT',
         balance: newBalance,
         updated_at: new Date().toISOString(),
       }, {
@@ -203,7 +203,7 @@ export async function updateHouseBalance(
  * Create audit log entry for balance change
  * 
  * @param userAddress - User's EVM wallet address
- * @param operation - Operation type (deposit, withdraw, bet_debit, bet_credit, refund)
+ * @param operation - Operation type (deposit, withdraw, bet_debit, bet_payout, refund)
  * @param amount - Amount involved in the operation as decimal string
  * @param balanceBefore - Balance before operation as decimal string
  * @param balanceAfter - Balance after operation as decimal string
@@ -226,7 +226,7 @@ export async function createAuditLog(
       .from('balance_audit_log')
       .insert({
         user_address: userAddress.toLowerCase(),
-        currency: 'CTC',
+        currency: 'OCT',
         operation,
         amount,
         balance_before: balanceBefore,

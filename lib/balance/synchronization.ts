@@ -2,7 +2,7 @@
  * Balance Synchronization Module
  *
  * Checks and maintains synchronization between the Supabase user_balances table
- * and the CreditCoin treasury (EOA). Stub for on-chain balance query.
+ * and the OneChain treasury (EOA). Stub for on-chain balance query.
  */
 
 import { supabase } from '../supabase/client';
@@ -26,8 +26,8 @@ export interface SyncCheckResult {
 }
 
 /**
- * Check synchronization between Supabase and CreditCoin treasury.
- * @param contractAddress - CreditCoin (EVM) treasury address
+ * Check synchronization between Supabase and OneChain treasury.
+ * @param contractAddress - OneChain (EVM) treasury address
  */
 export async function checkBalanceSynchronization(
   contractAddress: string
@@ -55,7 +55,7 @@ export async function checkBalanceSynchronization(
     // Calculate total from Supabase
     const supabaseTotal = balances?.reduce((sum, row) => sum + parseFloat(row.balance.toString()), 0) || 0;
 
-    // TODO: Query CreditCoin treasury balance via RPC for full sync check
+    // TODO: Query OneChain treasury balance via RPC for full sync check
     return {
       synchronized: true,
       supabaseTotal,
@@ -99,10 +99,10 @@ export interface ReconcileResult {
 /**
  * Reconcile a single user's balance with the blockchain
  * 
- * TODO: Update this function to work with CreditCoin blockchain after migration.
+ * TODO: Update this function to work with OneChain blockchain after migration.
  * Currently returns a stub response.
  * 
- * @param userAddress - The user's CreditCoin wallet address
+ * @param userAddress - The user's OneChain wallet address
  * @param dryRun - If true, only check discrepancy without updating
  * @returns ReconcileResult containing reconciliation details
  */
@@ -134,7 +134,7 @@ export async function reconcileUserBalance(
 
     const oldBalance = parseFloat(userData.balance.toString());
 
-    // TODO: Query user balance from CreditCoin chain if needed for reconciliation
+    // TODO: Query user balance from OneChain chain if needed for reconciliation
     return {
       success: true,
       userAddress,
@@ -158,7 +158,7 @@ export async function reconcileUserBalance(
 }
 
 /**
- * Reconcile all users' balances with the blockchain (CreditCoin treasury).
+ * Reconcile all users' balances with the blockchain (OneChain treasury).
  * 
  * @param dryRun - If true, only check discrepancies without updating
  * @param discrepancyThreshold - Only reconcile if discrepancy exceeds this amount

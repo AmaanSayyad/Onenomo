@@ -22,35 +22,35 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://creditnomo.vercel.app'),
-  title: "CreditNomo - Binary Options on CreditCoin",
+  metadataBase: new URL('https://onenomo.vercel.app'),
+  title: "Onenomo - Binary Options on OneChain",
   description:
-    "On-chain binary options trading dApp on CreditCoin testnet. Powered by Pyth Hermes price attestations and Supabase. Oracle-bound resolution, minimal trust.",
+    "On-chain binary options trading dApp on OneChain testnet. Powered by Pyth Hermes price attestations and Supabase. Oracle-bound resolution, minimal trust.",
   keywords: [
     "binary options",
     "crypto trading",
     "Pyth oracle",
-    "CreditCoin",
-    "CTC",
+    "OneChain",
+    "OCT",
     "Web3",
     "prediction",
   ],
   icons: {
-    icon: "/creditnomo-logo.ico",
-    shortcut: "/creditnomo-logo.ico",
-    apple: "/creditnomo-logo.ico",
+    icon: "/bynomologo.ico",
+    shortcut: "/bynomologo.ico",
+    apple: "/bynomologo.ico",
   },
   openGraph: {
-    title: "CreditNomo - Binary Options on CreditCoin",
+    title: "Onenomo - Binary Options on OneChain",
     description:
-      "On-chain binary options trading dApp on CreditCoin testnet. Powered by Pyth Hermes and Supabase. Oracle-bound resolution, minimal trust.",
-    images: [{ url: '/creditnomo-logo.png', width: 512, height: 512, alt: 'CreditNomo' }],
+      "On-chain binary options trading dApp on OneChain testnet. Powered by Pyth Hermes and Supabase. Oracle-bound resolution, minimal trust.",
+    images: [{ url: '/bynomo-logo.png', width: 512, height: 512, alt: 'Onenomo' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "CreditNomo - Binary Options on CreditCoin",
-    description: "On-chain binary options on CreditCoin testnet. Oracle-bound resolution, minimal trust.",
-    images: ['/creditnomo-logo.png'],
+    title: "Onenomo - Binary Options on OneChain",
+    description: "On-chain binary options on OneChain testnet. Oracle-bound resolution, minimal trust.",
+    images: ['/bynomo-logo.png'],
   },
 };
 

@@ -1,16 +1,16 @@
--- Migration: Update stored procedures for CreditCoin schema
+-- Migration: Update stored procedures for OneChain schema
 -- Task: 11.5 Update database to store transaction hashes
 -- Requirements: 13.6
 -- 
 -- This migration updates the stored procedures to use the correct column names
--- from the CreditCoin schema: 'operation' instead of 'operation_type' and 
+-- from the OneChain schema: 'operation' instead of 'operation_type' and 
 -- 'tx_hash' instead of 'transaction_hash'
 
 -- 1. Update deduct_balance_for_bet to use 'operation' column
 CREATE OR REPLACE FUNCTION deduct_balance_for_bet(
     p_user_address TEXT,
     p_bet_amount NUMERIC,
-    p_currency TEXT DEFAULT 'CTC'
+    p_currency TEXT DEFAULT 'OCT'
 )
 RETURNS JSON AS $
 DECLARE
@@ -49,11 +49,11 @@ BEGIN
 END;
 $ LANGUAGE plpgsql;
 
--- 2. Update credit_balance_for_payout to use 'operation' column
-CREATE OR REPLACE FUNCTION credit_balance_for_payout(
+-- 2. Update apply_balance_for_payout to use 'operation' column
+CREATE OR REPLACE FUNCTION apply_balance_for_payout(
     p_user_address TEXT,
     p_payout_amount NUMERIC,
-    p_currency TEXT DEFAULT 'CTC',
+    p_currency TEXT DEFAULT 'OCT',
     p_bet_id TEXT DEFAULT NULL
 )
 RETURNS JSON AS $
@@ -85,7 +85,7 @@ BEGIN
     -- Use 'operation' column instead of 'operation_type'
     -- Store bet_id in tx_hash field for reference
     INSERT INTO balance_audit_log (user_address, currency, operation, amount, balance_before, balance_after, tx_hash)
-    VALUES (p_user_address, p_currency, 'bet_credit', p_payout_amount, v_current_balance, v_new_balance, p_bet_id);
+    VALUES (p_user_address, p_currency, 'bet_payout', p_payout_amount, v_current_balance, v_new_balance, p_bet_id);
     
     RETURN json_build_object('success', true, 'error', NULL, 'new_balance', v_new_balance);
 END;
@@ -95,6 +95,6 @@ $ LANGUAGE plpgsql;
 COMMENT ON FUNCTION deduct_balance_for_bet IS 
 'Deducts bet amount from user house balance. Creates audit log entry with operation=bet_debit.';
 
-COMMENT ON FUNCTION credit_balance_for_payout IS 
-'Credits payout amount to user house balance for winning bets. Creates audit log entry with operation=bet_credit and stores bet_id in tx_hash field.';
+COMMENT ON FUNCTION apply_balance_for_payout IS 
+'Adds payout amount to user house balance for winning bets. Creates audit log entry with operation=bet_payout and stores bet_id in tx_hash field.';
 

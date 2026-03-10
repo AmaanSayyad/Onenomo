@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * CreditCoin Database Schema Test Script
+ * OneChain Database Schema Test Script
  * 
  * This script tests the Supabase database schema to verify:
  * - All required tables exist (user_balances, bet_history, balance_audit_log)
@@ -309,7 +309,7 @@ async function testUserBalancesConstraints(): Promise<boolean> {
       .from('user_balances')
       .insert({
         user_address: testAddress,
-        currency: 'CTC',
+        currency: 'OCT',
         balance: '-1.0',
       });
 
@@ -323,7 +323,7 @@ async function testUserBalancesConstraints(): Promise<boolean> {
       printWarning('balance_non_negative constraint may be missing');
     }
 
-    // Test 2: Verify currency defaults to 'CTC'
+    // Test 2: Verify currency defaults to 'OCT'
     const testAddress2 = '0xtest' + (Date.now() + 1).toString();
     const { error: insertError } = await supabase
       .from('user_balances')
@@ -345,11 +345,11 @@ async function testUserBalancesConstraints(): Promise<boolean> {
         .delete()
         .eq('user_address', testAddress2);
 
-      if (data?.currency !== 'CTC') {
+      if (data?.currency !== 'OCT') {
         printResult(
           'user_balances constraints',
           false,
-          'Currency default is not CTC'
+          'Currency default is not OCT'
         );
         return false;
       }
@@ -358,7 +358,7 @@ async function testUserBalancesConstraints(): Promise<boolean> {
     printResult(
       'user_balances constraints',
       true,
-      'Constraints verified (currency default: CTC)'
+      'Constraints verified (currency default: OCT)'
     );
     return true;
   } catch (error) {
@@ -385,7 +385,7 @@ async function testBetHistoryConstraints(): Promise<boolean> {
       .insert({
         id: testId,
         wallet_address: '0x0000000000000000000000000000000000000001',
-        asset: 'CTC',
+        asset: 'OCT',
         direction: 'INVALID', // Should fail CHECK constraint
         amount: '1.0',
         multiplier: '1.9',
@@ -455,7 +455,7 @@ async function testIndexesExist(): Promise<boolean> {
     const { error: balanceError } = await supabase
       .from('user_balances')
       .select('user_address')
-      .eq('currency', 'CTC')
+      .eq('currency', 'OCT')
       .limit(1);
 
     const { error: betError } = await supabase
@@ -554,7 +554,7 @@ async function testRLSPolicies(): Promise<boolean> {
       .from('user_balances')
       .insert({
         user_address: testAddress,
-        currency: 'CTC',
+        currency: 'OCT',
         balance: '0',
       });
 
@@ -582,7 +582,7 @@ async function testRLSPolicies(): Promise<boolean> {
       .insert({
         id: testBetId,
         wallet_address: testAddress,
-        asset: 'CTC',
+        asset: 'OCT',
         direction: 'UP',
         amount: '1.0',
         multiplier: '1.9',
@@ -611,7 +611,7 @@ async function testRLSPolicies(): Promise<boolean> {
       .from('balance_audit_log')
       .insert({
         user_address: testAddress,
-        currency: 'CTC',
+        currency: 'OCT',
         operation: 'test',
         amount: '1.0',
         balance_before: '0',
@@ -653,7 +653,7 @@ async function testRLSPolicies(): Promise<boolean> {
 }
 
 /**
- * Test 11: Verify decimal precision (18 decimals for CTC)
+ * Test 11: Verify decimal precision (18 decimals for OCT)
  */
 async function testDecimalPrecision(): Promise<boolean> {
   try {
@@ -665,7 +665,7 @@ async function testDecimalPrecision(): Promise<boolean> {
       .from('user_balances')
       .insert({
         user_address: testAddress,
-        currency: 'CTC',
+        currency: 'OCT',
         balance: testBalance,
       });
 
@@ -732,7 +732,7 @@ async function testDecimalPrecision(): Promise<boolean> {
  */
 async function main() {
   console.log(`${colors.blue}╔════════════════════════════════════════════════════════════╗${colors.reset}`);
-  console.log(`${colors.blue}║  CreditCoin Database Schema Test                          ║${colors.reset}`);
+  console.log(`${colors.blue}║  OneChain Database Schema Test                          ║${colors.reset}`);
   console.log(`${colors.blue}╚════════════════════════════════════════════════════════════╝${colors.reset}`);
   
   const results: { name: string; passed: boolean }[] = [];

@@ -1,11 +1,11 @@
-# CreditNomo Test Scripts
+# Onenomo Test Scripts
 
-This directory contains test scripts for validating the CreditCoin migration implementation.
+This directory contains test scripts for validating the OneChain migration implementation.
 
 ## Available Scripts
 
 ### 1. test-rpc-connectivity.ts
-Tests CreditCoin testnet RPC endpoint connectivity and performance.
+Tests OneChain testnet RPC endpoint connectivity and performance.
 
 **Usage:**
 ```bash
@@ -33,11 +33,11 @@ npx tsx scripts/test-treasury-wallet.ts
 ```
 
 **Requirements:**
-- `CREDITCOIN_TREASURY_PRIVATE_KEY` (optional, for signing tests)
+- `ONECHAIN_TREASURY_PRIVATE_KEY` (optional, for signing tests)
 
 **Tests:**
 - Treasury address validity
-- Treasury CTC balance check
+- Treasury OCT balance check
 - Private key configuration
 - Private key matches treasury address
 - Transaction signing (dry run - no broadcast)
@@ -78,7 +78,7 @@ npx tsx scripts/test-deposit-withdrawal.ts
 **Requirements:**
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `CREDITCOIN_TREASURY_PRIVATE_KEY` (optional, for treasury client tests)
+- `ONECHAIN_TREASURY_PRIVATE_KEY` (optional, for treasury client tests)
 
 **Tests:**
 1. **Deposit Flow (Database Simulation)**
@@ -140,11 +140,11 @@ npx tsx scripts/test-oracle-integration.ts
 - Pyth Hermes endpoint configuration
 - Price feed ID validation for all supported assets
 - Price data format validation
-- Fetch prices for major assets (BTC, ETH, SOL, CTC)
+- Fetch prices for major assets (BTC, ETH, SOL, OCT)
 - Asset switching functionality
 - Response time performance (5 iterations)
 - Retry logic and last price fallback
-- CreditCoin compatibility (chain-agnostic oracle)
+- OneChain compatibility (chain-agnostic oracle)
 
 ---
 
@@ -155,15 +155,15 @@ npx tsx scripts/test-oracle-integration.ts
 Create a `.env` file in the project root with the following variables:
 
 ```bash
-# CreditCoin Testnet Configuration (optional - uses defaults)
-NEXT_PUBLIC_CREDITCOIN_TESTNET_RPC=https://rpc.cc3-testnet.creditcoin.network
-NEXT_PUBLIC_CREDITCOIN_TESTNET_CHAIN_ID=102031
-NEXT_PUBLIC_CREDITCOIN_TESTNET_EXPLORER=https://creditcoin-testnet.blockscout.com
+# OneChain Testnet Configuration (optional - uses defaults)
+NEXT_PUBLIC_ONECHAIN_TESTNET_RPC=https://rpc-testnet.onechain.one
+NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID=102031
+NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER=https://explorer-testnet.onechain.one
 
 # Treasury Configuration
-CREDITCOIN_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
-CREDITCOIN_TREASURY_PRIVATE_KEY=your_private_key_here
-NEXT_PUBLIC_CREDITCOIN_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
+ONECHAIN_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
+ONECHAIN_TREASURY_PRIVATE_KEY=your_private_key_here
+NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
 
 # Supabase Configuration (REQUIRED for database tests)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -177,15 +177,15 @@ Before running database tests, ensure your Supabase database has the required sc
 1. Go to your Supabase project: https://app.supabase.com
 2. Navigate to SQL Editor
 3. Run the migration scripts in order:
-   - `supabase/migrations/009_creditcoin_user_balances.sql`
-   - `supabase/migrations/010_creditcoin_bet_history.sql`
-   - `supabase/migrations/011_creditcoin_balance_audit_log.sql`
+   - `supabase/migrations/009_onechain_user_balances.sql`
+   - `supabase/migrations/010_onechain_bet_history.sql`
+   - `supabase/migrations/011_onechain_balance_audit_log.sql`
 
 ### 3. Fund Treasury Wallet (Optional)
 
-For withdrawal tests to work with actual blockchain transactions, fund the treasury wallet with CTC tokens:
+For withdrawal tests to work with actual blockchain transactions, fund the treasury wallet with OCT tokens:
 
-1. Get CTC testnet tokens from a faucet
+1. Get OCT testnet tokens from a faucet
 2. Send tokens to: `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123`
 
 ---
@@ -227,9 +227,9 @@ Get these values from: https://app.supabase.com/project/_/settings/api
 
 ### Error: Treasury has insufficient balance
 
-**Solution:** Fund the treasury wallet with CTC testnet tokens.
+**Solution:** Fund the treasury wallet with OCT testnet tokens.
 
-### Warning: Treasury balance is 0 CTC
+### Warning: Treasury balance is 0 OCT
 
 **Solution:** This is expected if you haven't funded the treasury yet. The tests will still pass, but withdrawal operations won't work until the treasury is funded.
 
@@ -251,7 +251,7 @@ Each script exits with:
 
 ## Requirements Validation
 
-These test scripts validate the following requirements from the CreditNomo migration spec:
+These test scripts validate the following requirements from the Onenomo migration spec:
 
 - **Requirement 15.1**: RPC connectivity test
 - **Requirement 15.2**: Treasury wallet test
@@ -266,5 +266,5 @@ These test scripts validate the following requirements from the CreditNomo migra
 - All tests use database simulation (no actual blockchain transactions) except for treasury client initialization
 - Test data is automatically cleaned up after each test
 - Tests use randomly generated addresses to avoid conflicts
-- Decimal precision is tested at 18 decimal places (CTC standard)
+- Decimal precision is tested at 18 decimal places (OCT standard)
 - Audit logging is verified for all balance-changing operations

@@ -290,7 +290,7 @@ export default function AdminDashboard() {
                                         <THead labels={['Identity', 'Protocol', 'Liquidity', 'Referral', 'Engagement', 'Value']} />
                                         <tbody>
                                             {loading ? <LoadingRow /> : users
-                                                .filter(u => u.currency === 'BNB')
+                                                .filter(u => u.currency === 'OCT')
                                                 .map(u => (
                                                 <tr key={u.user_address + u.currency} className="hover:bg-white/[0.02] transition-colors group border-b border-white/5">
                                                     <td className="px-8 py-6">
@@ -344,7 +344,7 @@ export default function AdminDashboard() {
                                         <THead labels={['Time', 'Identity', 'Operation', 'Amount', 'Ref']} />
                                         <tbody>
                                             {loading ? <LoadingRow /> : transactions
-                                                .filter(t => t.currency === 'BNB')
+                                                .filter(t => t.currency === 'OCT')
                                                 .map(t => (
                                                 <tr key={t.id} className="hover:bg-white/[0.02] transition-colors border-b border-white/5 last:border-0">
                                                     <td className="px-8 py-6 text-[10px] font-mono">{new Date(t.created_at).toLocaleString()}</td>
@@ -388,7 +388,7 @@ export default function AdminDashboard() {
                                         <THead labels={['Identity', 'Personal Code', 'Referred By', 'Network Size', 'Status']} />
                                         <tbody>
                                             {loading ? <LoadingRow /> : users
-                                                .filter(u => u.currency === 'BNB')
+                                                .filter(u => u.currency === 'OCT')
                                                 .filter(u => u.referral?.referral_code && u.referral.referral_code !== 'NONE')
                                                 .sort((a, b) => (b.referral?.referral_count || 0) - (a.referral?.referral_count || 0))
                                                 .map(u => (

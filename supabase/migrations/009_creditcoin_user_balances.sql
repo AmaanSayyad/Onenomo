@@ -1,12 +1,12 @@
--- Migration: Update user_balances table for CreditCoin (CTC) support
+-- Migration: Update user_balances table for OneChain (OCT) support
 -- Task: 2.1 Create database migration script for user_balances table
 -- Requirements: 4.1, 4.4, 4.5, 4.6
 
--- Add currency column with default 'CTC'
+-- Add currency column with default 'OCT'
 ALTER TABLE user_balances 
-ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'CTC' NOT NULL;
+ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'OCT' NOT NULL;
 
--- Update balance column precision from NUMERIC(20,8) to NUMERIC(20,18) for CTC
+-- Update balance column precision from NUMERIC(20,8) to NUMERIC(20,18) for OCT
 -- This requires creating a new column, copying data, dropping old, and renaming
 ALTER TABLE user_balances 
 ADD COLUMN balance_new NUMERIC(20, 18);
@@ -33,12 +33,12 @@ ADD CONSTRAINT balance_non_negative CHECK (balance >= 0);
 CREATE INDEX IF NOT EXISTS idx_user_balances_currency ON user_balances(currency);
 
 -- Update table comment
-COMMENT ON TABLE user_balances IS 'Tracks CTC token balances for users in the house balance system on CreditCoin testnet';
+COMMENT ON TABLE user_balances IS 'Tracks OCT token balances for users in the house balance system on OneChain testnet';
 
 -- Update column comments
 COMMENT ON COLUMN user_balances.user_address IS 'EVM wallet address (0x...)';
-COMMENT ON COLUMN user_balances.currency IS 'Currency type (default: CTC for CreditCoin)';
-COMMENT ON COLUMN user_balances.balance IS 'Current house balance in CTC tokens (18 decimal places)';
+COMMENT ON COLUMN user_balances.currency IS 'Currency type (default: OCT for OneChain)';
+COMMENT ON COLUMN user_balances.balance IS 'Current house balance in OCT tokens (18 decimal places)';
 COMMENT ON COLUMN user_balances.updated_at IS 'Timestamp of last balance update';
 COMMENT ON COLUMN user_balances.created_at IS 'Timestamp when user first deposited';
 

@@ -3,8 +3,8 @@
  * 
  * This endpoint handles user deposit operations by:
  * 1. Validating the deposit request (userAddress, txHash, amount)
- * 2. Verifying the transaction on CreditCoin testnet
- * 3. Crediting the user's house balance in Supabase
+ * 2. Verifying the transaction on OneChain testnet
+ * 3. Adding the user's house balance in Supabase
  * 4. Creating an audit log entry
  * 
  * Error Handling:
@@ -17,9 +17,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
-import { CreditCoinClient } from '@/lib/ctc/client';
+import { OneChainClient } from '@/lib/ctc/client';
 import { updateHouseBalance, getHouseBalance } from '@/lib/ctc/database';
-import { creditCoinTestnet } from '@/lib/ctc/config';
+import { oneChainTestnet } from '@/lib/ctc/config';
 
 /**
  * Sanitize error messages to prevent sensitive data leakage
@@ -45,7 +45,7 @@ function sanitizeError(error: any): string {
 interface DepositRequest {
   userAddress: string;
   txHash: string;
-  amount: string; // CTC amount as string
+  amount: string; // OCT amount as string
 }
 
 /**
@@ -69,7 +69,7 @@ type DepositResponse = DepositSuccessResponse | DepositErrorResponse;
 /**
  * POST /api/deposit
  * 
- * Process a deposit transaction by verifying it on-chain and crediting the user's house balance.
+ * Process a deposit transaction by verifying it on-chain and adding to the user's house balance.
  */
 export async function POST(request: NextRequest): Promise<NextResponse<DepositResponse>> {
   const timestamp = new Date().toISOString();
@@ -147,8 +147,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
       amount,
     });
 
-    // Initialize CreditCoin client
-    const client = new CreditCoinClient();
+    // Initialize OneChain client
+    const client = new OneChainClient();
 
     // Verify transaction on blockchain
     let receipt;
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
     }
 
     // Verify transaction recipient is treasury address
-    const treasuryAddress = creditCoinTestnet.treasuryAddress.toLowerCase();
+    const treasuryAddress = oneChainTestnet.treasuryAddress.toLowerCase();
     if (receipt.to.toLowerCase() !== treasuryAddress) {
       console.error(`[${timestamp}] [Deposit API] Transaction recipient mismatch:`, {
         txHash,
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
       console.error(`[${timestamp}] [Deposit API] Transaction amount mismatch:`, {
         txHash,
         expected: amount,
-        actual: client.formatCTC(receipt.value),
+        actual: client.formatOCT(receipt.value),
         userAddress,
       });
       return NextResponse.json(
@@ -224,7 +224,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
       );
     }
 
-    // Credit user's house balance
+    // Add user's house balance
     try {
       const newBalance = await updateHouseBalance(
         userAddress,

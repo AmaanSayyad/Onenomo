@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useAccount, useChainId, useSwitchChain, useDisconnect } from 'wagmi';
 import { useBynomoStore } from '@/lib/store';
-import { creditCoinTestnet } from '@/lib/ctc/config';
-import { getCTCBalance } from '@/lib/ctc/client';
+import { oneChainTestnet } from '@/lib/ctc/config';
+import { getOCTBalance } from '@/lib/ctc/client';
 
 export const WalletConnect: React.FC = () => {
   const { logout: logoutPrivy, authenticated, user, ready } = usePrivy();
@@ -14,33 +14,33 @@ export const WalletConnect: React.FC = () => {
 
   const { network, address, setConnectModalOpen, disconnect: disconnectStore, setPreferredNetwork, setAddress, setIsConnected } = useBynomoStore();
 
-  const [ctcBalance, setCtcBalance] = useState<string>('0');
+  const [octBalance, setOctBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [showNetworkPrompt, setShowNetworkPrompt] = useState(false);
 
-  // Check if connected to correct chain (CreditCoin testnet: 102031)
-  const isCorrectChain = chainId === creditCoinTestnet.chainId;
+  // Check if connected to correct chain (OneChain testnet: 102031)
+  const isCorrectChain = chainId === oneChainTestnet.chainId;
 
-  // Fetch CTC balance when wallet is connected
+  // Fetch OCT balance when wallet is connected
   useEffect(() => {
     const fetchBalance = async () => {
       const activeAddress = wagmiAddress || address;
       if (!activeAddress || !isCorrectChain) {
-        setCtcBalance('0');
+        setOctBalance('0');
         return;
       }
 
       setIsLoadingBalance(true);
       try {
-        const balance = await getCTCBalance(activeAddress);
-        setCtcBalance(balance);
+        const balance = await getOCTBalance(activeAddress);
+        setOctBalance(balance);
 
         // Sync to global store
         const balNum = parseFloat(balance);
         useBynomoStore.setState({ walletBalance: isNaN(balNum) ? 0 : balNum });
       } catch (error) {
-        console.error('Failed to fetch CTC balance:', error);
-        setCtcBalance('0');
+        console.error('Failed to fetch OCT balance:', error);
+        setOctBalance('0');
       } finally {
         setIsLoadingBalance(false);
       }
@@ -81,7 +81,7 @@ export const WalletConnect: React.FC = () => {
 
   const handleSwitchNetwork = async () => {
     try {
-      await switchChain({ chainId: creditCoinTestnet.chainId });
+      await switchChain({ chainId: oneChainTestnet.chainId });
       setShowNetworkPrompt(false);
     } catch (error) {
       console.error('Failed to switch network:', error);
@@ -114,7 +114,7 @@ export const WalletConnect: React.FC = () => {
           <div className="bg-[#1a1a1a] border border-white/10 rounded-xl p-6 max-w-md mx-4">
             <h3 className="text-white text-lg font-bold mb-2">Wrong Network</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Please switch to CreditCoin Testnet (Chain ID: {creditCoinTestnet.chainId}) to use this application.
+              Please switch to OneChain Testnet (Chain ID: {oneChainTestnet.chainId}) to use this application.
             </p>
             <div className="flex gap-3">
               <button
@@ -149,10 +149,10 @@ export const WalletConnect: React.FC = () => {
             <div className="bg-white/5 border border-white/10 rounded-xl px-2 sm:px-3 py-1.5 flex items-center gap-2">
               <div className="flex flex-col items-end">
                 <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">
-                  CTC Balance
+                  OCT Balance
                 </span>
                 <span className="text-white text-[10px] sm:text-[11px] font-mono leading-none">
-                  {isLoadingBalance ? '...' : parseFloat(ctcBalance).toFixed(4)}
+                  {isLoadingBalance ? '...' : parseFloat(octBalance).toFixed(4)}
                 </span>
               </div>
             </div>
@@ -169,7 +169,7 @@ export const WalletConnect: React.FC = () => {
             </div>
             <div className="flex flex-col items-center sm:items-end">
               <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">
-                {isCorrectChain ? 'CreditCoin' : 'Wrong Network'}
+                {isCorrectChain ? 'OneChain' : 'Wrong Network'}
               </span>
               <span className="text-white text-[10px] sm:text-[11px] font-mono leading-none">
                 {address ? `${address.slice(0, 4)}...${address.slice(-3)}` : '...'}
