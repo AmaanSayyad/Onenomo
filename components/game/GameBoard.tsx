@@ -12,6 +12,9 @@ import { ethers } from 'ethers';
 import { useToast } from '@/lib/hooks/useToast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Loader2, Wallet, Zap } from 'lucide-react';
+import { Transaction } from '@mysten/sui/transactions';
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit';
+import { getOCTConfig } from '@/lib/ctc/config';
 
 
 export const GameBoard: React.FC = () => {
@@ -49,6 +52,10 @@ export const GameBoard: React.FC = () => {
 
   const { wallets } = useWallets();
   const { logout: logoutPrivy, authenticated, user: privyUser } = usePrivy();
+  
+  const currentAccount = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const suiClient = useSuiClient();
 
   const handleDisconnect = () => {
     if (authenticated) logoutPrivy();
@@ -76,7 +83,7 @@ export const GameBoard: React.FC = () => {
   const isUnauthorized = false;
 
   const handleEnterBlitz = async () => {
-    if (!isWalletConnected || !address) {
+    if (!address) {
       toast.error("Please connect your wallet first");
       return;
     }
@@ -90,8 +97,44 @@ export const GameBoard: React.FC = () => {
       setIsActivatingBlitz(true);
       toast.info(`Preparing ${blitzEntryFee} OCT Blitz Entry...`);
 
-      // Blitz entry using connected wallet provider
-      if (authenticated && wallets.length > 0) {
+      const config = getOCTConfig();
+      const treasuryAddress = config.treasuryAddress;
+      const decimals = config.nativeCurrency.decimals;
+      const amountInSmallestUnit = BigInt(Math.floor(blitzEntryFee * Math.pow(10, decimals)));
+
+      // Try Sui Wallet Transaction (dapp-kit)
+      if (currentAccount?.address && currentAccount.address.toLowerCase() === address.toLowerCase()) {
+        const tx = new Transaction();
+        tx.setSender(address);
+        tx.setGasBudget(30_000_000n);
+
+        // Simple coin selection for Blitz entry fee
+        const coinType = (process.env.NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE || '0x2::oct::OCT').replace(/^0x2::coin::Coin<(.+)>$/i, '$1');
+        const coinResult = await suiClient.getCoins({ owner: address, coinType });
+        
+        if (!coinResult.data || coinResult.data.length === 0) {
+          throw new Error("No OCT tokens found in wallet. Please ensure you have OCT.");
+        }
+
+        // Find a coin with enough balance (+ gas buffer if it's SUI, though gas is handled separately on OneChain usually)
+        const selectedCoin = coinResult.data.find(c => BigInt(c.balance) >= amountInSmallestUnit);
+        if (!selectedCoin) {
+          throw new Error("Insufficient OCT balance for Blitz entry.");
+        }
+
+        const [feeCoin] = tx.splitCoins(tx.object(selectedCoin.coinObjectId), [amountInSmallestUnit]);
+        tx.transferObjects([feeCoin], treasuryAddress);
+
+        const result = await signAndExecuteTransaction({ 
+          transaction: tx
+        });
+
+        toast.success(`Access granted! Tx: ${result.digest.slice(0, 6)}...`);
+        enableBlitzAccess();
+        refreshWalletBalance();
+      } 
+      // Fallback for Privy/EVM (if still used)
+      else if (authenticated && wallets.length > 0) {
         const wallet = wallets.find(w => w.address.toLowerCase() === address.toLowerCase());
         if (!wallet) throw new Error("Linked Privy wallet not found");
         
