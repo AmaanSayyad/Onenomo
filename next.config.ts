@@ -5,7 +5,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   // @ts-ignore
-  outputFileTracingRoot: 'C:\\Users\\enliven\\Documents\\GitHub\\Onenomo',
+  outputFileTracingRoot: process.cwd(),
+  // @ts-ignore
+  turbopack: {
+    // Define the project root to avoid inference issues with parent folders (e.g., C:/Users/enliven/bun.lock)
+    root: process.cwd(),
+  },
 };
 
 export default nextConfig;

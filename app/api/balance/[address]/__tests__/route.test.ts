@@ -65,7 +65,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '0x123' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -97,7 +97,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '0x456' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -114,7 +114,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: 'invalid' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -133,7 +133,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -161,7 +161,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '0x789' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -182,7 +182,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '0xabc' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -215,7 +215,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '0xdef' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response
@@ -247,7 +247,7 @@ describe('GET /api/balance/[address]', () => {
     const params = { address: '0x000' };
 
     // Call the endpoint
-    const response = await GET(request, { params });
+    const response = await GET(request, { params: Promise.resolve(params) });
     const json = await response.json();
 
     // Verify response

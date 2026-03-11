@@ -147,12 +147,12 @@ describe('TreasuryClient', () => {
   describe('processWithdrawal', () => {
     beforeEach(() => {
       // Mock ethers.isAddress to return true by default
-      (ethers.isAddress as jest.Mock).mockReturnValue(true);
+      (ethers.isAddress as unknown as jest.Mock).mockReturnValue(true);
     });
 
     it('should return error for invalid user address', async () => {
       // Override mock for this test
-      (ethers.isAddress as jest.Mock).mockReturnValue(false);
+      (ethers.isAddress as unknown as jest.Mock).mockReturnValue(false);
 
       const mockFormatOCT = jest.fn().mockReturnValue('1.0');
 

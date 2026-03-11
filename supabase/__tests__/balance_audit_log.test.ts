@@ -488,7 +488,7 @@ describe('balance_audit_log table schema', () => {
         '0x0000000000000001',
       ];
 
-      for (const address of flowAddresses) {
+      for (const address of suiAddresses) {
         const { data, error } = await supabase
           .from('balance_audit_log')
           .insert({
