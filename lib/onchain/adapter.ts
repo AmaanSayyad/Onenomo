@@ -221,13 +221,13 @@ class OneChainSuiAdapter implements OnchainAdapter {
 
     const tx = new Transaction();
     tx.setSender(treasuryAddress);
-    tx.setGasBudget(30_000_000n); // Increased gas budget
+    tx.setGasBudget(50_000_000n); // Increased gas budget to 0.05 OCT
 
-    let coinObjects: Array<{ coinObjectId: string; balance: string }> = [];
+    let coinObjects: Array<{ coinObjectId: string; balance: string; version: string; digest: string }> = [];
     for (const coinType of getPreferredCoinTypes()) {
       const coins = await client.getCoins({ owner: treasuryAddress, coinType });
       if (coins.data.length > 0) {
-        coinObjects = coins.data as Array<{ coinObjectId: string; balance: string }>;
+        coinObjects = coins.data as Array<{ coinObjectId: string; balance: string; version: string; digest: string }>;
         break;
       }
     }
@@ -242,8 +242,8 @@ class OneChainSuiAdapter implements OnchainAdapter {
     // Calculate total available balance
     const totalBalance = sorted.reduce((sum, coin) => sum + BigInt(coin.balance), 0n);
     
-    // Reserve some OCT for gas (0.03 OCT = 30,000,000 MIST)
-    const gasReserve = 30_000_000n;
+    // Reserve some OCT for gas (0.05 OCT = 50,000,000 MIST)
+    const gasReserve = 50_000_000n;
     const availableForWithdrawal = totalBalance - gasReserve;
     
     if (availableForWithdrawal < amount) {
@@ -253,24 +253,40 @@ class OneChainSuiAdapter implements OnchainAdapter {
       };
     }
 
-    // Check if we can use a single coin
+    // Use smallest coins for gas payment (preserve larger coins for withdrawal)
+    const gasCoins = sorted.slice(-3).filter(c => BigInt(c.balance) > 0n);
+    if (gasCoins.length > 0) {
+      tx.setGasPayment(gasCoins.map(c => ({
+        objectId: c.coinObjectId,
+        version: c.version,
+        digest: c.digest
+      })));
+    }
+
+    // Check if we can use a single coin for withdrawal
     const largestCoin = sorted[0];
-    if (BigInt(largestCoin.balance) >= amount + gasReserve) {
+    const gasCoinsIds = new Set(gasCoins.map(c => c.coinObjectId));
+    
+    if (BigInt(largestCoin.balance) >= amount && !gasCoinsIds.has(largestCoin.coinObjectId)) {
       // Single coin is enough - no merge needed
       const primaryCoin = tx.object(largestCoin.coinObjectId);
       const [withdrawCoin] = tx.splitCoins(primaryCoin, [amount]);
       tx.transferObjects([withdrawCoin], input.userAddress);
     } else {
-      // Need to merge coins
-      const primaryCoin = tx.object(sorted[0].coinObjectId);
+      // Need to merge coins (excluding gas coins)
+      const availableCoins = sorted.filter(c => !gasCoinsIds.has(c.coinObjectId));
       
-      // Only merge coins we actually need
-      let accumulated = BigInt(sorted[0].balance);
+      if (availableCoins.length === 0) {
+        return { success: false, error: 'No coins available for withdrawal after gas reservation' };
+      }
+      
+      const primaryCoin = tx.object(availableCoins[0].coinObjectId);
+      let accumulated = BigInt(availableCoins[0].balance);
       const coinsToMerge = [];
       
-      for (let i = 1; i < sorted.length && accumulated < amount + gasReserve; i++) {
-        coinsToMerge.push(tx.object(sorted[i].coinObjectId));
-        accumulated += BigInt(sorted[i].balance);
+      for (let i = 1; i < availableCoins.length && accumulated < amount; i++) {
+        coinsToMerge.push(tx.object(availableCoins[i].coinObjectId));
+        accumulated += BigInt(availableCoins[i].balance);
       }
       
       if (coinsToMerge.length > 0) {
