@@ -14,7 +14,7 @@
  */
 
 import { ethers } from 'ethers';
-import { getRpcUrl } from './config';
+import { getRpcUrl, getRpcUrls } from './config';
 
 /**
  * Sanitize log data to prevent sensitive information leakage
@@ -60,7 +60,9 @@ export interface TransactionReceipt {
 export class OneChainClient {
   private provider: ethers.JsonRpcProvider;
   private signer?: ethers.Wallet;
+  private rpcUrls: string[];
   private rpcUrl: string;
+  private providerIndex: number;
 
   /**
    * Create a new OneChainClient instance
@@ -68,11 +70,27 @@ export class OneChainClient {
    * @param privateKey - Optional private key for signing transactions
    */
   constructor(rpcUrl?: string, privateKey?: string) {
-    this.rpcUrl = rpcUrl || getRpcUrl();
+    this.rpcUrls = rpcUrl ? [rpcUrl] : getRpcUrls();
+    this.providerIndex = 0;
+    this.rpcUrl = this.rpcUrls[this.providerIndex] || getRpcUrl();
     this.provider = new ethers.JsonRpcProvider(this.rpcUrl);
 
     if (privateKey) {
       this.signer = new ethers.Wallet(privateKey, this.provider);
+    }
+  }
+
+  private rotateProvider(): void {
+    if (this.rpcUrls.length <= 1) {
+      return;
+    }
+
+    this.providerIndex = (this.providerIndex + 1) % this.rpcUrls.length;
+    this.rpcUrl = this.rpcUrls[this.providerIndex];
+    this.provider = new ethers.JsonRpcProvider(this.rpcUrl);
+
+    if (this.signer) {
+      this.signer = new ethers.Wallet(this.signer.privateKey, this.provider);
     }
   }
 
@@ -102,6 +120,7 @@ export class OneChainClient {
         );
 
         if (attempt < maxRetries) {
+          this.rotateProvider();
           // Exponential backoff: 1s, 2s, 4s
           const delay = Math.pow(2, attempt - 1) * 1000;
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -377,6 +396,25 @@ export function getOneChainClient(privateKey?: string): OneChainClient {
  * @returns Balance as formatted string
  */
 export async function getOCTBalance(address: string): Promise<string> {
+  if (typeof window !== 'undefined') {
+    const response = await fetch(`/api/onchain/balance/${encodeURIComponent(address)}`, {
+      method: 'GET',
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload?.error || `Failed to fetch balance (${response.status})`);
+    }
+
+    const payload = await response.json();
+    if (typeof payload?.balance !== 'string') {
+      throw new Error('Invalid balance response payload');
+    }
+
+    return payload.balance;
+  }
+
   const client = getOneChainClient();
   const balance = await client.getBalance(address);
   return client.formatOCT(balance);

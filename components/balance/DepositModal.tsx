@@ -1,15 +1,37 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { ethers } from 'ethers';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { useBynomoStore } from '@/lib/store';
 import { useToast } from '@/lib/hooks/useToast';
 import { getOCTConfig } from '@/lib/ctc/config';
-import { getAddress, parseEther } from 'viem';
-import { useAccount, useWalletClient } from 'wagmi';
+import { Transaction } from '@mysten/sui/transactions';
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit';
+
+const DEFAULT_OCT_TYPE = '0x2::coin::Coin<0x2::oct::OCT>';
+const SUI_FALLBACK_COIN_TYPE = '0x2::sui::SUI';
+
+function normalizeCoinType(type: string): string {
+  const trimmed = type.trim();
+  const match = /^0x2::coin::Coin<(.+)>$/i.exec(trimmed);
+  return match ? match[1] : trimmed;
+}
+
+function getPreferredCoinTypes(): string[] {
+  const configured = process.env.NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE || DEFAULT_OCT_TYPE;
+  const list = configured
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const expanded = list.flatMap((type) => {
+    const inner = normalizeCoinType(type);
+    return [type, inner, `0x2::coin::Coin<${inner}>`];
+  });
+
+  return [...new Set([...expanded, DEFAULT_OCT_TYPE, normalizeCoinType(DEFAULT_OCT_TYPE), SUI_FALLBACK_COIN_TYPE])];
+}
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -28,10 +50,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { wallets: privyWallets } = useWallets();
-  const { authenticated } = usePrivy();
-  const { address: wagmiAddress, isConnected: wagmiConnected } = useAccount();
-  const { data: wagmiWalletClient } = useWalletClient();
+  const currentAccount = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const suiClient = useSuiClient();
 
   const { depositFunds, walletBalance, refreshWalletBalance, address } = useBynomoStore();
   const toast = useToast();
@@ -39,6 +60,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const currencySymbol = 'OCT';
   const networkName = 'OneChain Testnet';
   const quickAmounts = [0.1, 0.5, 1, 5];
+  const decimals = Number(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS || 9);
 
   useEffect(() => {
     if (!isOpen) {
@@ -85,30 +107,52 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       const octConfig = getOCTConfig();
       if (!octConfig.treasuryAddress) throw new Error('Treasury address not configured');
 
-      const treasuryAddress = getAddress(octConfig.treasuryAddress);
-      const value = parseEther(depositAmount.toString());
+      const treasuryAddress = octConfig.treasuryAddress;
+      const amountInSmallestUnit = BigInt(Math.floor(depositAmount * Math.pow(10, decimals)));
       let txHash: string;
 
-      if (wagmiConnected && wagmiAddress?.toLowerCase() === address?.toLowerCase() && wagmiWalletClient) {
+      if (currentAccount?.address && currentAccount.address.toLowerCase() === address.toLowerCase()) {
         toast.info('Please confirm the transaction in your wallet...');
-        txHash = await wagmiWalletClient.sendTransaction({
-          to: treasuryAddress,
-          value,
-        });
-      } else if (authenticated && privyWallets?.length) {
-        const wallet = privyWallets.find(w => w.address.toLowerCase() === address.toLowerCase());
-        if (!wallet) throw new Error('Privy wallet not found');
-        const ethereumProvider = await wallet.getEthereumProvider();
-        const provider = new ethers.BrowserProvider(ethereumProvider);
-        const signer = await provider.getSigner();
-        toast.info('Please confirm the transaction in your wallet...');
-        const txResponse = await signer.sendTransaction({
-          to: treasuryAddress,
-          value: ethers.parseEther(depositAmount.toString()),
-        });
-        txHash = txResponse.hash;
+        const tx = new Transaction();
+
+        const preferredCoinTypes = getPreferredCoinTypes();
+        let coins: Array<{ coinObjectId: string; balance: string }> = [];
+        let selectedCoinType: string | null = null;
+
+        for (const coinType of preferredCoinTypes) {
+          const result = await suiClient.getCoins({ owner: address, coinType });
+          if (result.data?.length) {
+            coins = result.data as Array<{ coinObjectId: string; balance: string }>;
+            selectedCoinType = coinType;
+            break;
+          }
+        }
+
+        if (!coins.length || !selectedCoinType) {
+          throw new Error('No OCT coin objects found in wallet. Set NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE correctly.');
+        }
+
+        const isSuiGasType = selectedCoinType === SUI_FALLBACK_COIN_TYPE || /::sui::SUI$/i.test(selectedCoinType);
+
+        if (isSuiGasType) {
+          const [depositCoin] = tx.splitCoins(tx.gas, [amountInSmallestUnit]);
+          tx.transferObjects([depositCoin], treasuryAddress);
+        } else {
+          const sortedCoins = [...coins].sort((a, b) => Number(BigInt(b.balance) - BigInt(a.balance)));
+          const primaryCoin = tx.object(sortedCoins[0].coinObjectId);
+
+          if (sortedCoins.length > 1) {
+            tx.mergeCoins(primaryCoin, sortedCoins.slice(1).map((coin) => tx.object(coin.coinObjectId)));
+          }
+
+          const [depositCoin] = tx.splitCoins(primaryCoin, [amountInSmallestUnit]);
+          tx.transferObjects([depositCoin], treasuryAddress);
+        }
+
+        const result = await signAndExecuteTransaction({ transaction: tx });
+        txHash = result.digest;
       } else {
-        throw new Error('Please connect your wallet to deposit (MetaMask or Social Login).');
+        throw new Error('Please connect your OneChain wallet to deposit.');
       }
 
       toast.info('Transaction submitted. Waiting for confirmation...');

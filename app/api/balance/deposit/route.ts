@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { ethers } from 'ethers';
+import { isValidAddress } from '@/lib/utils/address';
 
 interface DepositRequest {
   userAddress: string;
@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate OCT (EVM) address only
-    if (!ethers.isAddress(userAddress)) {
+    // Validate supported wallet address formats
+    if (!(await isValidAddress(userAddress))) {
       return NextResponse.json(
-        { error: 'Invalid OCT (EVM) wallet address' },
+        { error: 'Invalid wallet address' },
         { status: 400 }
       );
     }

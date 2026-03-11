@@ -8,20 +8,14 @@ function ReferralSyncInner() {
     const searchParams = useSearchParams();
     const { setReferredBy, fetchReferralInfo, address, isConnected } = useStore();
 
-    useEffect(() => {
-        const ref = searchParams.get('ref');
-        if (ref) {
-            setReferredBy(ref);
-        }
-    }, [searchParams, setReferredBy]);
+
 
     useEffect(() => {
         if (isConnected && address) {
-            fetchReferralInfo(address);
             useStore.getState().fetchProfile(address);
             useStore.getState().fetchRecentTrades(address);
         }
-    }, [isConnected, address, fetchReferralInfo]);
+    }, [isConnected, address]);
 
     return null;
 }

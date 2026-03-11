@@ -1,45 +1,81 @@
 import React, { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { useAccount, useChainId, useSwitchChain, useDisconnect } from 'wagmi';
+import { useCurrentAccount, useDisconnectWallet, useSuiClient } from '@mysten/dapp-kit';
 import { useBynomoStore } from '@/lib/store';
-import { oneChainTestnet } from '@/lib/ctc/config';
-import { getOCTBalance } from '@/lib/ctc/client';
+
+const DEFAULT_OCT_TYPE = '0x2::coin::Coin<0x2::oct::OCT>';
+const SUI_FALLBACK_COIN_TYPE = '0x2::sui::SUI';
+
+function normalizeCoinType(type: string): string {
+  const trimmed = type.trim();
+  const match = /^0x2::coin::Coin<(.+)>$/i.exec(trimmed);
+  return match ? match[1] : trimmed;
+}
+
+function getPreferredCoinTypes(): string[] {
+  const configured = process.env.NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE || DEFAULT_OCT_TYPE;
+  const list = configured
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const normalized = list.flatMap((type) => {
+    const inner = normalizeCoinType(type);
+    const object = `0x2::coin::Coin<${inner}>`;
+    return [type, inner, object];
+  });
+
+  return [...new Set([...normalized, normalizeCoinType(DEFAULT_OCT_TYPE), DEFAULT_OCT_TYPE, SUI_FALLBACK_COIN_TYPE])];
+}
+
+function formatBalance(totalBalance: string, decimals: number): string {
+  const safeDecimals = Number.isFinite(decimals) ? decimals : 9;
+  return (Number(totalBalance) / Math.pow(10, safeDecimals)).toFixed(4);
+}
 
 export const WalletConnect: React.FC = () => {
-  const { logout: logoutPrivy, authenticated, user, ready } = usePrivy();
-  const { address: wagmiAddress, isConnected: wagmiConnected } = useAccount();
-  const { disconnect: disconnectWagmi } = useDisconnect();
-  const chainId = useChainId();
-  const { switchChain } = useSwitchChain();
+  const { logout: logoutPrivy, authenticated } = usePrivy();
+  const account = useCurrentAccount();
+  const suiClient = useSuiClient();
+  const { mutateAsync: disconnectWallet } = useDisconnectWallet();
 
-  const { network, address, setConnectModalOpen, disconnect: disconnectStore, setPreferredNetwork, setAddress, setIsConnected } = useBynomoStore();
+  const { address, setConnectModalOpen, disconnect: disconnectStore, setPreferredNetwork, setAddress, setIsConnected } = useBynomoStore();
 
   const [octBalance, setOctBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
-  const [showNetworkPrompt, setShowNetworkPrompt] = useState(false);
 
-  // Check if connected to correct chain (OneChain testnet: 102031)
-  const isCorrectChain = chainId === oneChainTestnet.chainId;
-
-  // Fetch OCT balance when wallet is connected
   useEffect(() => {
     const fetchBalance = async () => {
-      const activeAddress = wagmiAddress || address;
-      if (!activeAddress || !isCorrectChain) {
+      if (!account?.address) {
         setOctBalance('0');
         return;
       }
 
       setIsLoadingBalance(true);
       try {
-        const balance = await getOCTBalance(activeAddress);
-        setOctBalance(balance);
+        const preferredCoinTypes = getPreferredCoinTypes();
+        const allBalances = await suiClient.getAllBalances({ owner: account.address });
 
-        // Sync to global store
-        const balNum = parseFloat(balance);
-        useBynomoStore.setState({ walletBalance: isNaN(balNum) ? 0 : balNum });
+        const octLike =
+          allBalances.find((balance) => preferredCoinTypes.includes(balance.coinType)) ||
+          allBalances.find((balance) => /::oct::oct$/i.test(balance.coinType)) ||
+          allBalances.find((balance) => balance.totalBalance !== '0');
+
+        if (!octLike) {
+          setOctBalance('0.0000');
+          useBynomoStore.setState({ walletBalance: 0 });
+          return;
+        }
+
+        const metadata = await suiClient.getCoinMetadata({ coinType: octLike.coinType }).catch(() => null);
+        const decimals = Number(metadata?.decimals ?? 9);
+        const formatted = formatBalance(octLike.totalBalance, decimals);
+        setOctBalance(formatted);
+
+        const balNum = Number.parseFloat(formatted);
+        useBynomoStore.setState({ walletBalance: Number.isNaN(balNum) ? 0 : balNum });
       } catch (error) {
-        console.error('Failed to fetch OCT balance:', error);
+        console.warn('Failed to fetch OCT balance:', error);
         setOctBalance('0');
       } finally {
         setIsLoadingBalance(false);
@@ -47,93 +83,31 @@ export const WalletConnect: React.FC = () => {
     };
 
     fetchBalance();
-
-    // Refresh balance every 10 seconds
     const interval = setInterval(fetchBalance, 10000);
     return () => clearInterval(interval);
-  }, [wagmiAddress, address, isCorrectChain]);
+  }, [account?.address, suiClient]);
 
-  // Show network prompt when on wrong chain
-  useEffect(() => {
-    if (wagmiConnected && !isCorrectChain) {
-      setShowNetworkPrompt(true);
-    } else {
-      setShowNetworkPrompt(false);
+  const handleDisconnect = async () => {
+    if (authenticated) {
+      logoutPrivy();
     }
-  }, [wagmiConnected, isCorrectChain]);
 
-  const formatAddress = (addr: string) => {
-    if (!addr) return '';
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
+    try {
+      await disconnectWallet();
+    } catch {
+      // Ignore wallet disconnect errors, state will still be reset below.
+    }
 
-  const handleDisconnect = () => {
-    // Logout from all providers
-    if (authenticated) logoutPrivy();
-    if (wagmiConnected) disconnectWagmi();
-
-    // Explicitly reset our store state
     disconnectStore();
     setPreferredNetwork(null);
     setAddress(null);
     setIsConnected(false);
   };
 
-  const handleSwitchNetwork = async () => {
-    try {
-      await switchChain({ chainId: oneChainTestnet.chainId });
-      setShowNetworkPrompt(false);
-    } catch (error) {
-      console.error('Failed to switch network:', error);
-    }
-  };
-
-  const getNetworkIcon = () => {
-    return '/logos/ctc-logo.png';
-  };
-
-  const isConnected = !!address || wagmiConnected || authenticated;
-
-  // No longer blocking the entire UI on Privy ready state
-  // We only show loading if we are explicitly in an "isConnecting" state from WAGMI
-  const showLoading = false;
-
-  if (showLoading) {
-    return (
-      <div className="w-24 h-9 bg-white/5 animate-pulse rounded-xl border border-white/5 flex items-center justify-center">
-        <span className="text-[10px] text-white/20 font-bold">LOADING</span>
-      </div>
-    );
-  }
+  const isConnected = !!address || !!account?.address || authenticated;
 
   return (
     <div className="flex items-center gap-3">
-      {/* Network Switch Prompt */}
-      {showNetworkPrompt && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-[#1a1a1a] border border-white/10 rounded-xl p-6 max-w-md mx-4">
-            <h3 className="text-white text-lg font-bold mb-2">Wrong Network</h3>
-            <p className="text-gray-400 text-sm mb-4">
-              Please switch to OneChain Testnet (Chain ID: {oneChainTestnet.chainId}) to use this application.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleSwitchNetwork}
-                className="flex-1 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-bold transition-all"
-              >
-                Switch Network
-              </button>
-              <button
-                onClick={handleDisconnect}
-                className="flex-1 px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-bold transition-all"
-              >
-                Disconnect
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {!isConnected ? (
         <button
           onClick={() => setConnectModalOpen(true)}
@@ -144,33 +118,21 @@ export const WalletConnect: React.FC = () => {
         </button>
       ) : (
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Balance Display */}
-          {isCorrectChain && (
-            <div className="bg-white/5 border border-white/10 rounded-xl px-2 sm:px-3 py-1.5 flex items-center gap-2">
-              <div className="flex flex-col items-end">
-                <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">
-                  OCT Balance
-                </span>
-                <span className="text-white text-[10px] sm:text-[11px] font-mono leading-none">
-                  {isLoadingBalance ? '...' : parseFloat(octBalance).toFixed(4)}
-                </span>
-              </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl px-2 sm:px-3 py-1.5 flex items-center gap-2">
+            <div className="flex flex-col items-end">
+              <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">OCT Balance</span>
+              <span className="text-white text-[10px] sm:text-[11px] font-mono leading-none">
+                {isLoadingBalance ? '...' : octBalance}
+              </span>
             </div>
-          )}
+          </div>
 
-          {/* Address Display */}
           <div className="bg-white/5 border border-white/10 rounded-xl px-2 sm:px-3 py-1.5 flex items-center gap-2 sm:gap-2.5">
             <div className="w-4 h-4 shrink-0">
-              <img
-                src={getNetworkIcon()}
-                alt="Network"
-                className="w-full h-full object-contain"
-              />
+              <img src="/logos/ctc-logo.png" alt="Network" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col items-center sm:items-end">
-              <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">
-                {isCorrectChain ? 'OneChain' : 'Wrong Network'}
-              </span>
+              <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">OneChain</span>
               <span className="text-white text-[10px] sm:text-[11px] font-mono leading-none">
                 {address ? `${address.slice(0, 4)}...${address.slice(-3)}` : '...'}
               </span>

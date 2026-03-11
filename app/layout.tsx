@@ -36,21 +36,21 @@ export const metadata: Metadata = {
     "prediction",
   ],
   icons: {
-    icon: "/bynomologo.ico",
-    shortcut: "/bynomologo.ico",
-    apple: "/bynomologo.ico",
+    icon: "/onenomologo.ico",
+    shortcut: "/onenomologo.ico",
+    apple: "/onenomologo.ico",
   },
   openGraph: {
     title: "Onenomo - Binary Options on OneChain",
     description:
       "On-chain binary options trading dApp on OneChain testnet. Powered by Pyth Hermes and Supabase. Oracle-bound resolution, minimal trust.",
-    images: [{ url: '/bynomo-logo.png', width: 512, height: 512, alt: 'Onenomo' }],
+    images: [{ url: '/onenomo-logo.png', width: 512, height: 512, alt: 'Onenomo' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: "Onenomo - Binary Options on OneChain",
     description: "On-chain binary options on OneChain testnet. Oracle-bound resolution, minimal trust.",
-    images: ['/bynomo-logo.png'],
+    images: ['/onenomo-logo.png'],
   },
 };
 

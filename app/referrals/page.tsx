@@ -21,15 +21,7 @@ export default function ReferralPage() {
     const toast = useToast();
     const [referralLink, setReferralLink] = useState('');
 
-    useEffect(() => {
-        fetchReferralLeaderboard();
-    }, [fetchReferralLeaderboard]);
 
-    useEffect(() => {
-        if (isConnected && address) {
-            fetchReferralInfo(address);
-        }
-    }, [isConnected, address, fetchReferralInfo]);
 
     useEffect(() => {
         if (referralCode && typeof window !== 'undefined') {

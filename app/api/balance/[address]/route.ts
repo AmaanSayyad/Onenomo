@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { ethers } from 'ethers';
+import { isValidAddress } from '@/lib/utils/address';
 
 export async function GET(
   request: NextRequest,
@@ -24,10 +24,10 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const currency = searchParams.get('currency') || 'OCT';
 
-    // Validate OCT (EVM) address only
-    if (!ethers.isAddress(address)) {
+    // Validate supported wallet address formats
+    if (!(await isValidAddress(address))) {
       return NextResponse.json(
-        { error: 'Invalid OCT (EVM) wallet address' },
+        { error: 'Invalid wallet address' },
         { status: 400 }
       );
     }

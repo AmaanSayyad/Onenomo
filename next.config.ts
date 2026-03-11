@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  turbopack: {},
+  // @ts-ignore
+  outputFileTracingRoot: 'C:\\Users\\enliven\\Documents\\GitHub\\Onenomo',
 };
 
 export default nextConfig;

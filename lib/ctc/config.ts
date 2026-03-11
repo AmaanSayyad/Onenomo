@@ -23,11 +23,55 @@ export interface OneChainConfig {
   treasuryAddress: string;
 }
 
+const DEFAULT_ONECHAIN_TESTNET_RPC = 'https://rpc-testnet.onelabs.cc:443';
+const LOCALHOST_RPC_DENYLIST_HOSTS: string[] = [];
+
+function normalizeRpcUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '');
+}
+
+function isLocalhostRuntime(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const hostname = window.location.hostname;
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+}
+
+function shouldDeprioritizeRpcOnLocalhost(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname;
+    return LOCALHOST_RPC_DENYLIST_HOSTS.includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
+export function getRpcUrls(): string[] {
+  const configured = process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_RPC
+    ? process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_RPC.split(',').map(normalizeRpcUrl).filter(Boolean)
+    : [];
+
+  const merged = [...configured, DEFAULT_ONECHAIN_TESTNET_RPC]
+    .map(normalizeRpcUrl)
+    .filter((url, index, all) => all.indexOf(url) === index);
+
+  const preferred = merged.filter((url) => !shouldDeprioritizeRpcOnLocalhost(url));
+  const deprioritized = merged.filter((url) => shouldDeprioritizeRpcOnLocalhost(url));
+
+  if (!isLocalhostRuntime()) {
+    return [...preferred, ...deprioritized];
+  }
+
+  return [...preferred, ...deprioritized];
+}
+
 /**
  * OneChain Testnet Configuration
  * 
  * Chain ID: 102031
- * Native Token: OCT (18 decimals)
+ * Native Token: OCT (9 decimals)
  * RPC: https://rpc-testnet.onechain.one
  * Explorer: https://explorer-testnet.onechain.one
  * Treasury: 0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
@@ -38,11 +82,9 @@ export const oneChainTestnet: OneChainConfig = {
   nativeCurrency: {
     name: "OneChain",
     symbol: process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_SYMBOL || "OCT",
-    decimals: Number(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS) || 18,
+    decimals: Number(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS) || 9,
   },
-  rpcUrls: [
-    process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_RPC || "https://rpc-testnet.onechain.one"
-  ],
+  rpcUrls: getRpcUrls(),
   blockExplorerUrls: [
     process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER || "https://explorer-testnet.onechain.one"
   ],

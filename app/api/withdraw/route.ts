@@ -17,9 +17,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ethers } from 'ethers';
-import { getTreasuryClient } from '@/lib/ctc/backend-client';
 import { updateHouseBalance, getHouseBalance } from '@/lib/ctc/database';
+import { getOnchainAdapter } from '@/lib/onchain/adapter';
 
 /**
  * Sanitize error messages to prevent sensitive data leakage
@@ -74,6 +73,7 @@ type WithdrawResponse = WithdrawSuccessResponse | WithdrawErrorResponse;
  */
 export async function POST(request: NextRequest): Promise<NextResponse<WithdrawResponse>> {
   const timestamp = new Date().toISOString();
+  const adapter = getOnchainAdapter();
 
   try {
     // Parse request body
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<WithdrawR
     }
 
     // Validate user address format
-    if (!ethers.isAddress(userAddress)) {
+    if (!adapter.validateAddress(userAddress)) {
       console.error(`[${timestamp}] [Withdraw API] Validation error: Invalid address format`, {
         userAddress,
       });
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<WithdrawR
     // Validate amount
     let amountBigInt: bigint;
     try {
-      amountBigInt = ethers.parseUnits(amount, 18);
+      amountBigInt = adapter.parseAmount(amount);
       if (amountBigInt <= BigInt(0)) {
         console.error(`[${timestamp}] [Withdraw API] Validation error: Invalid amount`, {
           amount,
@@ -132,6 +132,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<WithdrawR
     console.log(`[${timestamp}] [Withdraw API] Processing withdrawal:`, {
       userAddress,
       amount,
+      chain: adapter.chainName,
     });
 
     // Check user's house balance is sufficient
@@ -165,14 +166,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<WithdrawR
       );
     }
 
-    const currentBalanceBigInt = ethers.parseUnits(currentBalance, 18);
+    const currentBalanceBigInt = adapter.parseAmount(currentBalance);
 
     if (currentBalanceBigInt < amountBigInt) {
       console.error(`[${timestamp}] [Withdraw API] Insufficient balance:`, {
         userAddress,
         currentBalance,
         requestedAmount: amount,
-        shortfall: ethers.formatUnits(amountBigInt - currentBalanceBigInt, 18),
+        shortfall: adapter.formatAmount(amountBigInt - currentBalanceBigInt),
       });
       return NextResponse.json(
         { success: false, error: 'Insufficient house balance' },
@@ -228,8 +229,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<WithdrawR
     // Process withdrawal via TreasuryClient
     let txHash: string;
     try {
-      const treasuryClient = getTreasuryClient();
-      const result = await treasuryClient.processWithdrawal(userAddress, amountBigInt);
+      const result = await adapter.executeWithdrawal({ userAddress, amount });
 
       if (!result.success) {
         console.error(`[${timestamp}] [Withdraw API] Withdrawal transaction failed:`, {

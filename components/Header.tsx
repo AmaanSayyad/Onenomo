@@ -39,7 +39,7 @@ export function Header() {
         setTimeout(() => setDemoActivated(false), 2000);
     };
 
-    const handleBynomoClick = () => {
+    const handleOnenomoClick = () => {
         if (clickTimer.current) clearTimeout(clickTimer.current);
         const newCount = clickCount + 1;
         setClickCount(newCount);
@@ -61,12 +61,12 @@ export function Header() {
                         onClick={(e) => {
                             // Prevent navigation if clicking for demo mode
                             if (clickCount > 0) e.preventDefault();
-                            handleBynomoClick();
+                            handleOnenomoClick();
                         }}
                         className="text-xl sm:text-2xl font-black tracking-tighter sm:tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-white cursor-pointer select-none"
                         style={{ fontFamily: 'var(--font-orbitron)' }}
                     >
-                        CREDITNOMO
+                        ONENOMO
                     </motion.span>
                 </Link>
                 {demoActivated && (

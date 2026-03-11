@@ -13,7 +13,7 @@ const steps = [
     {
         id: "01",
         title: "Hybrid Custody",
-        desc: "OneChain Testnet performance with non-custodial security. Bynomo connects your wallet to a high-speed house balance for instant execution without gas lag."
+        desc: "OneChain Testnet performance with non-custodial security. Onenomo connects your wallet to a high-speed house balance for instant execution without gas lag."
     },
     {
         id: "02",
@@ -36,7 +36,7 @@ const testimonials = [
     {
         name: "Astra Vance",
         role: "Venture Strategist",
-        content: "The Blitz Rounds are a game-changer. The millisecond precision from Pyth Oracles makes Bynomo feel like a professional CEX but with decentralized peace of mind.",
+        content: "The Blitz Rounds are a game-changer. The millisecond precision from Pyth Oracles makes Onenomo feel like a professional CEX but with decentralized peace of mind.",
         avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
     },
     {
@@ -48,19 +48,19 @@ const testimonials = [
     {
         name: "Kai Zen",
         role: "Algo Developer",
-        content: "Migrating to the Bynomo protocol was the best move. Instant house balance settlement solves the on-chain latency issue perfectly for high-frequency binary options.",
+        content: "Migrating to the Onenomo protocol was the best move. Instant house balance settlement solves the on-chain latency issue perfectly for high-frequency binary options.",
         avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
     },
     {
         name: "Julian Vane",
         role: "Quant Trader",
-        content: "Bynomo's tiered system provides a clear roadmap for traders. The VIP perks and advanced indicators give us a significant edge in these fast-moving rounds.",
+        content: "Onenomo's tiered system provides a clear roadmap for traders. The VIP perks and advanced indicators give us a significant edge in these fast-moving rounds.",
         avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
     },
     {
         name: "Sarah M.",
         role: "Early Adopter",
-        content: "Switching between Bitcoin and Gold predictions within seconds is what makes Bynomo stand out. The multi-asset support is truly elite.",
+        content: "Switching between Bitcoin and Gold predictions within seconds is what makes Onenomo stand out. The multi-asset support is truly elite.",
         avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop"
     }
 ];
@@ -68,11 +68,11 @@ const testimonials = [
 const faqs = [
     {
         question: "How does the House Balance work?",
-        answer: "To ensure millisecond execution, Bynomo uses a hybrid house balance system. You deposit OCT on OneChain Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
+        answer: "To ensure millisecond execution, Onenomo uses a hybrid house balance system. You deposit OCT on OneChain Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
     },
     {
         question: "What assets can I trade?",
-        answer: "Bynomo supports a wide range of assets including major cryptos (BTC, ETH, OCT), precious metals (Gold, Silver), and top-tier stocks (AAPL, NVDA, TSLA) through Pyth price feeds."
+        answer: "Onenomo supports a wide range of assets including major cryptos (BTC, ETH, OCT), precious metals (Gold, Silver), and top-tier stocks (AAPL, NVDA, TSLA) through Pyth price feeds."
     },
     {
         question: "What are Blitz Rounds?",
@@ -84,7 +84,7 @@ const faqs = [
     },
     {
         question: "Are my funds safe?",
-        answer: "Yes. All deposits are held in a secure treasury wallet verified on-chain. Withdrawals are processed through the Bynomo protocol, ensuring you maintain ultimate control over your assets."
+        answer: "Yes. All deposits are held in a secure treasury wallet verified on-chain. Withdrawals are processed through the Onenomo protocol, ensuring you maintain ultimate control over your assets."
     }
 ];
 
@@ -188,7 +188,7 @@ export default function WaitlistPage() {
                             }}
                             className="flex"
                         >
-                            {Array.from("CREDITNOMO").map((letter, index) => (
+                            {Array.from("ONENOMO").map((letter, index) => (
                                 <motion.h1
                                     key={index}
                                     variants={{
@@ -395,7 +395,7 @@ export default function WaitlistPage() {
 
             {/* FOOTER SECTION */}
             <footer className="py-24 px-10 border-t border-white/5 bg-black relative z-10 w-full overflow-hidden">
-                <div className="huge-footer-logo">CREDITNOMO</div>
+                <div className="huge-footer-logo">ONENOMO</div>
 
                 <div className="footer-meta">
                     <div className="footer-meta-item">2026 © All rights reserved</div>

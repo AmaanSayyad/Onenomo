@@ -5,6 +5,7 @@
  */
 
 import { StateCreator } from "zustand";
+import { isValidAddress } from '@/lib/utils/address';
 
 export type OctNetwork = 'OCT' | null;
 
@@ -66,14 +67,14 @@ export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
 
   refreshWalletBalance: async () => {
     const { address, isConnected } = get();
-    if (!isConnected || !address) return;
+    if (!isConnected || !address || !(await isValidAddress(address))) return;
     try {
       const { getOCTBalance } = await import('@/lib/ctc/client');
       const balStr = await getOCTBalance(address);
       const balNum = parseFloat(balStr);
       set({ walletBalance: isNaN(balNum) ? 0 : balNum });
     } catch (error) {
-      console.error("Error refreshing wallet balance:", error);
+      console.warn('Error refreshing wallet balance:', error);
     }
   },
 

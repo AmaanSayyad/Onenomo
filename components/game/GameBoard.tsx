@@ -6,14 +6,12 @@ import { LiveChart } from './';
 import { BalanceDisplay } from '@/components/balance';
 import { startPriceFeed } from '@/lib/store/gameSlice';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { useAccount, useDisconnect } from 'wagmi';
 import { oneChainTestnet } from '@/lib/ctc/config';
 import { getAddress } from 'viem';
 import { ethers } from 'ethers';
 import { useToast } from '@/lib/hooks/useToast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Loader2, Wallet, Zap } from 'lucide-react';
-import { useSendTransaction, useSwitchChain } from 'wagmi';
 
 
 export const GameBoard: React.FC = () => {
@@ -51,14 +49,9 @@ export const GameBoard: React.FC = () => {
 
   const { wallets } = useWallets();
   const { logout: logoutPrivy, authenticated, user: privyUser } = usePrivy();
-  const { isConnected: wagmiConnected, isConnecting: wagmiConnecting } = useAccount();
-  const { disconnect: disconnectWagmi } = useDisconnect();
-  const { sendTransactionAsync } = useSendTransaction();
-  const { switchChainAsync } = useSwitchChain();
 
   const handleDisconnect = () => {
     if (authenticated) logoutPrivy();
-    if (wagmiConnected) disconnectWagmi();
 
     disconnectStore();
     setAddress(null);
@@ -97,19 +90,7 @@ export const GameBoard: React.FC = () => {
       setIsActivatingBlitz(true);
       toast.info(`Preparing ${blitzEntryFee} OCT Blitz Entry...`);
 
-      // 1. Try WAGMI first if connected
-      if (wagmiConnected) {
-        const hash = await sendTransactionAsync({
-          to: oneChainTestnet.treasuryAddress as `0x${string}`,
-          value: ethers.parseEther(blitzEntryFee.toString()),
-        });
-        toast.success(`Access granted! Tx: ${hash.slice(0, 6)}...`);
-        enableBlitzAccess();
-        refreshWalletBalance();
-        return;
-      }
-
-      // 2. Fallback to Privy
+      // Blitz entry using connected wallet provider
       if (authenticated && wallets.length > 0) {
         const wallet = wallets.find(w => w.address.toLowerCase() === address.toLowerCase());
         if (!wallet) throw new Error("Linked Privy wallet not found");

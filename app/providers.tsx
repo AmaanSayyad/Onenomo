@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useBynomoStore } from '@/lib/store';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
-import { WagmiProvider, useAccount } from 'wagmi';
-import { ConnectKitProvider } from 'connectkit';
-import { config as wagmiConfig } from '@/lib/ctc/wagmi';
-import { oneChainTestnetChain } from '@/lib/ctc/wagmi';
+import {
+  WalletProvider as SuiWalletProvider,
+  SuiClientProvider,
+  createNetworkConfig,
+  useCurrentAccount,
+} from '@mysten/dapp-kit';
+import '@mysten/dapp-kit/dist/index.css';
 
 // Custom Components
 import { WalletConnectModal } from '@/components/wallet/WalletConnectModal';
@@ -16,9 +19,9 @@ import { ReferralSync } from './ReferralSync';
 
 // Wallet Sync component to bridge all wallet states with our Zustand store
 function WalletSync() {
-  const { user, authenticated, ready: privyReady } = usePrivy();
+  const { authenticated, ready: privyReady } = usePrivy();
   const { wallets: privyWallets } = useWallets();
-  const { address: wagmiAddress, isConnected: wagmiConnected } = useAccount();
+  const suiAccount = useCurrentAccount();
 
   const {
     address,
@@ -29,7 +32,6 @@ function WalletSync() {
     refreshWalletBalance,
     fetchProfile,
     fetchBalance,
-    preferredNetwork
   } = useBynomoStore();
 
 
@@ -45,8 +47,10 @@ function WalletSync() {
       return;
     }
 
-    const effectiveAddress = wagmiAddress || (authenticated && privyWallets[0] ? privyWallets[0].address : null);
-    const effectiveConnected = wagmiConnected || (authenticated && !!privyWallets[0]);
+    const effectiveAddress =
+      suiAccount?.address ||
+      (authenticated && privyWallets[0] ? privyWallets[0].address : null);
+    const effectiveConnected = !!suiAccount || (authenticated && !!privyWallets[0]);
 
     if (effectiveConnected && effectiveAddress) {
       if (address !== effectiveAddress) {
@@ -65,7 +69,7 @@ function WalletSync() {
       setNetwork(null);
     }
   }, [
-    authenticated, privyWallets, privyReady, wagmiAddress, wagmiConnected, address, accountType,
+    authenticated, privyWallets, privyReady, suiAccount, address, accountType,
     setAddress, setIsConnected, setNetwork, refreshWalletBalance, fetchProfile, fetchBalance
   ]);
 
@@ -77,6 +81,67 @@ function WalletSync() {
       fetchBalance(address);
     }, 10000);
 
+    return () => clearInterval(interval);
+  }, [address, accountType, fetchBalance]);
+
+  return null;
+}
+
+function WalletSyncSuiOnly() {
+  const suiAccount = useCurrentAccount();
+  const {
+    address,
+    accountType,
+    setAddress,
+    setIsConnected,
+    setNetwork,
+    refreshWalletBalance,
+    fetchProfile,
+    fetchBalance,
+  } = useBynomoStore();
+
+  useEffect(() => {
+    if (accountType === 'demo') {
+      if (address !== '0xDEMO_1234567890') {
+        setAddress('0xDEMO_1234567890');
+        setIsConnected(true);
+        setNetwork('OCT');
+      }
+      return;
+    }
+
+    const effectiveAddress = suiAccount?.address || null;
+    const effectiveConnected = !!suiAccount;
+
+    if (effectiveConnected && effectiveAddress) {
+      if (address !== effectiveAddress) {
+        setAddress(effectiveAddress);
+        setIsConnected(true);
+        setNetwork('OCT');
+        refreshWalletBalance();
+        fetchProfile(effectiveAddress);
+        fetchBalance(effectiveAddress);
+      }
+    } else if (address !== null && address !== '0xDEMO_1234567890') {
+      setAddress(null);
+      setIsConnected(false);
+      setNetwork(null);
+    }
+  }, [
+    suiAccount,
+    address,
+    accountType,
+    setAddress,
+    setIsConnected,
+    setNetwork,
+    refreshWalletBalance,
+    fetchProfile,
+    fetchBalance,
+  ]);
+
+  useEffect(() => {
+    if (!address || address === '0xDEMO_1234567890' || accountType === 'demo') return;
+    const interval = setInterval(() => fetchBalance(address), 10000);
     return () => clearInterval(interval);
   }, [address, accountType, fetchBalance]);
 
@@ -117,35 +182,50 @@ export function Providers({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'cm7377f0a00gup9u2w4m3v6be';
+  const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? '';
+  const isPrivyEnabled = Boolean(PRIVY_APP_ID.trim());
+  const { networkConfig } = createNetworkConfig({
+    onechainTestnet: {
+      url: process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_RPC || 'https://rpc-testnet.onelabs.cc:443',
+      network: 'testnet' as any,
+    },
+  });
 
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider mode="dark">
-          <PrivyProvider
-            appId={PRIVY_APP_ID}
-            config={{
-              appearance: {
-                theme: 'dark',
-                accentColor: '#A855F7',
-                showWalletLoginFirst: true,
-              },
-              supportedChains: [oneChainTestnetChain],
-              defaultChain: oneChainTestnetChain,
-              embeddedWallets: {
-                createOnLogin: 'users-without-wallets',
-              },
-            }}
-          >
-            <WalletSync />
-            <ReferralSync />
-            {children}
-            <WalletConnectModal />
-            <ToastProvider />
-          </PrivyProvider>
-        </ConnectKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <SuiClientProvider networks={networkConfig} defaultNetwork="onechainTestnet">
+        <SuiWalletProvider autoConnect>
+          {isPrivyEnabled ? (
+            <PrivyProvider
+              appId={PRIVY_APP_ID}
+              config={{
+                appearance: {
+                  theme: 'dark',
+                  accentColor: '#A855F7',
+                  showWalletLoginFirst: true,
+                },
+                embeddedWallets: {
+                  createOnLogin: 'users-without-wallets',
+                },
+              }}
+            >
+              <WalletSync />
+              <ReferralSync />
+              {children}
+              <WalletConnectModal />
+              <ToastProvider />
+            </PrivyProvider>
+          ) : (
+            <>
+              <WalletSyncSuiOnly />
+              <ReferralSync />
+              {children}
+              <WalletConnectModal />
+              <ToastProvider />
+            </>
+          )}
+        </SuiWalletProvider>
+      </SuiClientProvider>
+    </QueryClientProvider>
   );
 }

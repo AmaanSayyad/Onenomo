@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate OCT (EVM) address only
+    // Validate supported wallet address formats
     const { isValidAddress } = await import('@/lib/utils/address');
     if (!(await isValidAddress(userAddress))) {
       return NextResponse.json(
-        { error: 'Invalid OCT (EVM) wallet address' },
+        { error: 'Invalid wallet address' },
         { status: 400 }
       );
     }
@@ -120,13 +120,12 @@ export async function POST(request: NextRequest) {
     // Perform OCT transfer from treasury
     let signature: string;
     try {
-      const { getTreasuryClient } = await import('@/lib/ctc/backend-client');
-      const { parseEther } = await import('viem');
-
-      const treasury = getTreasuryClient();
-      const amountInWei = parseEther(netWithdrawAmount.toString());
-
-      const result = await treasury.processWithdrawal(userAddress, amountInWei);
+      const { getOnchainAdapter } = await import('@/lib/onchain/adapter');
+      const adapter = getOnchainAdapter();
+      const result = await adapter.executeWithdrawal({
+        userAddress,
+        amount: netWithdrawAmount.toString(),
+      });
 
       if (!result.success || !result.txHash) {
         throw new Error(result.error || 'Failed to process blockchain transfer');

@@ -26,8 +26,12 @@ export const createProfileSlice: StateCreator<ProfileState> = (set, get) => ({
             const { data, error } = await supabase
                 .from('user_profiles')
                 .select('username, access_code')
-                .ilike('user_address', address)
-                .single();
+                .eq('user_address', address.toLowerCase())
+                .maybeSingle();
+
+            if (error) {
+                throw error;
+            }
 
             if (data) {
                 set({
@@ -48,11 +52,15 @@ export const createProfileSlice: StateCreator<ProfileState> = (set, get) => ({
         set({ isUpdatingUsername: true });
         try {
             // Check if username is already taken
-            const { data: existing } = await supabase
+            const { data: existing, error: existingError } = await supabase
                 .from('user_profiles')
                 .select('user_address')
                 .eq('username', username)
-                .single();
+                .maybeSingle();
+
+            if (existingError) {
+                throw existingError;
+            }
 
             if (existing && existing.user_address !== address) {
                 throw new Error('Username already taken');

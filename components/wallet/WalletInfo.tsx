@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAccount, useBalance } from 'wagmi';
-import { formatUnits } from 'ethers';
 import { Card } from '@/components/ui/Card';
 import { useBynomoStore } from '@/lib/store';
 

@@ -20,7 +20,7 @@ const ENV_VARIABLES: EnvVariable[] = [
   {
     name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_RPC',
     required: false,
-    description: 'OneChain testnet RPC endpoint (defaults to https://rpc-testnet.onechain.one)',
+    description: 'OneChain testnet RPC endpoint (defaults to https://rpc-testnet.onelabs.cc:443)',
   },
   {
     name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID',
@@ -45,7 +45,18 @@ const ENV_VARIABLES: EnvVariable[] = [
   {
     name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS',
     required: false,
-    description: 'OneChain native token decimals (defaults to 18)',
+    description: 'OneChain native token decimals (defaults to 9)',
+  },
+  {
+    name: 'ONECHAIN_OCT_COIN_TYPE',
+    required: false,
+    description: 'OCT coin type (supports both 0x2::oct::OCT and 0x2::coin::Coin<0x2::oct::OCT>)',
+    serverSideOnly: true,
+  },
+  {
+    name: 'NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE',
+    required: false,
+    description: 'Client-side OCT coin type override for balance display',
   },
 
   // Treasury Configuration
@@ -58,7 +69,7 @@ const ENV_VARIABLES: EnvVariable[] = [
   {
     name: 'ONECHAIN_TREASURY_PRIVATE_KEY',
     required: true,
-    description: 'Treasury private key for withdrawals (REQUIRED for withdrawal operations)',
+    description: 'Treasury private key for withdrawals (base64 with flag byte or raw 64-char hex)',
     serverSideOnly: true,
   },
   {
@@ -79,11 +90,12 @@ const ENV_VARIABLES: EnvVariable[] = [
     description: 'Supabase anonymous key (REQUIRED for database operations)',
   },
 
-  // Wallet Connection Configuration
+  // Adapter Configuration
   {
-    name: 'NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID',
+    name: 'ONECHAIN_ADAPTER_MODE',
     required: false,
-    description: 'WalletConnect project ID (recommended for WalletConnect support)',
+    description: 'Onchain adapter mode: sui (default) or evm',
+    serverSideOnly: true,
   },
 
   // Privy Configuration (Optional)

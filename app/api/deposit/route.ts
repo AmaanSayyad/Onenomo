@@ -16,10 +16,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { ethers } from 'ethers';
-import { OneChainClient } from '@/lib/ctc/client';
 import { updateHouseBalance, getHouseBalance } from '@/lib/ctc/database';
-import { oneChainTestnet } from '@/lib/ctc/config';
+import { getOnchainAdapter } from '@/lib/onchain/adapter';
 
 /**
  * Sanitize error messages to prevent sensitive data leakage
@@ -73,6 +71,7 @@ type DepositResponse = DepositSuccessResponse | DepositErrorResponse;
  */
 export async function POST(request: NextRequest): Promise<NextResponse<DepositResponse>> {
   const timestamp = new Date().toISOString();
+  const adapter = getOnchainAdapter();
 
   try {
     // Parse request body
@@ -93,7 +92,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
     }
 
     // Validate user address format
-    if (!ethers.isAddress(userAddress)) {
+    if (!adapter.validateAddress(userAddress)) {
       console.error(`[${timestamp}] [Deposit API] Validation error: Invalid address format`, {
         userAddress,
       });
@@ -106,7 +105,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
     // Validate amount
     let amountBigInt: bigint;
     try {
-      amountBigInt = ethers.parseUnits(amount, 18);
+      amountBigInt = adapter.parseAmount(amount);
       if (amountBigInt <= BigInt(0)) {
         console.error(`[${timestamp}] [Deposit API] Validation error: Invalid amount`, {
           amount,
@@ -129,97 +128,24 @@ export async function POST(request: NextRequest): Promise<NextResponse<DepositRe
       );
     }
 
-    // Validate transaction hash format
-    if (!/^0x[0-9a-fA-F]{64}$/.test(txHash)) {
-      console.error(`[${timestamp}] [Deposit API] Validation error: Invalid txHash format`, {
-        txHash,
-        userAddress,
-      });
-      return NextResponse.json(
-        { success: false, error: 'Invalid transaction hash format' },
-        { status: 400 }
-      );
-    }
-
     console.log(`[${timestamp}] [Deposit API] Processing deposit:`, {
       userAddress,
       txHash,
       amount,
+      chain: adapter.chainName,
     });
 
-    // Initialize OneChain client
-    const client = new OneChainClient();
-
-    // Verify transaction on blockchain
-    let receipt;
-    try {
-      receipt = await client.waitForTransaction(txHash);
-    } catch (error) {
+    const verification = await adapter.verifyDeposit({ userAddress, txHash, amount });
+    if (!verification.success) {
       console.error(`[${timestamp}] [Deposit API] Transaction verification failed:`, {
         txHash,
         userAddress,
         amount,
-        errorType: error instanceof Error ? error.constructor.name : 'Unknown',
-        errorMessage: sanitizeError(error),
+        chain: adapter.chainName,
+        reason: verification.error,
       });
       return NextResponse.json(
-        { success: false, error: 'Failed to verify transaction on blockchain. Please try again.' },
-        { status: 400 }
-      );
-    }
-
-    // Check transaction status
-    if (receipt.status === 'failed') {
-      console.error(`[${timestamp}] [Deposit API] Transaction failed on blockchain:`, {
-        txHash,
-        userAddress,
-        amount,
-        blockNumber: receipt.blockNumber,
-      });
-      return NextResponse.json(
-        { success: false, error: 'Transaction failed on blockchain' },
-        { status: 400 }
-      );
-    }
-
-    // Verify transaction recipient is treasury address
-    const treasuryAddress = oneChainTestnet.treasuryAddress.toLowerCase();
-    if (receipt.to.toLowerCase() !== treasuryAddress) {
-      console.error(`[${timestamp}] [Deposit API] Transaction recipient mismatch:`, {
-        txHash,
-        expected: treasuryAddress,
-        actual: receipt.to.toLowerCase(),
-        userAddress,
-      });
-      return NextResponse.json(
-        { success: false, error: 'Transaction recipient is not the treasury address' },
-        { status: 400 }
-      );
-    }
-
-    // Verify transaction amount matches
-    if (receipt.value !== amountBigInt) {
-      console.error(`[${timestamp}] [Deposit API] Transaction amount mismatch:`, {
-        txHash,
-        expected: amount,
-        actual: client.formatOCT(receipt.value),
-        userAddress,
-      });
-      return NextResponse.json(
-        { success: false, error: 'Transaction amount does not match deposit amount' },
-        { status: 400 }
-      );
-    }
-
-    // Verify transaction sender is the user
-    if (receipt.from.toLowerCase() !== userAddress.toLowerCase()) {
-      console.error(`[${timestamp}] [Deposit API] Transaction sender mismatch:`, {
-        txHash,
-        expected: userAddress.toLowerCase(),
-        actual: receipt.from.toLowerCase(),
-      });
-      return NextResponse.json(
-        { success: false, error: 'Transaction sender does not match user address' },
+        { success: false, error: verification.error || 'Transaction verification failed' },
         { status: 400 }
       );
     }
