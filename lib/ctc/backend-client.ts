@@ -56,10 +56,13 @@ export class TreasuryClient {
       throw new Error(error);
     }
 
-    // Validate private key format (should be 64 hex chars, optionally prefixed with 0x)
+    // Validate private key format (64 hex chars OR 44 chars Base64)
     const cleanKey = key.startsWith('0x') ? key.slice(2) : key;
-    if (!/^[0-9a-fA-F]{64}$/.test(cleanKey)) {
-      const error = 'Invalid treasury private key format. Expected 64 hexadecimal characters.';
+    const isHex = /^[0-9a-fA-F]{64}$/.test(cleanKey);
+    const isBase64 = /^[A-Za-z0-9+/=]{40,44}$/.test(cleanKey);
+    
+    if (!isHex && !isBase64) {
+      const error = 'Invalid treasury private key format. Expected 64 hexadecimal characters or Base64 string.';
       console.error('[TreasuryClient] ERROR:', error);
       throw new Error(error);
     }

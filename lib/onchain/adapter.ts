@@ -6,7 +6,7 @@ import { Transaction } from '@mysten/sui/transactions';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { fromBase64, fromHex, isValidSuiAddress, isValidTransactionDigest } from '@mysten/sui/utils';
 
-const RAW_OCT_TYPE = process.env.ONECHAIN_OCT_COIN_TYPE || process.env.NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE || '0x2::coin::Coin<0x2::oct::OCT>';
+const RAW_OCT_TYPE = process.env.ONECHAIN_OCT_COIN_TYPE || process.env.NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE || '0x2::oct::OCT';
 const SUI_FALLBACK_COIN_TYPE = '0x2::sui::SUI';
 const DEFAULT_SUI_DECIMALS = 9;
 
@@ -221,7 +221,7 @@ class OneChainSuiAdapter implements OnchainAdapter {
 
     const tx = new Transaction();
     tx.setSender(treasuryAddress);
-    tx.setGasBudget(10_000_000n);
+    tx.setGasBudget(20_000_000n);
 
     let coinObjects: Array<{ coinObjectId: string; balance: string }> = [];
     for (const coinType of getPreferredCoinTypes()) {
@@ -248,7 +248,10 @@ class OneChainSuiAdapter implements OnchainAdapter {
     const execution = await client.signAndExecuteTransaction({
       signer,
       transaction: tx,
-      options: { showEffects: true },
+      options: { 
+        showEffects: true,
+        showObjectChanges: true,
+      },
     });
 
     const txHash = execution.digest;

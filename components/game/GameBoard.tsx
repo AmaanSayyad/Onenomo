@@ -94,13 +94,19 @@ export const GameBoard: React.FC = () => {
       if (authenticated && wallets.length > 0) {
         const wallet = wallets.find(w => w.address.toLowerCase() === address.toLowerCase());
         if (!wallet) throw new Error("Linked Privy wallet not found");
+        
         const provider = await wallet.getEthereumProvider();
         const ethersProvider = new ethers.BrowserProvider(provider);
         const signer = await ethersProvider.getSigner();
+        
+        const decimalMultiplier = Math.pow(10, oneChainTestnet.nativeCurrency.decimals);
+        const amountSmallestUnit = BigInt(Math.floor(blitzEntryFee * decimalMultiplier));
+        
         const tx = await signer.sendTransaction({
           to: oneChainTestnet.treasuryAddress,
-          value: ethers.parseEther(blitzEntryFee.toString()),
+          value: amountSmallestUnit,
         });
+
         toast.success(`Access granted! Tx: ${tx.hash.slice(0, 6)}...`);
         enableBlitzAccess();
         refreshWalletBalance();
@@ -600,7 +606,7 @@ export const GameBoard: React.FC = () => {
             ) : (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-[#00ff88] rounded-full shadow-[0_0_8px_#00ff88]" />
+                  <div className="w-1.5 h-1.5 bg-[#00ff88] rounded-full shadow-[0_0_88px_#00ff88]" />
                   <span className="text-[10px] text-white/40 font-black uppercase tracking-widest">Connected</span>
                 </div>
                 <span className="text-[10px] text-white/20 font-mono">{formatAddress(address)}</span>

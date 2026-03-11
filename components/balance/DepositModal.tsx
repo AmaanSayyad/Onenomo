@@ -113,8 +113,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
 
       if (currentAccount?.address && currentAccount.address.toLowerCase() === address.toLowerCase()) {
         toast.info('Please confirm the transaction in your wallet...');
-        const tx = new Transaction();
-
+        
         const preferredCoinTypes = getPreferredCoinTypes();
         let coins: Array<{ coinObjectId: string; balance: string }> = [];
         let selectedCoinType: string | null = null;
@@ -129,27 +128,59 @@ export const DepositModal: React.FC<DepositModalProps> = ({
         }
 
         if (!coins.length || !selectedCoinType) {
-          throw new Error('No OCT coin objects found in wallet. Set NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE correctly.');
+          throw new Error('No OCT coin objects found in wallet. Please ensure you have OCT tokens.');
         }
 
-        const isSuiGasType = selectedCoinType === SUI_FALLBACK_COIN_TYPE || /::sui::SUI$/i.test(selectedCoinType);
+        // Sort OCT coins by balance (largest first)
+        const sortedCoins = [...coins].sort((a, b) => Number(BigInt(b.balance) - BigInt(a.balance)));
+        
+        // Calculate total available balance
+        const totalBalance = sortedCoins.reduce((sum, coin) => sum + BigInt(coin.balance), 0n);
+        
+        // Reserve some OCT for gas (0.02 OCT = 20,000,000 MIST)
+        const gasReserve = 30_000_000n; // Increased gas reserve
+        const availableForDeposit = totalBalance - gasReserve;
+        
+        if (availableForDeposit < amountInSmallestUnit) {
+          const availableOCT = Number(availableForDeposit) / Math.pow(10, decimals);
+          throw new Error(`Insufficient OCT balance. You have ${availableOCT.toFixed(4)} OCT available (after gas reserve) but trying to deposit ${depositAmount} OCT`);
+        }
 
-        if (isSuiGasType) {
-          const [depositCoin] = tx.splitCoins(tx.gas, [amountInSmallestUnit]);
+        const tx = new Transaction();
+        tx.setSender(address);
+        tx.setGasBudget(30_000_000n); // Increased gas budget
+
+        // Check if we can use a single coin
+        const largestCoin = sortedCoins[0];
+        if (BigInt(largestCoin.balance) >= amountInSmallestUnit + gasReserve) {
+          // Single coin is enough - no merge needed
+          const primaryCoin = tx.object(largestCoin.coinObjectId);
+          const [depositCoin] = tx.splitCoins(primaryCoin, [amountInSmallestUnit]);
           tx.transferObjects([depositCoin], treasuryAddress);
         } else {
-          const sortedCoins = [...coins].sort((a, b) => Number(BigInt(b.balance) - BigInt(a.balance)));
+          // Need to merge coins
           const primaryCoin = tx.object(sortedCoins[0].coinObjectId);
-
-          if (sortedCoins.length > 1) {
-            tx.mergeCoins(primaryCoin, sortedCoins.slice(1).map((coin) => tx.object(coin.coinObjectId)));
+          
+          // Only merge coins we actually need
+          let accumulated = BigInt(sortedCoins[0].balance);
+          const coinsToMerge = [];
+          
+          for (let i = 1; i < sortedCoins.length && accumulated < amountInSmallestUnit + gasReserve; i++) {
+            coinsToMerge.push(tx.object(sortedCoins[i].coinObjectId));
+            accumulated += BigInt(sortedCoins[i].balance);
           }
-
+          
+          if (coinsToMerge.length > 0) {
+            tx.mergeCoins(primaryCoin, coinsToMerge);
+          }
+          
           const [depositCoin] = tx.splitCoins(primaryCoin, [amountInSmallestUnit]);
           tx.transferObjects([depositCoin], treasuryAddress);
         }
 
-        const result = await signAndExecuteTransaction({ transaction: tx });
+        const result = await signAndExecuteTransaction({ 
+          transaction: tx
+        });
         txHash = result.digest;
       } else {
         throw new Error('Please connect your OneChain wallet to deposit.');

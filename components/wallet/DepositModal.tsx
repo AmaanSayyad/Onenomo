@@ -10,7 +10,7 @@ import { Transaction } from '@mysten/sui/transactions';
 import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit';
 import { ExternalLink, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
-const DEFAULT_OCT_TYPE = '0x2::coin::Coin<0x2::oct::OCT>';
+const DEFAULT_OCT_TYPE = '0x2::sui::SUI';
 const SUI_FALLBACK_COIN_TYPE = '0x2::sui::SUI';
 
 function normalizeCoinType(type: string): string {
@@ -153,6 +153,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           const [depositCoin] = tx.splitCoins(primaryCoin, [amountInSmallestUnit]);
           tx.transferObjects([depositCoin], treasuryAddress);
         }
+        
+        // Ensure gas budget is sufficient for programmable transaction
+        tx.setGasBudget(20_000_000n);
 
         const result = await signAndExecuteTransaction({ transaction: tx });
         transactionHash = result.digest;
