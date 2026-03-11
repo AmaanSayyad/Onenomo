@@ -709,31 +709,8 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
           playLoseSound();
         }
 
-        // Update house balance via API (skip for demo mode)
-        const isDemoMode = userAddress?.startsWith('0xDEMO');
-
-        if (userAddress && !isDemoMode) {
-          // Real mode - use API
-          if (won) {
-            fetch('/api/balance/win', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userAddress,
-                winAmount: payout,
-                betId: bet.betId
-              })
-            }).then(() => {
-              fetchBalance(userAddress);
-            }).catch(console.error);
-          } else {
-            // If lost, just refresh balance (already deducted)
-            fetchBalance(userAddress);
-          }
-        } else if (isDemoMode && won) {
-          // Demo mode - update locally on win (bet amount already subtracted)
-          updateBalance(payout, 'add');
-        }
+        // Balance update (Real and Demo) is now handled globally in the resolveBet store action
+        // for better consistency and to avoid double-updates.
 
         // Add to resolved cells for visual feedback
         setResolvedCells(prev => [...prev, {
@@ -848,7 +825,12 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
                     betAmount,
                     targetId,
                     userAddress,
-                    cell.id
+                    cell.id,
+                    {
+                      priceTop: cell.priceTop,
+                      priceBottom: cell.priceBottom,
+                      endTime: Date.now() + (timeframeSeconds * 1000)
+                    }
                   );
 
                   if (result && result.bet) {

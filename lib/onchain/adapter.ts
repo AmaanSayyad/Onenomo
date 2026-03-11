@@ -221,7 +221,7 @@ class OneChainSuiAdapter implements OnchainAdapter {
 
     const tx = new Transaction();
     tx.setSender(treasuryAddress);
-    tx.setGasBudget(20_000_000n);
+    tx.setGasBudget(30_000_000n); // Increased gas budget
 
     let coinObjects: Array<{ coinObjectId: string; balance: string }> = [];
     for (const coinType of getPreferredCoinTypes()) {
@@ -236,31 +236,84 @@ class OneChainSuiAdapter implements OnchainAdapter {
       return { success: false, error: 'Treasury has no transferable coins' };
     }
 
+    // Sort coins by balance (largest first)
     const sorted = [...coinObjects].sort((a, b) => Number(BigInt(b.balance) - BigInt(a.balance)));
-    const primaryCoin = tx.object(sorted[0].coinObjectId);
-    if (sorted.length > 1) {
-      tx.mergeCoins(primaryCoin, sorted.slice(1).map((coin) => tx.object(coin.coinObjectId)));
+    
+    // Calculate total available balance
+    const totalBalance = sorted.reduce((sum, coin) => sum + BigInt(coin.balance), 0n);
+    
+    // Reserve some OCT for gas (0.03 OCT = 30,000,000 MIST)
+    const gasReserve = 30_000_000n;
+    const availableForWithdrawal = totalBalance - gasReserve;
+    
+    if (availableForWithdrawal < amount) {
+      return { 
+        success: false, 
+        error: `Treasury has insufficient balance. Available: ${this.formatAmount(availableForWithdrawal)} OCT, Requested: ${this.formatAmount(amount)} OCT` 
+      };
     }
 
-    const [withdrawCoin] = tx.splitCoins(primaryCoin, [amount]);
-    tx.transferObjects([withdrawCoin], input.userAddress);
-
-    const execution = await client.signAndExecuteTransaction({
-      signer,
-      transaction: tx,
-      options: { 
-        showEffects: true,
-        showObjectChanges: true,
-      },
-    });
-
-    const txHash = execution.digest;
-
-    if (execution.effects?.status?.status !== 'success') {
-      return { success: false, txHash, error: 'Transaction failed on blockchain' };
+    // Check if we can use a single coin
+    const largestCoin = sorted[0];
+    if (BigInt(largestCoin.balance) >= amount + gasReserve) {
+      // Single coin is enough - no merge needed
+      const primaryCoin = tx.object(largestCoin.coinObjectId);
+      const [withdrawCoin] = tx.splitCoins(primaryCoin, [amount]);
+      tx.transferObjects([withdrawCoin], input.userAddress);
+    } else {
+      // Need to merge coins
+      const primaryCoin = tx.object(sorted[0].coinObjectId);
+      
+      // Only merge coins we actually need
+      let accumulated = BigInt(sorted[0].balance);
+      const coinsToMerge = [];
+      
+      for (let i = 1; i < sorted.length && accumulated < amount + gasReserve; i++) {
+        coinsToMerge.push(tx.object(sorted[i].coinObjectId));
+        accumulated += BigInt(sorted[i].balance);
+      }
+      
+      if (coinsToMerge.length > 0) {
+        tx.mergeCoins(primaryCoin, coinsToMerge);
+      }
+      
+      const [withdrawCoin] = tx.splitCoins(primaryCoin, [amount]);
+      tx.transferObjects([withdrawCoin], input.userAddress);
     }
 
-    return { success: true, txHash };
+    try {
+      const execution = await client.signAndExecuteTransaction({
+        signer,
+        transaction: tx,
+        options: { 
+          showEffects: true,
+          showObjectChanges: true,
+        },
+      });
+
+      const txHash = execution.digest;
+
+      if (execution.effects?.status?.status !== 'success') {
+        return { success: false, txHash, error: 'Transaction failed on blockchain' };
+      }
+
+      return { success: true, txHash };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Check for specific error types
+      if (errorMessage.includes('gas') || errorMessage.includes('insufficient')) {
+        return { 
+          success: false, 
+          error: 'No valid gas coins found for the transaction. Treasury may need more OCT.' 
+        };
+      }
+      
+      return { 
+        success: false, 
+        error: `Transaction failed: ${errorMessage}` 
+      };
+    }
   }
 }
 

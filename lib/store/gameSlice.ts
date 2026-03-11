@@ -431,7 +431,8 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
 
       set({
         isPlacingBet: false,
-        error: null
+        error: null,
+        houseBalance: data.remainingBalance
       });
 
       // Return bet info for UI
@@ -650,6 +651,11 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
           }).catch(console.error);
         } else if (accountType === 'demo') {
           updateBalance(payout, 'add');
+        }
+      } else {
+        // Even on loss, refresh balance for real accounts to ensure sync
+        if (accountType === 'real' && address && fetchBalance) {
+          fetchBalance(address);
         }
       }
 
