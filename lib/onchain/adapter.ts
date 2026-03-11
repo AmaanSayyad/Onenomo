@@ -4,7 +4,7 @@ import { getRpcUrl, oneChainTestnet } from '@/lib/ctc/config';
 import { SuiJsonRpcClient } from '@mysten/sui/jsonRpc';
 import { Transaction } from '@mysten/sui/transactions';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
-import { fromBase64, fromHex, isValidSuiAddress, isValidTransactionDigest } from '@mysten/sui/utils';
+import { fromBase58, fromBase64, fromHex, isValidSuiAddress, isValidTransactionDigest, toBase58, toBase64 } from '@mysten/sui/utils';
 
 const RAW_OCT_TYPE = process.env.ONECHAIN_OCT_COIN_TYPE || process.env.NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE || '0x2::oct::OCT';
 const SUI_FALLBACK_COIN_TYPE = '0x2::sui::SUI';
@@ -21,6 +21,46 @@ const OCT_OBJECT_TYPE = `0x2::coin::Coin<${OCT_COIN_TYPE}>`;
 
 function getPreferredCoinTypes(): string[] {
   return [...new Set([RAW_OCT_TYPE, OCT_COIN_TYPE, OCT_OBJECT_TYPE, SUI_FALLBACK_COIN_TYPE])];
+}
+
+/** Base58 excludes 0, O, I, l - if digest contains these, it's base64 or hex. */
+const BASE58_ALPHABET = /^[1-9A-HJ-NP-Za-km-z]+$/;
+
+/** Normalize base64url to base64 (OneChain may use base64url). */
+function base64UrlToBase64(s: string): string {
+  return s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (s.length % 4)) % 4);
+}
+
+/**
+ * Normalize object digest for Sui SDK. OneChain RPC returns base64; SDK expects base58.
+ * ObjectDigest.validate: fromBase58(digest).length === 32. Must return base58 that decodes to 32 bytes.
+ */
+function normalizeObjectDigest(digest: string): string {
+  if (!digest || typeof digest !== 'string') return digest;
+  try {
+    let bytes: Uint8Array;
+    if (/^0x[0-9a-fA-F]{64}$/.test(digest) || /^[0-9a-fA-F]{64}$/.test(digest)) {
+      bytes = fromHex(digest.startsWith('0x') ? digest : `0x${digest}`);
+    } else if (BASE58_ALPHABET.test(digest)) {
+      const decoded = fromBase58(digest);
+      if (decoded.length === 32) return digest;
+      if (decoded.length > 32) bytes = decoded.slice(0, 32);
+      else return digest;
+    } else {
+      try {
+        bytes = fromBase64(digest);
+      } catch {
+        bytes = fromBase64(base64UrlToBase64(digest));
+      }
+    }
+    if (!bytes || bytes.length < 32) return digest;
+    const b32 = bytes.length > 32 ? bytes.slice(0, 32) : bytes;
+    const b58 = toBase58(b32);
+    if (fromBase58(b58).length !== 32) return digest;
+    return b58;
+  } catch {
+    return digest;
+  }
 }
 
 export interface DepositVerificationInput {
@@ -219,9 +259,27 @@ class OneChainSuiAdapter implements OnchainAdapter {
     const treasuryAddress = this.getTreasuryAddress();
     const amount = this.parseAmount(input.amount);
 
+    // Fetch current epoch and chain ID to satisfy Sui's "min_epoch must equal max_epoch" constraint
+    // (Multi-epoch transaction expiration is not yet supported)
+    const [systemState, chainId] = await Promise.all([
+      client.getLatestSuiSystemState(),
+      client.getChainIdentifier(),
+    ]);
+    const currentEpoch = Number(systemState.epoch ?? 0);
+
     const tx = new Transaction();
     tx.setSender(treasuryAddress);
     tx.setGasBudget(50_000_000n); // Increased gas budget to 0.05 OCT
+    tx.setExpiration({
+      ValidDuring: {
+        chain: chainId,
+        minEpoch: currentEpoch,
+        maxEpoch: currentEpoch,
+        minTimestamp: null,
+        maxTimestamp: null,
+        nonce: Date.now() >>> 0,
+      },
+    });
 
     let coinObjects: Array<{ coinObjectId: string; balance: string; version: string; digest: string }> = [];
     for (const coinType of getPreferredCoinTypes()) {
@@ -253,46 +311,40 @@ class OneChainSuiAdapter implements OnchainAdapter {
       };
     }
 
-    // Use smallest coins for gas payment (preserve larger coins for withdrawal)
+    const objRef = (c: { coinObjectId: string; version: string; digest: string }) =>
+      tx.objectRef({ objectId: c.coinObjectId, version: c.version, digest: normalizeObjectDigest(c.digest) });
+
+    // SDK resolver looks for SUI coins for gas; OneChain uses OCT. We must set gas payment
+    // explicitly with OCT coins. Use smallest coins for gas to preserve larger ones for withdrawal.
     const gasCoins = sorted.slice(-3).filter(c => BigInt(c.balance) > 0n);
     if (gasCoins.length > 0) {
-      tx.setGasPayment(gasCoins.map(c => ({
-        objectId: c.coinObjectId,
-        version: c.version,
-        digest: c.digest
-      })));
+      tx.setGasPayment(gasCoins.map(c => ({ objectId: c.coinObjectId, version: c.version, digest: normalizeObjectDigest(c.digest) })));
     }
 
-    // Check if we can use a single coin for withdrawal
-    const largestCoin = sorted[0];
     const gasCoinsIds = new Set(gasCoins.map(c => c.coinObjectId));
-    
+
+    // Use objectRef (not tx.object) so we control digest format - RPC returns base64, SDK expects base58
+    const largestCoin = sorted[0];
+
     if (BigInt(largestCoin.balance) >= amount && !gasCoinsIds.has(largestCoin.coinObjectId)) {
-      // Single coin is enough - no merge needed
-      const primaryCoin = tx.object(largestCoin.coinObjectId);
+      const primaryCoin = objRef(largestCoin);
       const [withdrawCoin] = tx.splitCoins(primaryCoin, [amount]);
       tx.transferObjects([withdrawCoin], input.userAddress);
     } else {
-      // Need to merge coins (excluding gas coins)
       const availableCoins = sorted.filter(c => !gasCoinsIds.has(c.coinObjectId));
-      
       if (availableCoins.length === 0) {
         return { success: false, error: 'No coins available for withdrawal after gas reservation' };
       }
-      
-      const primaryCoin = tx.object(availableCoins[0].coinObjectId);
+      const primaryCoin = objRef(availableCoins[0]);
       let accumulated = BigInt(availableCoins[0].balance);
       const coinsToMerge = [];
-      
       for (let i = 1; i < availableCoins.length && accumulated < amount; i++) {
-        coinsToMerge.push(tx.object(availableCoins[i].coinObjectId));
+        coinsToMerge.push(objRef(availableCoins[i]));
         accumulated += BigInt(availableCoins[i].balance);
       }
-      
       if (coinsToMerge.length > 0) {
         tx.mergeCoins(primaryCoin, coinsToMerge);
       }
-      
       const [withdrawCoin] = tx.splitCoins(primaryCoin, [amount]);
       tx.transferObjects([withdrawCoin], input.userAddress);
     }
