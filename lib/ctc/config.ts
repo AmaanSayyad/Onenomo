@@ -24,6 +24,14 @@ export interface OneChainConfig {
 }
 
 const DEFAULT_ONECHAIN_TESTNET_RPC = 'https://rpc-testnet.onelabs.cc:443';
+
+function parseNumberEnv(value: string | undefined, fallback: number): number {
+  if (value === undefined || value === null || value.trim() === '') {
+    return fallback;
+  }
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
 const LOCALHOST_RPC_DENYLIST_HOSTS: string[] = [];
 
 function normalizeRpcUrl(url: string): string {
@@ -70,23 +78,23 @@ export function getRpcUrls(): string[] {
 /**
  * OneChain Testnet Configuration
  * 
- * Chain ID: 102031
+ * Chain ID: 0
  * Native Token: OCT (9 decimals)
- * RPC: https://rpc-testnet.onechain.one
- * Explorer: https://explorer-testnet.onechain.one
+ * RPC: https://rpc-testnet.onelabs.cc:443
+ * Explorer: https://onescan.cc/testnet
  * Treasury: 0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123
  */
 export const oneChainTestnet: OneChainConfig = {
-  chainId: Number(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID) || 102031,
+  chainId: parseNumberEnv(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID, 0),
   chainName: "OneChain Testnet",
   nativeCurrency: {
     name: "OneChain",
     symbol: process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_SYMBOL || "OCT",
-    decimals: Number(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS) || 9,
+    decimals: parseNumberEnv(process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS, 9),
   },
   rpcUrls: getRpcUrls(),
   blockExplorerUrls: [
-    process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER || "https://explorer-testnet.onechain.one"
+    process.env.NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER || "https://onescan.cc/testnet"
   ],
   treasuryAddress:
     process.env.NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS ||

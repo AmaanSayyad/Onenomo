@@ -24,6 +24,8 @@ export const GameBoard: React.FC = () => {
     network,
     walletBalance,
     houseBalance,
+    demoBalance,
+    accountType,
     bets,
     gameMode,
     setGameMode,
@@ -79,7 +81,8 @@ export const GameBoard: React.FC = () => {
   const blitzEntryFee = 0.0001;
 
   // Connection and Authorization status (access code requirement disabled)
-  const isWalletConnected = !!address;
+  const isDemoMode = accountType === 'demo';
+  const isWalletConnected = isDemoMode || !!address;
   const isUnauthorized = false;
 
   const handleEnterBlitz = async () => {
@@ -209,21 +212,22 @@ export const GameBoard: React.FC = () => {
   };
 
   const handleBynomoBet = async (direction: 'UP' | 'DOWN') => {
-    if (!address || !isWalletConnected || gameMode !== 'binomo' || isUnauthorized) return;
+    if (!isWalletConnected || gameMode !== 'binomo' || isUnauthorized) return;
 
     try {
       const multiplier = getMultiplier(selectedDuration);
+      const bettingAddress = address || '0xDEMO_MODE';
       await placeBetFromHouseBalance(
         betAmount,
         `${direction}-${multiplier}-${selectedDuration}`,
-        address
+        bettingAddress
       );
     } catch (err) {
       console.error("Failed to place bet:", err);
     }
   };
 
-  const activeWalletBalance = walletBalance;
+  const activeWalletBalance = isDemoMode ? demoBalance : walletBalance;
 
   const formatAddress = (addr: string) => {
     if (!addr || addr.length <= 10) return addr || '---';

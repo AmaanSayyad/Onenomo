@@ -26,11 +26,11 @@ export const Leaderboard: React.FC = () => {
             case 'SOL': return '/logos/solana-sol-logo.png';
             case 'SUI': return '/logos/sui-logo.png';
             case 'OCT':
-            case 'ONECHAIN': return '/logos/ctc-logo.png';
+            case 'ONECHAIN': return '/logos/onechain.jpg';
             case 'XLM': return '/logos/stellar-xlm-logo.png';
             case 'XTZ': return '/logos/tezos-xtz-logo.png';
             case 'NEAR': return '/logos/near-logo.svg';
-            default: return '/logos/ctc-logo.png';
+            default: return '/logos/onechain.jpg';
         }
     };
 

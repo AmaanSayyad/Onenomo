@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import GridScan from '@/components/ui/GridScan';
 import TrueFocus from '@/components/ui/TrueFocus';
 import HowItWorksDemo from './waitlist/HowItWorksDemo';
@@ -89,6 +90,7 @@ const faqs = [
 ];
 
 export default function WaitlistPage() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -142,8 +144,8 @@ export default function WaitlistPage() {
 
     const isExpanded = isHovered || email.length > 0;
 
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const handleStartNow = () => {
+        router.push('/trade');
     };
 
     return (
@@ -384,7 +386,7 @@ export default function WaitlistPage() {
                 >
                     <div className="cta-glow" />
                     <h2 className="cta-title">Ready to trade the future with decentralized precision?</h2>
-                    <button className="cta-button" onClick={scrollToTop}>
+                    <button className="cta-button" onClick={handleStartNow}>
                         Start now
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'translateY(1px)' }}>
                             <path d="m9 18 6-6-6-6" />

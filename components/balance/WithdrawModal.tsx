@@ -134,7 +134,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
             Available to Withdraw
           </p>
           <p className="text-[#FF006E] text-xl font-bold font-mono flex items-center gap-2">
-            <img src="/logos/ctc-logo.png" alt="OCT" className="w-5 h-5 rounded-sm" />
+            <img src="/logos/onechain.jpg" alt="OCT" className="w-5 h-5 rounded-sm" />
             {houseBalance.toFixed(4)} {currencySymbol}
           </p>
         </div>

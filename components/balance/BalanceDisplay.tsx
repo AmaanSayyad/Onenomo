@@ -177,7 +177,7 @@ export const BalanceDisplay: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <div className="flex items-center gap-1">
                   <img
-                    src="/logos/ctc-logo.png"
+                    src="/logos/onechain.jpg"
                     alt={network || 'Network'}
                     className="w-4 h-4 object-contain rounded-sm"
                   />

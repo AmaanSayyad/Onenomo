@@ -129,7 +129,7 @@ export const WalletConnect: React.FC = () => {
 
           <div className="bg-white/5 border border-white/10 rounded-xl px-2 sm:px-3 py-1.5 flex items-center gap-2 sm:gap-2.5">
             <div className="w-4 h-4 shrink-0">
-              <img src="/logos/ctc-logo.png" alt="Network" className="w-full h-full object-contain" />
+              <img src="/logos/onechain.jpg" alt="Network" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col items-center sm:items-end">
               <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter">OneChain</span>

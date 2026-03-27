@@ -156,9 +156,13 @@ Create a `.env` file in the project root with the following variables:
 
 ```bash
 # OneChain Testnet Configuration (optional - uses defaults)
-NEXT_PUBLIC_ONECHAIN_TESTNET_RPC=https://rpc-testnet.onechain.one
-NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID=102031
-NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER=https://explorer-testnet.onechain.one
+NEXT_PUBLIC_ONECHAIN_TESTNET_RPC=https://rpc-testnet.onelabs.cc:443
+NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID=0
+NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER=https://onescan.cc/testnet
+NEXT_PUBLIC_ONECHAIN_FAUCET_URL=https://faucet-testnet.onelabs.cc
+NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE=0x2::oct::OCT
+ONECHAIN_OCT_COIN_TYPE=0x2::oct::OCT
+ONECHAIN_ADAPTER_MODE=sui
 
 # Treasury Configuration
 ONECHAIN_TREASURY_ADDRESS=0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123

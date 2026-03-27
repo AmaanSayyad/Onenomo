@@ -5,12 +5,12 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.1-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 
-**The first on-chain binary options trading dApp on OneChain testnet.**  
+**A hybrid on-chain experience across GameFi + GambleFi + Prediction + Trading on OneChain testnet.**  
 Running on **OneChain testnet**.
 
 Powered by **OneChain testnet** + **Pyth Hermes** price attestations + **Supabase** + instant house balance.
 
-*Trade binary options with oracle-bound resolution and minimal trust.*
+*Play and trade short-duration prediction rounds with oracle-bound outcomes and on-chain treasury settlement.*
 
 **Main treasury (OneChain testnet):** [`0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123`](https://explorer-testnet.onechain.one/address/0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123)
 
@@ -53,14 +53,39 @@ All architectural and flow diagrams are in Markdown using [Mermaid](https://merm
 
 ## Why Onenomo?
 
-Binary options trading in Web3 is rare. Real-time oracles and sub-second resolution have been the missing piece.
+Web3 still lacks a polished product that combines **playability**, **risk/reward excitement**, **prediction mechanics**, and **high-frequency trading-style execution** in one loop.
 
 - **Pyth Hermes** delivers millisecond-grade prices for 300+ assets (crypto, stocks, metals, forex).
 - **OneChain testnet** — EVM-compatible blockchain for fast finality and low fees.
-- **House balance** — place unlimited bets without signing a transaction every time; only deposit/withdraw hit the chain.
-- **5s, 10s, 15s, 30s, 1m** rounds with oracle-bound settlement.
+- **House balance** — place repeated in-game actions without signing a transaction every round; only deposit/withdraw hit the chain.
+- **5s, 10s, 15s, 30s, 1m** rounds with oracle-bound resolution.
 
-Onenomo brings binary options to OneChain testnet with transparent, on-chain settlement.
+Onenomo brings a unified **GameFi + GambleFi + Prediction + Trading** loop to OneChain testnet with transparent, testable mechanics and on-chain settlement touchpoints.
+
+---
+
+## MVP Status
+
+This repository contains a **working MVP** with complete core flow:
+
+- Connect wallet
+- Deposit OCT to treasury
+- Play Classic/Box rounds with live oracle pricing
+- Resolve outcomes and update internal balance
+- Withdraw OCT back to wallet
+
+This is production-oriented in structure, with API routes, SQL migrations, and verifiable transaction paths.
+
+---
+
+## OneChain Ecosystem Alignment
+
+Onenomo is designed as a native OneChain product with practical ecosystem fit:
+
+- **OneWallet-compatible UX** through EVM wallet flows and standard wallet connection patterns.
+- **OneChain-native OCT treasury flow** for deposits and withdrawals.
+- **Move ecosystem-ready scope** by combining game mechanics, prediction logic, and trading-style session design that can evolve into deeper OneChain product integrations.
+- **GameFi + GambleFi + Prediction + Trading direction** via two modes (Classic/Box), oracle-driven automated resolution logic, and data-ready foundations for AI-assisted gameplay features.
 
 ---
 
@@ -72,7 +97,7 @@ Onenomo brings binary options to OneChain testnet with transparent, on-chain set
 | **Blockchain** | **OneChain testnet**, ethers.js, viem, Wagmi, ConnectKit, Privy |
 | **Oracle** | Pyth Network Hermes (real-time prices) |
 | **Backend** | Next.js API Routes, Supabase (PostgreSQL) |
-| **Payments** | OCT native transfers, single treasury |
+| **Game & Trading Economy** | OCT-based balance, rewards, risk/reward rounds, and treasury-backed settlement |
 
 ### Key Dependencies & Acknowledgements
 
@@ -88,28 +113,30 @@ Onenomo brings binary options to OneChain testnet with transparent, on-chain set
 
 ---
 
-## Market Opportunity
+## Market Opportunity (GameFi + GambleFi + Prediction + Trading)
 
 | Metric | Value |
 |--------|--------|
-| **Binary options / prediction (TAM)** | $27.56B (2025) → ~$116B by 2034 (19.8% CAGR) |
-| **Crypto prediction markets** | $45B+ annual volume (Polymarket, Kalshi, on-chain) |
-| **Crypto derivatives volume** | $86T+ annually (2025) |
+| **Prediction gameplay demand** | Strong overlap with short-session, high-engagement game loops |
+| **Crypto-native gaming audience** | Large base of wallet-ready users seeking interactive utility |
+| **Risk/reward entertainment demand** | Persistent interest in competitive, stake-based digital experiences |
+| **High-frequency retail behavior** | Strong preference for fast sessions, instant outcomes, and repeatable loops |
+| **On-chain game economies** | Growing preference for transparent, composable reward systems |
 | **Crypto users** | 590M+ worldwide |
 
 ---
 
-## Competitive Landscape
+## Positioning Landscape
 
-| Segment | Examples | Limitation vs Onenomo |
+| Segment | Examples | Limitation vs Onenomo hybrid model |
 |--------|----------|----------------------|
-| **Web2 binary options** | Binomo, IQ Option, Quotex | Opaque pricing, regulatory issues, no on-chain settlement; users do not custody funds. |
-| **Crypto prediction markets** | Polymarket, Kalshi, Azuro | Event/outcome markets (e.g. “Will X happen?”), not sub-minute **price** binary options; resolution in hours or days. |
-| **Crypto derivatives (CEX)** | Binance Futures, Bybit, OKX | Leveraged perps and positions; not short-duration binary options (5s–1m) with oracle-bound resolution. |
-| **On-chain options / DeFi** | Dopex, Lyra, Premia | Standard options (calls/puts), complex UX; no simple “price up/down in 30s” binary product. |
-| **OneChain testnet binary options** | — | No established on-chain binary options dApp; Onenomo fills this gap. |
+| **Prediction markets** | Polymarket, Kalshi, Azuro | Primarily event markets; not built around sub-minute interactive rounds. |
+| **On-chain derivatives UIs** | Perp/options apps | Finance-first workflows; lower emphasis on game loops and session-based play. |
+| **Casual Web2 prediction apps** | Centralized mini-games | No on-chain transparency or wallet-native ownership patterns. |
+| **Web2 gamble-style products** | Centralized casino/binary apps | Weak on transparency, custody, and verifiable settlement logic. |
+| **OneChain game category** | Early-stage | Opportunity for a polished, playable prediction game with verifiable outcomes. |
 
-**Onenomo’s differentiation:** First on-chain binary options dApp on OneChain testnet with sub-second oracle resolution (Pyth Hermes), house balance for instant bets, and dual modes (Classic + Box) in one treasury.
+**Onenomo’s differentiation:** A OneChain-native hybrid combining GameFi engagement, GambleFi-style risk/reward rounds, prediction-market logic, and trading-style speed with sub-second oracle resolution (Pyth Hermes), instant execution via house balance, and dual modes (Classic + Box).
 
 ---
 
@@ -122,7 +149,7 @@ Endless possibilities across:
 - **Derivatives & Futures** — More products for advanced traders.
 - **DEX** — Deeper DeFi integration and on-chain liquidity.
 
-**Ultimate objective:** To become the next PolyMarket for binary options — the go-to on-chain venue for short-duration, oracle-settled binary options on OneChain testnet and beyond.
+**Ultimate objective:** Build a category-defining hybrid experience across GameFi + GambleFi + Prediction + Trading on OneChain testnet, then expand into richer multiplayer, progression, and AI-assisted systems.
 
 ---
 
@@ -154,7 +181,7 @@ flowchart LR
 
 1. **Connect** — Connect via MetaMask (ConnectKit/Wagmi) or Privy (social login). All operations use **OCT** on OneChain testnet.
 2. **Deposit** — Send OCT from your wallet to the Onenomo treasury. Your house balance is added instantly.
-3. **Place bet** — Choose **Classic** (up/down + expiry) or **Box** (tap tiles with multipliers). No on-chain tx per bet.
+3. **Play round** — Choose **Classic** (up/down + expiry) or **Box** (tap tiles with multipliers). No on-chain tx per round action.
 4. **Resolution** — Pyth Hermes provides the price at expiry; win/loss is applied to your house balance.
 5. **Withdraw** — Request withdrawal; OCT is sent from the treasury to your wallet on OneChain testnet.
 
@@ -216,7 +243,7 @@ sequenceDiagram
         P->>App: Live price stream
         U->>App: Place bet Classic or Box
         App->>API: Record bet in Supabase
-        Note over App,API: No on-chain tx per bet, house balance only
+        Note over App,API: No on-chain tx per round action, house balance only
         P->>App: Price at expiry
         App->>API: Settle win or loss, update house balance
     end
@@ -258,7 +285,7 @@ flowchart TD
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/0xamaan-dev/Onenomo.git
+git clone https://github.com/AmaanSayyad/Onenomo.git
 cd Onenomo
 yarn install
 ```
@@ -283,19 +310,22 @@ Edit `.env` with the following variables. See `.env.example` for a complete temp
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `NEXT_PUBLIC_ONECHAIN_TESTNET_RPC` | `https://rpc-testnet.onechain.one` | OneChain testnet RPC endpoint |
-| `NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID` | `102031` | OneChain testnet chain ID |
-| `NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER` | `https://explorer-testnet.onechain.one` | Block explorer URL |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_RPC` | `https://rpc-testnet.onelabs.cc:443` | OneChain testnet RPC endpoint |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID` | `0` | OneChain testnet chain ID |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER` | `https://onescan.cc/testnet` | Block explorer URL |
 | `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY` | `OCT` | Native currency name |
 | `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_SYMBOL` | `OCT` | Currency symbol for display |
-| `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS` | `18` | Native token decimals |
+| `NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY_DECIMALS` | `9` | Native token decimals |
+| `NEXT_PUBLIC_ONECHAIN_FAUCET_URL` | `https://faucet-testnet.onelabs.cc` | Testnet faucet endpoint |
+| `NEXT_PUBLIC_ONECHAIN_OCT_COIN_TYPE` | `0x2::oct::OCT` | Client coin type for OCT |
+| `ONECHAIN_OCT_COIN_TYPE` | `0x2::oct::OCT` | Server coin type for OCT |
 
 #### Treasury Configuration (Optional - defaults provided)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `ONECHAIN_TREASURY_ADDRESS` | `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123` | Treasury wallet address (server-side) |
-| `NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS` | `0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123` | Treasury address for client display |
+| `NEXT_PUBLIC_ONECHAIN_TREASURY_ADDRESS` | _(set in `.env`)_ | Treasury address for client display |
+| `ONECHAIN_TREASURY_PRIVATE_KEY` | _(set in `.env`)_ | Treasury private key (server-side) |
 
 #### Wallet Connection (Optional)
 
@@ -314,6 +344,7 @@ Edit `.env` with the following variables. See `.env.example` for a complete temp
 | `NEXT_PUBLIC_ROUND_DURATION` | `30` | Default round duration in seconds |
 | `NEXT_PUBLIC_PRICE_UPDATE_INTERVAL` | `1000` | Price update interval in milliseconds |
 | `NEXT_PUBLIC_CHART_TIME_WINDOW` | `300000` | Chart time window in milliseconds (5 minutes) |
+| `ONECHAIN_ADAPTER_MODE` | `sui` | Adapter mode (`sui` or `evm`) |
 
 **⚠️ Security Note:** Never commit `.env` to version control. All sensitive keys (private keys, secrets) should only be used server-side and never exposed to the client.
 
@@ -340,13 +371,13 @@ Open [http://localhost:3000](http://localhost:3000); the app redirects to `/trad
 
 ## Architecture: How Onenomo Scales
 
-Onenomo is designed for **high-throughput, low-latency** binary options trading on OneChain testnet.
+Onenomo is designed for **high-throughput, low-latency** GameFi prediction rounds on OneChain testnet.
 
 ### Performance Characteristics
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| **Bet throughput** | 1,000+ bets/second | Off-chain house balance (no tx per bet) |
+| **Round action throughput** | 1,000+ actions/second | Off-chain house balance (no tx per round action) |
 | **Price updates** | 1-second interval | Pyth Hermes real-time feed |
 | **Concurrent users** | 10,000+ | Supabase PostgreSQL + connection pooling |
 | **Settlement latency** | <100ms | In-memory bet resolution + DB write |
@@ -355,9 +386,9 @@ Onenomo is designed for **high-throughput, low-latency** binary options trading 
 ### Scalability Strategy
 
 1. **Off-chain execution engine**  
-   - Bets are placed against house balance (stored in Supabase)  
+  - Round actions are placed against house balance (stored in Supabase)  
    - Only deposits/withdrawals hit the blockchain  
-   - Eliminates gas costs and network congestion for betting
+  - Eliminates gas costs and network congestion for gameplay loops
 
 2. **Horizontal scaling**  
    - Stateless Next.js API routes (scale via Vercel/AWS)  
@@ -381,16 +412,16 @@ Onenomo is designed for **high-throughput, low-latency** binary options trading 
 
 ---
 
-## Revenue Model & Sustainability
+## Economy & Sustainability
 
-### Protocol Revenue Streams
+### Economy Streams
 
-| Source | Fee/Rate | Destination |
+| Source | Model | Destination |
 |--------|----------|-------------|
-| **Protocol fees** | 1.5-2% per bet | 70% treasury reserves, 20% insurance fund, 5% team, 5% community |
-| **Referral bonuses** | 10% of referrer fees | Paid from protocol fee allocation |
-| **VIP tier upgrades** | Volume-based (no upfront fee) | Incentivizes higher betting activity |
-| **Future: Token staking** | Variable APY | Reduces sell pressure, aligns incentives |
+| **Round fees** | 1.5-2% per resolved round | 70% treasury reserves, 20% insurance fund, 5% team, 5% community |
+| **Referral rewards** | 10% of referee-generated fees | Paid from protocol fee allocation |
+| **VIP progression** | Activity/volume-based tiering | Incentivizes retention and deeper gameplay |
+| **Future: Token staking** | Variable APY / utility | Aligns long-term player incentives |
 
 ### Sustainability Plan
 
@@ -417,7 +448,7 @@ Onenomo is designed for **high-throughput, low-latency** binary options trading 
 | Q3 2026 | 20,000 | $250K | $150K | $1M |
 | Q4 2026 | 50,000 | $1M | $600K | $5M |
 
-**Break-even:** Estimated at 2,500 users with $25K daily volume (achievable Q2 2026)
+**Break-even:** Estimated at 2,500 active users with healthy daily round volume (target Q2 2026)
 
 ---
 
@@ -425,20 +456,21 @@ Onenomo is designed for **high-throughput, low-latency** binary options trading 
 
 ### Target Segments
 
-- **DeFi-native traders on OneChain testnet** — users already active on OneChain perps/DEXs looking for new high-frequency products.
-- **Binary options & prediction users (Web2 → Web3)** — users of Binomo/IQ Option and prediction markets seeking transparent, on-chain settlement.
-- **Creators & communities** — KOLs, trading groups, and Telegram/Discord communities who want gamified trading experiences.
+- **GameFi-native players on OneChain testnet** — users seeking competitive, short-session on-chain gameplay.
+- **Prediction + trading-native users (Web2 → Web3)** — users wanting transparent, wallet-native outcomes with fast session velocity.
+- **Risk/reward entertainment users** — users who prefer high-intensity rounds with clear rules and verifiable settlement.
+- **Creators & communities** — KOLs and Telegram/Discord communities that drive social and competitive play loops.
 
 ### Acquisition Channels
 
 - **OneChain testnet ecosystem**: Grants, ecosystem programs, and co-marketing with OneChain testnet and infra partners.
-- **X/Twitter & Telegram**: Short-form trade clips, PnL screenshots, and streak highlights for virality.
+- **X/Twitter & Telegram**: Short-form gameplay clips, win streaks, and leaderboard moments for virality.
 - **Referral program**: Perpetual fee share for referrers, with deep links into Classic and Box modes.
 - **Launch partners**: Early integrations with wallets, analytics dashboards, and trader communities.
 
 ### Activation & Retention
 
-- **Onboarding quests**: Complete first deposit and 3 trades to unlock boosted odds or fee discounts.
+- **Onboarding quests**: Complete first deposit and 3 rounds to unlock boosted odds or fee discounts.
 - **Streaks & leaderboards**: Daily/weekly leaderboards for hit-rate, multipliers, and volume.
 - **VIP tiers**: Volume-based tiers with better odds, early access to new assets, and governance rights.
 - **Education & transparency**: Clear docs about oracle settlement, treasury health, and risk disclosures.

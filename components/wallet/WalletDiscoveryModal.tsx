@@ -35,7 +35,7 @@ export const WalletDiscoveryModal: React.FC<WalletDiscoveryModalProps> = ({ isOp
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/5 flex items-center justify-center border border-purple-500/20">
-                  <img src="/logos/ctc-logo.png" alt="OCT" className="w-7 h-7 object-contain rounded-sm" />
+                  <img src="/logos/onechain.jpg" alt="OCT" className="w-7 h-7 object-contain rounded-sm" />
                 </div>
                 <div className="relative flex-1">
                   <div className="flex items-center gap-2">

@@ -38,7 +38,7 @@ export const WalletInfo: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center p-1 border border-white/10 shrink-0">
             <img
-              src="/logos/ctc-logo.png"
+              src="/logos/onechain.jpg"
               alt={networkName}
               className="w-full h-full object-contain rounded-sm"
             />

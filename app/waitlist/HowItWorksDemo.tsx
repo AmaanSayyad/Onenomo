@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // --- Assets / Icons ---
 // Reused from previous code
 const CHAINS = [
-    { name: 'OneChain Testnet', id: 'OCT', color: '#b24fff', logo: '/logos/ctc-logo.png', bg: '' },
+    { name: 'OneChain Testnet', id: 'OCT', color: '#b24fff', logo: '/logos/onechain.jpg', bg: '' },
 ];
 
 export default function HowItWorksDemo() {

@@ -25,12 +25,12 @@ const ENV_VARIABLES: EnvVariable[] = [
   {
     name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CHAIN_ID',
     required: false,
-    description: 'OneChain testnet chain ID (defaults to 102031)',
+    description: 'OneChain testnet chain ID (defaults to 0)',
   },
   {
     name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_EXPLORER',
     required: false,
-    description: 'OneChain testnet block explorer URL (defaults to https://explorer-testnet.onechain.one)',
+    description: 'OneChain testnet block explorer URL (defaults to https://onescan.cc/testnet)',
   },
   {
     name: 'NEXT_PUBLIC_ONECHAIN_TESTNET_CURRENCY',

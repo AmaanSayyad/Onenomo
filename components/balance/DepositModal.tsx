@@ -217,7 +217,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
           </div>
           <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1 font-mono">Wallet Balance</p>
           <p className="text-[#00f5ff] text-xl font-bold font-mono flex items-center gap-2">
-            <img src="/logos/ctc-logo.png" alt="OCT" className="w-5 h-5 rounded-sm" />
+            <img src="/logos/onechain.jpg" alt="OCT" className="w-5 h-5 rounded-sm" />
             {walletBalance.toFixed(4)} {currencySymbol}
           </p>
         </div>

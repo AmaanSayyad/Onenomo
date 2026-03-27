@@ -76,7 +76,7 @@ export const WalletConnectModal: React.FC = () => {
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:scale-110 transition-transform shrink-0">
-                                <img src="/logos/ctc-logo.png" alt="OCT" className="w-6 h-6 sm:w-7 sm:h-7 rounded-sm" />
+                                <img src="/logos/onechain.jpg" alt="OCT" className="w-6 h-6 sm:w-7 sm:h-7 rounded-sm" />
                             </div>
                             <div className="flex-1 text-left">
                                 <div className="flex items-center gap-2">
