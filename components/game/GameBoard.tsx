@@ -229,8 +229,8 @@ export const GameBoard: React.FC = () => {
 
   const activeWalletBalance = isDemoMode ? demoBalance : walletBalance;
 
-  const formatAddress = (addr: string) => {
-    if (!addr || addr.length <= 10) return addr || '---';
+  const formatAddress = (addr: string | null | undefined) => {
+    if (!addr || addr.length <= 10) return addr || (isDemoMode ? 'Demo' : '---');
     return `${addr.slice(0, 5)}...${addr.slice(-4)}`;
   };
 
