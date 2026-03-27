@@ -56,7 +56,7 @@ All architectural and flow diagrams are in Markdown using [Mermaid](https://merm
 Web3 still lacks a polished product that combines **playability**, **risk/reward excitement**, **prediction mechanics**, and **high-frequency trading-style execution** in one loop.
 
 - **Pyth Hermes** delivers millisecond-grade prices for 300+ assets (crypto, stocks, metals, forex).
-- **OneChain testnet** — EVM-compatible blockchain for fast finality and low fees.
+- **OneChain testnet** — Move/Sui-style execution environment; fast finality and low fees.
 - **House balance** — place repeated in-game actions without signing a transaction every round; only deposit/withdraw hit the chain.
 - **5s, 10s, 15s, 30s, 1m** rounds with oracle-bound resolution.
 
@@ -82,7 +82,7 @@ This is production-oriented in structure, with API routes, SQL migrations, and v
 
 Onenomo is designed as a native OneChain product with practical ecosystem fit:
 
-- **OneWallet-compatible UX** through EVM wallet flows and standard wallet connection patterns.
+- **OneWallet / Sui-compatible wallets** via dapp-kit and familiar connect UX.
 - **OneChain-native OCT treasury flow** for deposits and withdrawals.
 - **Move ecosystem-ready scope** by combining game mechanics, prediction logic, and trading-style session design that can evolve into deeper OneChain product integrations.
 - **GameFi + GambleFi + Prediction + Trading direction** via two modes (Classic/Box), oracle-driven automated resolution logic, and data-ready foundations for AI-assisted gameplay features.
@@ -94,7 +94,7 @@ Onenomo is designed as a native OneChain product with practical ecosystem fit:
 | Layer        | Technology |
 |-------------|------------|
 | **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS, Zustand, Recharts |
-| **Blockchain** | **OneChain testnet**, ethers.js, viem, Wagmi, ConnectKit, Privy |
+| **Blockchain** | **OneChain testnet** (Sui/Move stack: `@mysten/sui`, `@mysten/dapp-kit`); optional `ONECHAIN_ADAPTER_MODE=evm` uses ethers.js / viem; **Privy** for social login |
 | **Oracle** | Pyth Network Hermes (real-time prices) |
 | **Backend** | Next.js API Routes, Supabase (PostgreSQL) |
 | **Game & Trading Economy** | OCT-based balance, rewards, risk/reward rounds, and treasury-backed settlement |
@@ -106,7 +106,8 @@ Onenomo is designed as a native OneChain product with practical ecosystem fit:
 - **Tailwind CSS** — utility-first styling for a responsive trading UI.
 - **Zustand** — lightweight global state for prices, rounds, and UI state.
 - **Recharts** — charting library for price feeds and Box mode tiles.
-- **Wagmi, viem, ethers.js & ConnectKit** — wallet integration and OneChain testnet RPC access.
+- **@mysten/sui & @mysten/dapp-kit** — wallet connect, transactions, and OCT on OneChain (primary path).
+- **ethers.js & viem** — optional EVM adapter and legacy API helpers (`ONECHAIN_ADAPTER_MODE`).
 - **Privy** — social login and embedded wallet experience.
 - **Pyth Hermes** — real-time oracle prices for settlement.
 - **Supabase (PostgreSQL)** — managed database, auth, and SQL migrations.
@@ -164,7 +165,7 @@ flowchart LR
         D --> E[Withdraw]
     end
     subgraph Onenomo
-        F[MetaMask / ConnectKit / Privy]
+        F[Sui wallet / OneWallet / Privy]
         G[Pyth Hermes Prices]
         H[Supabase Balances]
         I[OCT Treasury]
@@ -179,7 +180,7 @@ flowchart LR
 
 ### Flow
 
-1. **Connect** — Connect via MetaMask (ConnectKit/Wagmi) or Privy (social login). All operations use **OCT** on OneChain testnet.
+1. **Connect** — Connect via a Sui-compatible wallet (e.g. OneWallet) or Privy (social login). All operations use **OCT** on OneChain testnet.
 2. **Deposit** — Send OCT from your wallet to the Onenomo treasury. Your house balance is added instantly.
 3. **Play round** — Choose **Classic** (up/down + expiry) or **Box** (tap tiles with multipliers). No on-chain tx per round action.
 4. **Resolution** — Pyth Hermes provides the price at expiry; win/loss is applied to your house balance.
@@ -194,7 +195,7 @@ graph TB
     subgraph Client
         UI["Next.js + React UI"]
         Store["Zustand Store"]
-        Wallets["Wagmi / ConnectKit / Privy"]
+        Wallets["dapp-kit / OneWallet / Privy"]
     end
 
     subgraph Oracle
@@ -202,7 +203,7 @@ graph TB
     end
 
     subgraph OCTChain["OneChain Testnet"]
-        UserWallet["User Wallet MetaMask or Privy"]
+        UserWallet["User Wallet Sui or Privy"]
         Treasury["Onenomo Treasury OCT EOA"]
         OneChainRPC["OneChain RPC"]
     end
@@ -233,7 +234,7 @@ sequenceDiagram
     participant API as API + Supabase
     participant OCT as OCT Treasury on OneChain
 
-    U->>App: Connect wallet MetaMask or Privy
+    U->>App: Connect wallet Sui-compatible or Privy
     U->>App: Deposit OCT
     App->>OCT: Transfer OCT to treasury
     OCT-->>App: Tx confirmed
@@ -279,7 +280,7 @@ flowchart TD
 
 - Node.js 18+
 - Yarn (or npm)
-- A OneChain testnet wallet (e.g. MetaMask) and some OCT
+- A OneChain testnet wallet (Sui-compatible, e.g. OneWallet) and some OCT
 - Supabase project
 
 ### 1. Clone and install
@@ -489,4 +490,4 @@ Onenomo is built for **OneChain testnet**:
 
 - Deposits and withdrawals are OCT transfers on OneChain testnet.
 - Treasury is an EOA on OneChain testnet; no custom contract required for core flow.
-- Wallet connection via ConnectKit (MetaMask, etc.) and Privy.
+- Wallet connection via Sui dapp-kit (OneWallet and compatible wallets) and optional Privy.
