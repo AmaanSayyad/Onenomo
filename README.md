@@ -14,6 +14,14 @@ Powered by **OneChain testnet** + **Pyth Hermes** price attestations + **Supabas
 
 **Main treasury (OneChain testnet):** [`0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123`](https://explorer-testnet.onechain.one/address/0x71197e7a1CA5A2cb2AD82432B924F69B1E3dB123)
 
+## Links
+
+| Resource | Link |
+|----------|------|
+| **Live MVP** | [onenomo-opal.vercel.app](https://onenomo-opal.vercel.app/) |
+| **Demo video (~3 min)** | [YouTube](https://youtu.be/p3rT7KzHB6Y) |
+| **Pitch deck** | [Google Slides](https://docs.google.com/presentation/d/1-QsStD6O9riICVa5OiEH_lcaY3A5LHFevij0Vc55nGc/edit?usp=sharing) |
+| **Source code** | [github.com/AmaanSayyad/Onenomo](https://github.com/AmaanSayyad/Onenomo) |
 
 ## Evaluation repository
 
