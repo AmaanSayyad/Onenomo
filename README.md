@@ -23,7 +23,7 @@ Powered by **OneChain testnet** + **Pyth Hermes** price attestations + **Supabas
 |--------|----------|
 | **Core code** | `app/`, `components/`, `lib/`, `supabase/`, `scripts/` — full Next.js app, OneChain integration, Pyth, Supabase |
 | **README** | This file — overview, quick start, tech stack, architecture, getting started |
-| **Architecture & flow (`.md` + Mermaid)** | **README.md** (How It Works, System Architecture, Data Flow, Game Modes) · **docs/TECHNICAL.md** (architecture, setup, demo) · **docs/PROJECT.md** (problem, solution, user journey) · **USER_JOURNEY.md** (onboarding, deposit, Classic/Box, withdrawal, lifecycle) · **DEVELOPER_GUIDE.md** (component diagram, sequence diagram) · **ROADMAP.md** (timeline) |
+| **Architecture & flow (`.md` + Mermaid)** | **README.md** (How It Works, System Architecture, Data Flow, Game Modes) |
 
 All architectural and flow diagrams are in Markdown using [Mermaid](https://mermaid.js.org/) (rendered on GitHub). No evaluation materials live outside this repo.
 
@@ -32,12 +32,7 @@ All architectural and flow diagrams are in Markdown using [Mermaid](https://merm
 ## 📚 Documentation
 
 - **[Quick Start](#getting-started)** - Get up and running in 5 minutes
-- **[Developer Guide](./DEVELOPER_GUIDE.md)** - Comprehensive setup and contribution guide
-- **[Roadmap](./ROADMAP.md)** - Product roadmap and milestones
-- **[User Journey](./USER_JOURNEY.md)** - End‑to‑end trader flow and UX
-- **[Dependencies & acknowledgements](./DEPENDENCIES.md)** - Open-source dependencies and acknowledgements
-- **[Contributing](./CONTRIBUTING.md)** - How to contribute
-- **[Security](./SECURITY.md)** - Security policy and vulnerability reporting
+- **[License](./LICENSE)** - MIT license details
 
 **Open source:** This repository is public and **fork-friendly**. The project is licensed under [MIT](./LICENSE); see the [LICENSE](./LICENSE) file for the full text.
 
@@ -50,7 +45,6 @@ All architectural and flow diagrams are in Markdown using [Mermaid](https://merm
 | `app/` | Next.js App Router pages and API routes |
 | `components/` | React UI components (trade, chart, wallet) |
 | `lib/` | OCT config, Supabase client, Pyth, utilities |
-| `docs/` | PROJECT.md, TECHNICAL.md, EXTRAS.md, OneChain.address.json |
 | `scripts/` | Balance sync, reconciliation, DB helpers |
 | `supabase/` | SQL migrations and Supabase config |
 | `public/` | Static assets |
@@ -454,14 +448,6 @@ Onenomo is designed for **high-throughput, low-latency** binary options trading 
 - **Phase 1 (OneChain testnet focus)**: Ship on OneChain, harden infra, iterate on UX and risk parameters.
 - **Phase 2 (More assets & regions)**: Expand to FX, indices, and region-specific campaigns.
 - **Phase 3 (Cross-chain & tokenization)**: Onenomo token, cross-chain deployment, and deeper DeFi integrations.
-
----
-
-## Documentation
-
-- **[Developer Guide](./DEVELOPER_GUIDE.md)** - Full setup and contribution guide
-- **[Roadmap](./ROADMAP.md)** - Product roadmap and milestones
-- **[License](./LICENSE)** - MIT License
 
 ---
 
